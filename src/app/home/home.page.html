@@ -1,0 +1,22 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-button (click)="openModelSettingsModal()" size="small" fill="outline">
+      Claude 3.5 Sonnet
+      <ion-icon slot="end" name="chevron-forward-outline"></ion-icon>
+    </ion-button>
+    <ion-title></ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-header collapse="condense">
+    <ion-toolbar>
+      <ion-title size="large">Start a new conversation</ion-title>
+    </ion-toolbar>
+  </ion-header>
+  
+</ion-content>
+
+<ion-footer [translucent]="true">
+  <app-chat-input></app-chat-input>
+</ion-footer>
