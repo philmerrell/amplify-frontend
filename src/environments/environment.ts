@@ -3,6 +3,7 @@
 // The list of file replacements can be found in `angular.json`.
 
 export const environment = {
+  chatEndpoint: 'https://si62aopn4bfch4cyohmfcvrz4y0gsiab.lambda-url.us-east-1.on.aws/',
   production: false
 };
 

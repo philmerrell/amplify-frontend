@@ -1,0 +1,25 @@
+<ion-list>
+  <ion-item-divider sticky>
+    Conversations
+  </ion-item-divider>
+  <ion-accordion-group (ionChange)="handleFolderChange($event)">
+    @for (folder of folders(); track folder.id) {
+      <ion-accordion [value]="folder.id">
+        <ion-item slot="header" color="light">
+          <ion-label>{{ folder.name }}</ion-label>
+          <!-- <ion-button>test</ion-button> -->
+        </ion-item>
+        <div slot="content">
+          @for(conversation of map.get(folder.id); track conversation.id) {
+            <ion-item (click)="setCurrentConversation(conversation)" button>
+              <ion-icon name="chatbox-outline" color="secondary" slot="start"></ion-icon>
+              <ion-label>
+                {{ conversation.name }}
+              </ion-label>
+            </ion-item>
+          }
+        </div>
+      </ion-accordion>
+    }
+  </ion-accordion-group>
+</ion-list>

@@ -4,6 +4,9 @@ import { IonicRouteStrategy, provideIonicAngular } from '@ionic/angular/standalo
 
 import { routes } from './app/app.routes';
 import { AppComponent } from './app/app.component';
+import { provideHttpClient, withFetch, withInterceptors } from '@angular/common/http';
+import { addBearerTokenInterceptor } from './app/auth/bearer-token.interceptor';
+import { provideMarkdown } from 'ngx-markdown';
 
 bootstrapApplication(AppComponent, {
   providers: [
@@ -12,5 +15,10 @@ bootstrapApplication(AppComponent, {
       mode: 'ios'
     }),
     provideRouter(routes, withPreloading(PreloadAllModules)),
+    provideHttpClient(
+      withFetch(),
+      withInterceptors([addBearerTokenInterceptor])
+    ),
+    provideMarkdown()
   ],
 });

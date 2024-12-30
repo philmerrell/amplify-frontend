@@ -1,31 +1,46 @@
 <ion-app>
   <ion-split-pane contentId="main-content">
     <ion-menu contentId="main-content" type="overlay">
-      <ion-content>
-        <ion-list id="inbox-list">
-          <ion-list-header>Inbox</ion-list-header>
-          <ion-note>hi&#64;ionicframework.com</ion-note>
-
-          @for (p of appPages; track p; let i = $index) {
-            <ion-menu-toggle auto-hide="false">
-              <ion-item routerDirection="root" [routerLink]="[p.url]" lines="none" detail="false" routerLinkActive="selected">
-                <ion-icon aria-hidden="true" slot="start" [ios]="p.icon + '-outline'" [md]="p.icon + '-sharp'"></ion-icon>
-                <ion-label>{{ p.title }}</ion-label>
-              </ion-item>
-            </ion-menu-toggle>
-          }
-        </ion-list>
-
-        <ion-list id="labels-list">
-          <ion-list-header>Labels</ion-list-header>
-
-          @for (label of labels; track label) {
-            <ion-item lines="none">
-              <ion-icon aria-hidden="true" slot="start" ios="bookmark-outline" md="bookmark-sharp"></ion-icon>
-              <ion-label>{{ label }}</ion-label>
-            </ion-item>
-          }
-        </ion-list>
+      <ion-header>
+        <ion-toolbar>
+          <ion-segment value="conversations">
+            <ion-segment-button value="conversations" content-id="conversations">
+              <ion-icon name="chatbox-outline"></ion-icon>
+            </ion-segment-button>
+            <ion-segment-button value="shared" content-id="shared">
+              <ion-icon name="share-social-outline"></ion-icon>
+            </ion-segment-button>
+            <ion-segment-button value="workspaces" content-id="workspaces">
+              <ion-icon name="briefcase-outline"></ion-icon>
+            </ion-segment-button>
+            <ion-segment-button value="settings" content-id="settings">
+              <ion-icon name="settings-outline"></ion-icon>
+            </ion-segment-button>
+          </ion-segment>
+        </ion-toolbar>
+      </ion-header>
+      <ion-content color="light">
+        <ion-segment-view>
+          <ion-segment-content id="conversations">
+              <ion-button>
+                <ion-icon slot="start" name="add"></ion-icon>
+                New Chat
+              </ion-button>
+              <!-- <ion-button fill="outline">
+                <ion-icon slot="icon-only" name="folder"></ion-icon>
+              </ion-button> -->
+            <app-conversations-menu></app-conversations-menu>
+          </ion-segment-content>
+          <ion-segment-content id="shared">
+            <div>
+              Shared with Me
+            </div>
+          </ion-segment-content>
+          <ion-segment-content id="workspaces">Third</ion-segment-content>
+          <ion-segment-content id="settings">
+            <app-settings-menu></app-settings-menu>
+          </ion-segment-content>
+        </ion-segment-view>
       </ion-content>
     </ion-menu>
     <ion-router-outlet id="main-content"></ion-router-outlet>
