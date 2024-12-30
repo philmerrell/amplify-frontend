@@ -13,24 +13,5 @@
       <ion-title size="large">Settings</ion-title>
     </ion-toolbar>
   </ion-header>
-  <ion-list>
-    <ion-item>
-      <input label="Conversations" placeholder="Select a file" type="file" accept=".json" (change)="onFileSelected($event)" />
-    </ion-item>
-    <ion-item>
-      <ion-button (click)="clearLocalStorage()">Clear Local Storage</ion-button>
-    </ion-item>
-    <ion-item>
-      <ion-label>
-        Conversations
-      </ion-label>
-      <ion-badge>{{ conversations().length }}</ion-badge>
-    </ion-item>
-    <ion-item>
-      <ion-label>
-        Folders
-      </ion-label>
-      <ion-badge>{{ folders().length }}</ion-badge>
-    </ion-item>
-  </ion-list>
+
 </ion-content>

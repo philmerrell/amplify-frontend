@@ -11,7 +11,7 @@
         </ion-item>
         <div slot="content">
           @for(conversation of map.get(folder.id); track conversation.id) {
-            <ion-item (click)="setCurrentConversation(conversation)" button>
+            <ion-item (click)="setCurrentConversation(conversation)" routerLink="/home" routerDirection="back">
               <ion-icon name="chatbox-outline" color="secondary" slot="start"></ion-icon>
               <ion-label>
                 {{ conversation.name }}
@@ -22,4 +22,18 @@
       </ion-accordion>
     }
   </ion-accordion-group>
+  @if(!folders().length) {
+    <ion-card>
+      <ion-item lines="none">
+        <ion-label>
+          <h1>You don't have any conversations yet.</h1>
+          <p>Start a new chat or import existing chat history.</p>
+        </ion-label>
+        
+      </ion-item>
+      <div class="ion-padding">
+        <ion-button routerLink="/settings/import-conversations" expand="block">Import</ion-button>
+      </div>
+    </ion-card>
+  }
 </ion-list>

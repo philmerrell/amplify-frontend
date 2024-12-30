@@ -14,7 +14,7 @@ import { documentsOutline } from 'ionicons/icons';
 export class SettingsMenuComponent  implements OnInit {
 
   constructor() {
-    addIcons({documentsOutline})
+    addIcons({documentsOutline});
   }
 
   ngOnInit() {}

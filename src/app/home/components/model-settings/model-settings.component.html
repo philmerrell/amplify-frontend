@@ -15,8 +15,7 @@
           [value]="selectedModel()"
           interface="popover"
           label="Model"
-          label-placement="floating"
-          fill="outline">
+          label-placement="floating">
           @for(model of models; track model.id) {
             <ion-select-option [value]="model">{{ model.name }}</ion-select-option>
           }
@@ -27,7 +26,7 @@
         <ion-select
           [interfaceOptions]="customPopoverOptions"
           interface="popover" label="Custom Instructions"
-          label-placement="floating" fill="outline">
+          label-placement="floating">
           <ion-select-option value="apple">Default</ion-select-option>
           <ion-select-option value="banana">Banana</ion-select-option>
           <ion-select-option value="orange">Orange</ion-select-option>

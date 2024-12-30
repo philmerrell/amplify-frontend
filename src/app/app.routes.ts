@@ -14,4 +14,8 @@ export const routes: Routes = [
     path: 'settings',
     loadComponent: () => import('./settings/settings.page').then( m => m.SettingsPage)
   },
+  {
+    path: 'settings/import-conversations',
+    loadComponent: () => import('./settings/import-conversations/import-conversations.page').then( m => m.ImportConversationsPage)
+  },
 ];
