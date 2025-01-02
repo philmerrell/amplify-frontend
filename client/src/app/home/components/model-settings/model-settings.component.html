@@ -1,0 +1,60 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Model Settings</ion-title>
+    <ion-button (click)="dismiss()" slot="end" fill="clear">Dismiss</ion-button>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-card>
+    <!-- <ion-card-content> -->
+      <ion-item>
+        <ion-select
+          (ionChange)="handleModelChange($event)"
+          [interfaceOptions]="customPopoverOptions"
+          [value]="selectedModel()"
+          interface="popover"
+          label="Model"
+          label-placement="floating">
+          @for(model of models; track model.id) {
+            <ion-select-option [value]="model">{{ model.name }}</ion-select-option>
+          }
+          
+        </ion-select>
+      </ion-item>
+      <ion-item>
+        <ion-select
+          [interfaceOptions]="customPopoverOptions"
+          interface="popover" label="Custom Instructions"
+          label-placement="floating">
+          <ion-select-option value="apple">Default</ion-select-option>
+          <ion-select-option value="banana">Banana</ion-select-option>
+          <ion-select-option value="orange">Orange</ion-select-option>
+        </ion-select>
+      </ion-item>
+      <ion-item>
+        <ion-label>
+          <p>Temperature</p>
+          Higher values like 0.8 will make the output more random, while lower values like 0.2 will make it more focused and deterministic.
+          <ion-range
+            aria-label="temperature"
+            (ionChange)="handleTempChange($event)"
+            [value]="selectedTemperature()"
+            [min]="0"
+            [max]="1.0"
+            [step]="0.1"
+            [pin]="true"
+            [pinFormatter]="pinFormatter">
+          </ion-range>
+        </ion-label>
+      </ion-item>
+      <ion-item>
+        <ion-label>
+          <p>Response Length</p>
+          Higher values will allow, but do not guarantee, longer answers.
+          <ion-range aria-label="Response length" [pin]="true" [min]="0" [max]="6" [value]="3" [snaps]="true"></ion-range>
+        </ion-label>
+      </ion-item>
+    <!-- </ion-card-content> -->
+  </ion-card>
+</ion-content>

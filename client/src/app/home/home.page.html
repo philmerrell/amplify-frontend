@@ -1,0 +1,31 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button (click)="openModelSettingsModal()">
+        {{ selectedModel().name }}
+        <!-- <ion-icon slot="end" name="chevron-forward-outline"></ion-icon> -->
+      </ion-button>
+    </ion-buttons>
+    <ion-title>{{ currentConversation().name }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" #scroller>
+  
+  <div class="container">
+    <ion-header collapse="condense">
+      <ion-toolbar>
+        <ion-title size="large">{{ currentConversation().name }}</ion-title>
+      </ion-toolbar>
+    </ion-header>
+    
+    <app-conversation [conversation]="currentConversation()" [loading]="chatLoading()" [scroller]="scroller"></app-conversation>
+    
+  </div>
+</ion-content>
+
+<ion-footer [translucent]="true">
+  <div class="container">
+    <app-chat-input></app-chat-input>
+  </div>
+</ion-footer>

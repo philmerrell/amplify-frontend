@@ -1,0 +1,39 @@
+<ion-app>
+  <ion-split-pane contentId="main-content">
+    <ion-menu contentId="main-content" type="overlay">
+      <ion-header>
+        <ion-toolbar>
+          <ion-segment value="conversations">
+            <ion-segment-button value="conversations" content-id="conversations">
+              <ion-icon name="chatbox-outline"></ion-icon>
+            </ion-segment-button>
+            <ion-segment-button value="shared" content-id="shared">
+              <ion-icon name="share-social-outline"></ion-icon>
+            </ion-segment-button>
+            <ion-segment-button value="workspaces" content-id="workspaces">
+              <ion-icon name="briefcase-outline"></ion-icon>
+            </ion-segment-button>
+            <ion-segment-button value="settings" content-id="settings">
+              <ion-icon name="settings-outline"></ion-icon>
+            </ion-segment-button>
+          </ion-segment>
+        </ion-toolbar>
+      </ion-header>
+      <ion-content color="light">
+        <ion-segment-view>
+          <ion-segment-content id="conversations">
+            <app-conversations-menu></app-conversations-menu>
+          </ion-segment-content>
+          <ion-segment-content id="shared">
+            <app-share-menu></app-share-menu>
+          </ion-segment-content>
+          <ion-segment-content id="workspaces">Third</ion-segment-content>
+          <ion-segment-content id="settings">
+            <app-settings-menu></app-settings-menu>
+          </ion-segment-content>
+        </ion-segment-view>
+      </ion-content>
+    </ion-menu>
+    <ion-router-outlet id="main-content"></ion-router-outlet>
+  </ion-split-pane>
+</ion-app>

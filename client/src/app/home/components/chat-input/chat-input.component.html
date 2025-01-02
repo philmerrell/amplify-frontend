@@ -1,0 +1,29 @@
+<ion-card color="light">
+  <ion-card-content>
+    <ion-textarea
+      [(ngModel)]="message"
+      (keypress)="handleEnterKey($event)"
+      [autoGrow]="true"
+      placeholder="Type something here"
+      value=""
+    >
+    <ion-button (click)="handleSubmitChat()" shape="round" slot="end" aria-label="Submit">
+      @if (chatLoading()) {
+        <ion-icon slot="icon-only" name="stop" aria-hidden="true"></ion-icon>
+      } @else {
+        <ion-icon slot="icon-only" name="arrow-up-outline" aria-hidden="true"></ion-icon>
+      }
+    </ion-button>
+    </ion-textarea>
+
+    <ion-button shape="round" aria-label="Submit">
+      <ion-icon slot="icon-only" name="copy-outline" aria-hidden="true"></ion-icon>
+    </ion-button>
+    <ion-button shape="round" aria-label="Submit">
+      <ion-icon slot="icon-only" name="add-outline" aria-hidden="true"></ion-icon>
+    </ion-button>
+    <ion-button shape="round" aria-label="Submit">
+      <ion-icon slot="icon-only" name="at-outline" aria-hidden="true"></ion-icon>
+    </ion-button>
+  </ion-card-content>
+</ion-card>
