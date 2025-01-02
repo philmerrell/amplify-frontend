@@ -19,7 +19,7 @@ import { ConversationComponent } from './components/conversation/conversation.co
   standalone: true,
   imports: [
     ConversationComponent,
-    IonContent, IonHeader, IonButtons, IonTitle, IonToolbar, IonFooter, IonButton, ChatInputComponent, JsonPipe]
+    IonContent, IonHeader, IonButtons, IonTitle, IonToolbar, IonFooter, IonButton, ChatInputComponent ]
 })
 export class HomePage implements OnInit {
   currentConversation: Signal<Conversation> = this.conversationService.getCurrentConversation();
