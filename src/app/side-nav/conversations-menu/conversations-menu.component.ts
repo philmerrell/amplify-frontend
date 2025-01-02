@@ -1,43 +1,65 @@
-import { Component, OnInit, Signal } from '@angular/core';
+import { Component, computed, effect, OnInit, Signal, ViewChild, WritableSignal } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { IonAccordionGroup, IonAccordion, IonItemDivider, IonLabel, IonItem, IonIcon, IonList, IonCard, IonButton, IonRouterLink } from "@ionic/angular/standalone";
+import { IonAccordionGroup, IonAccordion, IonItemDivider, IonLabel, IonItem, IonIcon, IonList, IonCard, IonButton, IonRouterLink, IonSkeletonText } from "@ionic/angular/standalone";
 import { addIcons } from 'ionicons';
-import { chatbubbleOutline, chatboxOutline } from 'ionicons/icons';
+import { chatbubbleOutline, chatboxOutline, add, folder, chevronForwardOutline, trash } from 'ionicons/icons';
 import { Conversation } from 'src/app/models/conversation.model';
 import { ConversationService } from 'src/app/services/conversation.service';
 import { Folder, FoldersService } from 'src/app/services/folders.service';
+import { ConversationFilterPipe } from './conversation-filter.pipe';
+import { ConversationRenameService } from 'src/app/services/conversation-rename.service';
 
 @Component({
   selector: 'app-conversations-menu',
   templateUrl: './conversations-menu.component.html',
   styleUrls: ['./conversations-menu.component.scss'],
-  imports: [IonButton, IonCard, IonList, IonIcon, IonItem, IonAccordion, IonAccordionGroup, IonLabel, IonItemDivider, RouterLink, IonRouterLink ],
+  imports: [IonSkeletonText,  ConversationFilterPipe, IonButton, IonCard, IonList, IonIcon, IonItem, IonAccordion, IonAccordionGroup, IonLabel, IonItemDivider, RouterLink, IonRouterLink ],
   standalone: true,
 })
 export class ConversationsMenuComponent  implements OnInit {
+  @ViewChild('accordionGroup', {static: true}) accordionGroup!: IonAccordionGroup;
+  conversations: WritableSignal<Conversation[]> = this.conversationService.getConversations();
+  currentConversation: Signal<Conversation> = this.conversationService.getCurrentConversation();
+  conversationRename: Signal<{loading: boolean, name: string, conversationId: string }> = this.conversationRenameService.getConversationRename();
   folders: Signal<Folder[]> = this.foldersService.getFolders();
-  map = new Map<string, Conversation[]>();
 
 
-  constructor(private conversationService: ConversationService, private foldersService: FoldersService) {
-    addIcons({chatboxOutline,chatbubbleOutline});
+  constructor(
+    private conversationService: ConversationService,
+    private conversationRenameService: ConversationRenameService,
+    private foldersService: FoldersService) {
+      addIcons({add,folder,trash,chatboxOutline,chevronForwardOutline,chatbubbleOutline});
+      effect(() => {
+        this.openAccordion(this.currentConversation().folderId || '')
+      });
+      effect(() => {
+        console.log(this.conversationRename());
+      })
   }
 
   ngOnInit() {
-    this.conversationService.initConversations();
     this.foldersService.initFolders();
+    this.conversationService.initConversations();
+  }
+
+  createNewConversation() {
+    const currentConversation = this.conversationService.getCurrentConversation();
+    if (currentConversation().messages.length !== 0) {
+      const newConversation = this.conversationService.createConversation();
+      this.setCurrentConversation(newConversation);
+    } 
   }
 
   setCurrentConversation(conversation: Conversation) {
     this.conversationService.setCurrentConversation(conversation);
   }
 
-  handleFolderChange(event: any) {
-    const folderId = event.detail.value;
-    if (!this.map.has(folderId)) {
-      const conversations = this.conversationService.getConversationsByFolderId(folderId);
-      this.map.set(folderId, conversations)
-    }
+  private openAccordion(folderId: string) {
+    setTimeout(() => {
+      if (folderId !== '') {
+        this.accordionGroup.value = folderId;
+      }
+    }, 500)
   }
 
 }

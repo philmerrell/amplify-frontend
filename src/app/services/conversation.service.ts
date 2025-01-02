@@ -5,6 +5,7 @@ import { ModelService } from './model.service';
 import { Model } from '../models/model.model';
 import { PromptService } from './prompt.service';
 import { lzwUncompress } from './compression';
+import { FoldersService } from './folders.service';
 
 @Injectable({
   providedIn: 'root'
@@ -13,14 +14,15 @@ export class ConversationService {
   private selectedModel: Signal<Model> = this.modelService.getSelectedModel();
   private selectedTemperature: Signal<number> = this.modelService.getSelectedTemperature();
   private selectedPrompt: Signal<string> = this.promptService.getSelectedPrompt();
-  private currentConversation: WritableSignal<Conversation> = signal(this.initConversation());
+  private currentConversation: WritableSignal<Conversation> = signal(this.createConversation());
   private conversations: WritableSignal<Conversation[]> = signal([]);
   
   constructor(
+    private folderService: FoldersService,
     private modelService: ModelService,
     private promptService: PromptService) { }
 
-  getCurrentConversation(): Signal<Conversation> {
+  getCurrentConversation(): WritableSignal<Conversation> {
     return this.currentConversation;
   }
 
@@ -30,12 +32,11 @@ export class ConversationService {
 
   getConversationName() {}
 
-  getConversations(): Signal<Conversation[]> {
+  getConversations(): WritableSignal<Conversation[]> {
     return this.conversations;
   }
 
-  initConversations(): Signal<Conversation[]> {
-
+  initConversations() {
     if (!this.conversations().length) {
       const conversationHistoryJson = localStorage.getItem('conversationHistory');
       try {
@@ -46,24 +47,26 @@ export class ConversationService {
         console.error(error);
       }
     }
-    return this.conversations;
   }
 
-  getConversationsByFolderId(folderId: string): Conversation[] {
-    const conversations = this.conversations().filter((conversation: Conversation) => conversation.folderId === folderId);
-    return conversations;
-  }
+  // getConversationsByFolderId(folderId: string): Conversation[] {
+  //   // console.log(folderId, this.conversations())
+  //   const conversations = this.conversations().filter((conversation: Conversation) => conversation.folderId === folderId);
+  //   return conversations;
+  // }
 
-  private initConversation() {
-    return {
+  createConversation(): Conversation {
+    const newConversation = {
       id: uuidv4(),
       name: 'New Conversation',
       messages: [],
       model: this.selectedModel(),
       prompt: this.selectedPrompt(),
       temperature: this.selectedTemperature(),
-      folderId: '', //folder.id,
+      folderId: ''
     };
+    return newConversation;
+    
   }
 
   private uncompressMessages(conversations: Conversation[]): Conversation[] {

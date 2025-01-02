@@ -1,21 +1,42 @@
+<div class="ion-padding">
+  <ion-button (click)="createNewConversation()">
+    <ion-icon slot="start" name="add"></ion-icon>
+    New Conversation
+  </ion-button>
+  <ion-button size="large">
+    <ion-icon slot="icon-only" name="folder"></ion-icon>
+  </ion-button>
+</div>
 <ion-list>
-  <ion-item-divider sticky>
+  <ion-item-divider color="medium" sticky>
     Conversations
   </ion-item-divider>
-  <ion-accordion-group (ionChange)="handleFolderChange($event)">
+  <ion-accordion-group #accordionGroup>
     @for (folder of folders(); track folder.id) {
       <ion-accordion [value]="folder.id">
         <ion-item slot="header" color="light">
           <ion-label>{{ folder.name }}</ion-label>
-          <!-- <ion-button>test</ion-button> -->
+          <!-- <ion-button size="small" fill="clear">
+            <ion-icon slot="icon-only" name="trash"></ion-icon>
+          </ion-button> -->
         </ion-item>
         <div slot="content">
-          @for(conversation of map.get(folder.id); track conversation.id) {
+          @for(conversation of conversations | filter:folder.id; track conversation.id) {
             <ion-item (click)="setCurrentConversation(conversation)" routerLink="/home" routerDirection="back">
               <ion-icon name="chatbox-outline" color="secondary" slot="start"></ion-icon>
-              <ion-label>
-                {{ conversation.name }}
-              </ion-label>
+              @if (conversationRename().conversationId === conversation.id && conversationRename().loading) {
+                <ion-label>
+                  <ion-skeleton-text [animated]="true"></ion-skeleton-text>
+                </ion-label>
+              } @else {
+                <ion-label>
+                  {{ conversation.name }}
+                </ion-label>
+              }
+            </ion-item>
+          } @empty {
+            <ion-item>
+              There are no conversations yet.
             </ion-item>
           }
         </div>
@@ -25,6 +46,7 @@
   @if(!folders().length) {
     <ion-card>
       <ion-item lines="none">
+        <ion-icon slot="start" name="chatbox-outline"></ion-icon>
         <ion-label>
           <h1>You don't have any conversations yet.</h1>
           <p>Start a new chat or import existing chat history.</p>
@@ -32,7 +54,10 @@
         
       </ion-item>
       <div class="ion-padding">
-        <ion-button routerLink="/settings/import-conversations" expand="block">Import</ion-button>
+        <ion-button routerLink="/settings/import-conversations" expand="block">
+          Import Settings
+          <ion-icon slot="end" name="chevron-forward-outline"></ion-icon>
+        </ion-button>
       </div>
     </ion-card>
   }

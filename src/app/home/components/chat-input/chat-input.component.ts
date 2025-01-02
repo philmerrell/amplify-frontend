@@ -2,7 +2,7 @@ import { Component, OnInit, Signal } from '@angular/core';
 import { IonButton, IonIcon, IonCard, IonCardContent, IonTextarea } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { arrowUpOutline, addOutline, copyOutline, atOutline, stop } from 'ionicons/icons';
-import { ChatService } from '../../services/chat.service';
+import { ChatRequestService } from '../../services/chat-request.service';
 import { FormsModule } from '@angular/forms';
 
 @Component({
@@ -14,12 +14,12 @@ import { FormsModule } from '@angular/forms';
 })
 export class ChatInputComponent  implements OnInit {
   
-  chatLoading: Signal<boolean> = this.chatService.getChatLoading();
+  chatLoading: Signal<boolean> = this.chatRequestService.getChatLoading();
   message: string = '';
   loading: boolean = false;
   error = '';
   
-  constructor(private chatService: ChatService) {
+  constructor(private chatRequestService: ChatRequestService) {
     addIcons({stop,arrowUpOutline,copyOutline,addOutline,atOutline});
   }
 
@@ -43,13 +43,13 @@ export class ChatInputComponent  implements OnInit {
   private submitChatRequest() {
     const message = this.message.trim();
     if (message !== '') {
-      this.chatService.submitChatRequest(this.message);
+      this.chatRequestService.submitChatRequest(this.message);
     }
     this.message = ''
   }
 
   private cancelChatRequest() {
-    this.chatService.cancelChatRequest();
+    this.chatRequestService.cancelChatRequest();
   }
 
 }

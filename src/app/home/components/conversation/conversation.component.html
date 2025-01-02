@@ -5,7 +5,7 @@
     <ion-grid>
       @for(message of conversation()?.messages; track message.id) {
         @if(message.role === 'user') {
-          <ion-row>
+          <ion-row [id]="message.id">
             <ion-col offset="3" size="9" style="text-align: right;">
                 <div class="user-message">
                   <div>{{ message.content }}</div>
@@ -17,6 +17,9 @@
           <ion-row>
             <ion-col size="12">
               <div class="assistant-message">
+                @if(loading() && message.content === '') {
+                  <ion-spinner name="circular"></ion-spinner>
+                }
                 <markdown clipboard [data]="message.content"></markdown>
               </div>
             </ion-col>

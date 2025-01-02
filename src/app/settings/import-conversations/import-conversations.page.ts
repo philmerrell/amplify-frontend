@@ -1,7 +1,7 @@
 import { Component, OnInit, Signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IonContent, IonHeader, IonTitle, IonToolbar, IonList, IonItem, IonButton, IonLabel, IonBadge, IonBackButton, IonToast } from '@ionic/angular/standalone';
+import { IonContent, IonHeader, IonTitle, IonToolbar, IonList, IonItem, IonButton, IonLabel, IonBadge, IonBackButton, IonToast, IonAlert } from '@ionic/angular/standalone';
 import { Conversation } from 'src/app/models/conversation.model';
 import { ConversationService } from 'src/app/services/conversation.service';
 import { Folder, FoldersService } from 'src/app/services/folders.service';
@@ -11,12 +11,29 @@ import { Folder, FoldersService } from 'src/app/services/folders.service';
   templateUrl: './import-conversations.page.html',
   styleUrls: ['./import-conversations.page.scss'],
   standalone: true,
-  imports: [IonToast, IonBackButton, IonBadge, IonLabel, IonButton, IonItem, IonList, IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule]
+  imports: [IonAlert, IonToast, IonBackButton, IonBadge, IonLabel, IonButton, IonItem, IonList, IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule]
 })
 export class ImportConversationsPage implements OnInit {
   conversations: Signal<Conversation[]> = this.conversationService.getConversations();
   folders: Signal<Folder[]> = this.foldersService.getFolders();
   isToastOpen: boolean = false;
+  isAlertOpen: boolean = false;
+  alertButtons = [
+    {
+      text: 'Cancel',
+      role: 'cancel',
+      handler: () => {
+        console.log('Alert canceled');
+      },
+    },
+    {
+      text: 'OK',
+      role: 'confirm',
+      handler: () => {
+        this.clearConversations();
+      },
+    },
+  ];
 
   constructor(
     private conversationService: ConversationService,
@@ -70,15 +87,20 @@ export class ImportConversationsPage implements OnInit {
     this.isToastOpen = true;
   }
 
-  clearLocalStorage() {
-    localStorage.clear();
-    localStorage.setItem('conversationHistory', JSON.stringify([]));
+  clearConversations() {
+    localStorage.removeItem('conversationHistory');
+    localStorage.removeItem('folders');
+    localStorage.removeItem('prompts');
     this.conversationService.setConversations([]);
     this.foldersService.setFolders([]);
   }
 
   setToastOpen(isOpen: boolean) {
     this.isToastOpen = isOpen;
+  }
+
+  setAlertOpen(isOpen: boolean) {
+    this.isAlertOpen = isOpen;
   }
 
 }

@@ -10,19 +10,6 @@ export interface Model {
     description: string;
 }
 
-
-export interface Model {
-    id: string;
-    name: string;
-    maxLength: number; // maximum length of a message
-    tokenLimit: number;
-    actualTokenLimit: number;
-    visible?: boolean;
-    outputCost: number;
-    inputCost: number;
-    description: string;
-}
-
 export enum ModelID {
     GPT_4_TURBO = 'gpt-4-1106-preview',
     GPT_4_TURBO_AZ = 'gpt-4-1106-Preview',

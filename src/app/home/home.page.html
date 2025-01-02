@@ -10,7 +10,7 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
+<ion-content [fullscreen]="true" #scroller>
   
   <div class="container">
     <ion-header collapse="condense">
@@ -19,29 +19,7 @@
       </ion-toolbar>
     </ion-header>
     
-    <app-conversation [conversation]="currentConversation()"></app-conversation>
-
-    <div class="ion-padding">
-      <ion-grid>
-        <ion-row>
-          <ion-col offset="3" size="9" style="text-align: right;">
-            @if(userInput() !== '') {
-              <div class="user-message">
-                <div> {{ userInput() }} </div>
-              </div>
-            }
-          </ion-col>
-        </ion-row>
-        <ion-row>
-          <ion-col size="12">
-            @if(chatLoading() && chatResponse() === '') {
-              <ion-spinner name="circular"></ion-spinner>
-            }
-            <markdown clipboard [data]="chatResponse()"></markdown>
-          </ion-col>
-        </ion-row>
-      </ion-grid>
-    </div>
+    <app-conversation [conversation]="currentConversation()" [loading]="chatLoading()" [scroller]="scroller"></app-conversation>
     
   </div>
 </ion-content>
