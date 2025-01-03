@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { IonIcon, IonCard, IonItem, IonButton, IonLabel, IonItemDivider, IonList, IonText } from "@ionic/angular/standalone";
+import { Component, input, OnInit } from '@angular/core';
+import { IonIcon, IonCard, IonItem, IonButton, IonLabel, IonItemDivider, IonList, IonText, IonMenu } from "@ionic/angular/standalone";
 
 @Component({
   selector: 'app-share-menu',
@@ -9,9 +9,14 @@ import { IonIcon, IonCard, IonItem, IonButton, IonLabel, IonItemDivider, IonList
   standalone: true,
 })
 export class ShareMenuComponent  implements OnInit {
+  readonly menu = input<IonMenu>();
 
   constructor() { }
 
   ngOnInit() {}
+
+  closeMenu() {
+    this.menu()?.close();
+  }
 
 }

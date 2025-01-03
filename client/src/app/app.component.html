@@ -25,13 +25,13 @@
             <app-conversations-menu [menu]="mainMenu"></app-conversations-menu>
           </ion-segment-content>
           <ion-segment-content id="shared">
-            <app-share-menu></app-share-menu>
+            <app-share-menu [menu]="mainMenu"></app-share-menu>
           </ion-segment-content>
           <ion-segment-content id="workspaces">
-            <app-workspaces-menu></app-workspaces-menu>
+            <app-workspaces-menu [menu]="mainMenu"></app-workspaces-menu>
           </ion-segment-content>
           <ion-segment-content id="settings">
-            <app-settings-menu></app-settings-menu>
+            <app-settings-menu [menu]="mainMenu"></app-settings-menu>
           </ion-segment-content>
         </ion-segment-view>
       </ion-content>
