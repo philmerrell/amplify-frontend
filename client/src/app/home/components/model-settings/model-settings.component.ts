@@ -36,7 +36,6 @@ export class ModelSettingsComponent  implements OnInit {
 
   getModels() {
     this.models = this.modelService.getModels();
-    console.log(this.models);
   }
 
   handleModelChange(event: any) {
