@@ -31,6 +31,7 @@ export class InfrastructureStack extends cdk.Stack {
       websiteIndexDocument: 'index.html',
       websiteErrorDocument: 'index.html',
       publicReadAccess: true,
+      blockPublicAccess: s3.BlockPublicAccess.BLOCK_ACLS,
       removalPolicy: cdk.RemovalPolicy.DESTROY,
     });
     new cdk.CfnOutput(this, 'Bucket', { value: siteBucket.bucketName });
@@ -73,7 +74,7 @@ export class InfrastructureStack extends cdk.Stack {
     });
 
     new s3Deploy.BucketDeployment(this, 'DeployWithInvalidation', {
-      sources: [s3Deploy.Source.asset('../client/www')],
+      sources: [s3Deploy.Source.asset('../client/www/browser')],
       destinationBucket: siteBucket,
       distribution,
       distributionPaths: ['/*'],
