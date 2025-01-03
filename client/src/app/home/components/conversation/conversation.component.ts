@@ -17,24 +17,26 @@ export class ConversationComponent  implements OnInit {
   
   constructor() {
     effect(() => {
-      
-        // console.log(this.conversation())
-        // console.log(this.conversation()?.messages.length)
         if (this.conversation()!.messages.length > 3) {
-          const lastUserMessage = this.conversation()?.messages.filter(item => item.role === 'user').pop();
-          if(lastUserMessage) {
-            setTimeout(() => {
-              console.log(lastUserMessage)
-              const element = document.getElementById(lastUserMessage.id);
-              this.scroller()?.scrollByPoint(0, element!.offsetTop, 700)
-            }, 300)
-          }
+          this.scrollToLatestUserMessage()
         }
       
     }) 
   }
 
   ngOnInit() {}
+
+  scrollToLatestUserMessage() {
+    const lastUserMessage = this.conversation()?.messages.filter(item => item.role === 'user').pop();
+    if(lastUserMessage) {
+      setTimeout(() => {
+        const element = document.getElementById(lastUserMessage.id);
+        this.scroller()?.scrollByPoint(0, element!.offsetTop, 700)
+      }, 300)
+    }
+  }
+
+  
 
 
 
