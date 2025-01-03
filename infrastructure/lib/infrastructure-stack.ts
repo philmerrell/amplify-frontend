@@ -7,12 +7,14 @@ import * as targets from 'aws-cdk-lib/aws-route53-targets';
 import { Construct } from 'constructs';
 import { Certificate } from 'aws-cdk-lib/aws-certificatemanager';
 import { S3StaticWebsiteOrigin } from 'aws-cdk-lib/aws-cloudfront-origins';
+import * as dotenv from 'dotenv';
+dotenv.config();
 
 export class InfrastructureStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
 
-    const sslCertArn: string = process.env.SSL_CERT_ARN || '';
+    const sslCertArn = process.env.SSL_CERT_ARN || '';
     const subdomain: string = process.env.SUBDOMAIN || '';
     const domainName: string = process.env.DOMAIN_NAME || '';
 
