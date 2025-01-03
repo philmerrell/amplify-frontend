@@ -1,5 +1,5 @@
 import { Component, OnInit, Signal } from '@angular/core';
-import { IonButton, IonTitle, IonHeader, IonToolbar, IonContent, IonItem, IonSelect, IonSelectOption, IonLabel, IonRange, IonCard, ModalController } from '@ionic/angular/standalone';
+import { IonButton, IonTitle, IonHeader, IonToolbar, IonContent, IonItem, IonSelect, IonSelectOption, IonLabel, IonRange, IonCard, ModalController, IonGrid, IonRow, IonCol } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { Model } from 'src/app/models/model.model';
 import { ModelService } from 'src/app/services/model.service';
@@ -9,12 +9,16 @@ import { ModelService } from 'src/app/services/model.service';
   templateUrl: './model-settings.component.html',
   styleUrls: ['./model-settings.component.scss'],
   standalone: true,
-  imports: [IonButton, IonTitle, IonHeader, IonToolbar, IonContent, IonCard, IonItem, IonSelect, IonSelectOption, IonLabel, IonRange]
+  imports: [IonCol, IonRow, IonGrid, IonButton, IonTitle, IonHeader, IonToolbar, IonContent, IonCard, IonItem, IonSelect, IonSelectOption, IonLabel, IonRange]
 })
 export class ModelSettingsComponent  implements OnInit {
-  customPopoverOptions = {
+  modelPopoverOptions = {
     header: 'Models',
     subHeader: 'Select a model',
+  };
+  customInstructionsPopoverOptions = {
+    header: 'Custom Instructions',
+    subHeader: 'Select instructions',
   };
   models: Model[] = [];
   selectedModel: Signal<Model> = this.modelService.getSelectedModel();
@@ -42,12 +46,11 @@ export class ModelSettingsComponent  implements OnInit {
 
   handleTempChange(event: any) {
     const temperature = event.detail.value;
-    console.log(temperature);
     this.modelService.setSelectedTemperature(temperature);
   }
 
-  pinFormatter(value: number) {
-    return `${value}`;
+  temperatureFormatter(value: number) {
+    return value;
   }
 
 }

@@ -1,4 +1,4 @@
-import { Component, computed, effect, OnInit, Signal, ViewChild, WritableSignal } from '@angular/core';
+import { Component, effect, OnInit, Signal, ViewChild, WritableSignal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { IonAccordionGroup, IonAccordion, IonItemDivider, IonLabel, IonItem, IonIcon, IonList, IonCard, IonButton, IonRouterLink, IonSkeletonText } from "@ionic/angular/standalone";
 import { addIcons } from 'ionicons';
@@ -23,7 +23,6 @@ export class ConversationsMenuComponent  implements OnInit {
   conversationRename: Signal<{loading: boolean, name: string, conversationId: string }> = this.conversationRenameService.getConversationRename();
   folders: Signal<Folder[]> = this.foldersService.getFolders();
 
-
   constructor(
     private conversationService: ConversationService,
     private conversationRenameService: ConversationRenameService,
@@ -32,9 +31,6 @@ export class ConversationsMenuComponent  implements OnInit {
       effect(() => {
         this.openAccordion(this.currentConversation().folderId || '')
       });
-      effect(() => {
-        console.log(this.conversationRename());
-      })
   }
 
   ngOnInit() {
@@ -47,7 +43,8 @@ export class ConversationsMenuComponent  implements OnInit {
     if (currentConversation().messages.length !== 0) {
       const newConversation = this.conversationService.createConversation();
       this.setCurrentConversation(newConversation);
-    } 
+    }
+
   }
 
   setCurrentConversation(conversation: Conversation) {

@@ -1,4 +1,4 @@
-import { Component, OnInit, Signal } from '@angular/core';
+import { Component, effect, OnInit, Signal, ViewChild } from '@angular/core';
 import { IonButton, IonIcon, IonCard, IonCardContent, IonTextarea } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { arrowUpOutline, addOutline, copyOutline, atOutline, stop } from 'ionicons/icons';
@@ -13,7 +13,6 @@ import { FormsModule } from '@angular/forms';
   imports: [IonButton, IonIcon, IonCard, IonCardContent, IonTextarea, FormsModule]
 })
 export class ChatInputComponent  implements OnInit {
-  
   chatLoading: Signal<boolean> = this.chatRequestService.getChatLoading();
   message: string = '';
   loading: boolean = false;
@@ -24,6 +23,8 @@ export class ChatInputComponent  implements OnInit {
   }
 
   ngOnInit() {}
+
+  
 
   handleSubmitChat() {
     if (this.chatLoading()) {

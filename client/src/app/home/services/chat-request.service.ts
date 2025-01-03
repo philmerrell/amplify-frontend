@@ -6,7 +6,6 @@ import { v4 as uuidv4 } from 'uuid';
 import { DeveloperSettingsService } from 'src/app/settings/developer/developer-settings.service';
 import { ConversationService } from 'src/app/services/conversation.service';
 import { Conversation, Message } from 'src/app/models/conversation.model';
-import { ChatRequest } from 'src/app/models/chat-request.model';
 import { ModelService } from 'src/app/services/model.service';
 import { Model } from 'src/app/models/model.model';
 import { DEFAULT_SYSTEM_PROMPT } from 'src/app/services/prompts';
@@ -36,8 +35,6 @@ export class ChatRequestService {
   getChatLoading(): Signal<boolean> {
     return this.chatLoading;
   }
-
-  
 
   debugSSEMessages(message: string) {
     const requestObject = this.createRequestObject(message);

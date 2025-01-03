@@ -1,11 +1,13 @@
 <ion-card color="light">
   <ion-card-content>
     <ion-textarea
+      #input
       [(ngModel)]="message"
       (keypress)="handleEnterKey($event)"
       [autoGrow]="true"
       placeholder="Type something here"
       value=""
+      [autofocus]="true"
     >
     <ion-button (click)="handleSubmitChat()" shape="round" slot="end" aria-label="Submit">
       @if (chatLoading()) {
