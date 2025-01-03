@@ -1,6 +1,6 @@
 <ion-app>
   <ion-split-pane contentId="main-content">
-    <ion-menu contentId="main-content" type="overlay" #mainMenu>
+    <ion-menu #mainMenu contentId="main-content" type="overlay" [swipeGesture]="false">
       <ion-header>
         <ion-toolbar>
           <ion-segment value="conversations">
