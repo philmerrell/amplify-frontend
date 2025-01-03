@@ -22,18 +22,20 @@
         </ion-item>
         <div slot="content">
           @for(conversation of conversations | filter:folder.id; track conversation.id) {
-            <ion-item (click)="setCurrentConversation(conversation)" routerLink="/home" routerDirection="back">
-              <ion-icon name="chatbox-outline" color="secondary" slot="start"></ion-icon>
-              @if (conversationRename().conversationId === conversation.id && conversationRename().loading) {
-                <ion-label>
-                  <ion-skeleton-text [animated]="true"></ion-skeleton-text>
-                </ion-label>
-              } @else {
-                <ion-label>
-                  {{ conversation.name }}
-                </ion-label>
-              }
-            </ion-item>
+            <!-- <ion-menu-toggle> -->
+              <ion-item (click)="setCurrentConversation(conversation)" routerLink="/home" routerDirection="back">
+                <ion-icon name="chatbox-outline" color="secondary" slot="start"></ion-icon>
+                @if (conversationRename().conversationId === conversation.id && conversationRename().loading) {
+                  <ion-label>
+                    <ion-skeleton-text [animated]="true"></ion-skeleton-text>
+                  </ion-label>
+                } @else {
+                  <ion-label>
+                    {{ conversation.name }}
+                  </ion-label>
+                }
+              </ion-item>
+            <!-- </ion-menu-toggle> -->
           } @empty {
             <ion-item>
               There are no conversations yet.

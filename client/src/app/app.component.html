@@ -1,6 +1,6 @@
 <ion-app>
   <ion-split-pane contentId="main-content">
-    <ion-menu contentId="main-content" type="overlay">
+    <ion-menu contentId="main-content" type="overlay" #mainMenu>
       <ion-header>
         <ion-toolbar>
           <ion-segment value="conversations">
@@ -22,7 +22,7 @@
       <ion-content color="light">
         <ion-segment-view>
           <ion-segment-content id="conversations">
-            <app-conversations-menu></app-conversations-menu>
+            <app-conversations-menu [menu]="mainMenu"></app-conversations-menu>
           </ion-segment-content>
           <ion-segment-content id="shared">
             <app-share-menu></app-share-menu>

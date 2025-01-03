@@ -142,7 +142,7 @@ export class ChatRequestService {
       const message = JSON.parse(messageEvent.data);
       if (message.s === 'meta') {
         // TODO: Handle meta data from response...
-        // console.log(message);
+        console.log(message);
       }
       // This case contains the response text we want to compile
       if (message.s === 0 && typeof message.d === 'string') {

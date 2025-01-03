@@ -1,5 +1,5 @@
 import { Component, OnInit, Signal } from '@angular/core';
-import { IonContent, IonHeader, IonTitle, IonToolbar, IonFooter, IonButton, IonButtons, ModalController } from '@ionic/angular/standalone';
+import { IonContent, IonHeader, IonTitle, IonToolbar, IonFooter, IonButton, IonButtons, ModalController, IonMenuButton } from '@ionic/angular/standalone';
 import { ChatInputComponent } from './components/chat-input/chat-input.component';
 import { ModelSettingsComponent } from './components/model-settings/model-settings.component';
 import { addIcons } from 'ionicons';
@@ -19,7 +19,7 @@ import { ConversationComponent } from './components/conversation/conversation.co
   standalone: true,
   imports: [
     ConversationComponent,
-    IonContent, IonHeader, IonButtons, IonTitle, IonToolbar, IonFooter, IonButton, ChatInputComponent ]
+    IonContent, IonHeader, IonButtons, IonTitle, IonToolbar, IonFooter, IonButton, ChatInputComponent, IonMenuButton ]
 })
 export class HomePage implements OnInit {
   currentConversation: Signal<Conversation> = this.conversationService.getCurrentConversation();
