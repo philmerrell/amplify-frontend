@@ -1,10 +1,12 @@
 import { Injectable, signal, Signal, WritableSignal } from '@angular/core';
 
+
 @Injectable({
   providedIn: 'root'
 })
 export class ThemeService {
   theme: WritableSignal<string> = signal('system');
+  logo: WritableSignal<string> = signal('dark');
   paletteToggle: boolean = false;
 
 
@@ -42,6 +44,10 @@ export class ThemeService {
     return this.theme
   }
 
+  getLogo(): Signal<string> {
+    return this.logo;
+  }
+
   enableSystemPreference() {
      // Use matchMedia to check the user preference
      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)');
@@ -57,7 +63,9 @@ export class ThemeService {
 
   // Check/uncheck the toggle and update the palette based on isDark
   initializeDarkPalette(isDark: boolean) {
+    console.log(isDark);
     this.paletteToggle = isDark;
+    this.logo.set(isDark ? 'dark' : 'light');
     this.toggleDarkPalette(isDark);
   }
 

@@ -2,7 +2,12 @@
   <ion-split-pane contentId="main-content">
     <ion-menu #mainMenu contentId="main-content" type="overlay" [swipeGesture]="false">
       <ion-header style="background: var(--ion-color-light)">
-        <ion-img src="/assets/logo-light.png"></ion-img>
+        @if (logo() === 'light') {
+          <ion-img src="/assets/logo-light.png"></ion-img>
+        } @else {
+          <ion-img src="/assets/logo-dark.png"></ion-img>
+        }
+
         <ion-toolbar>
           <ion-segment value="conversations">
             <ion-segment-button aria-label="conversations" value="conversations" content-id="conversations">
