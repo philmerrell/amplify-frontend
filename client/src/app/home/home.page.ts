@@ -19,6 +19,7 @@ import { ConversationComponent } from './components/conversation/conversation.co
   standalone: true,
   imports: [
     ConversationComponent,
+    ModelSettingsComponent,
     IonContent, IonHeader, IonButtons, IonTitle, IonToolbar, IonFooter, IonButton, ChatInputComponent, IonMenuButton ]
 })
 export class HomePage implements OnInit {
