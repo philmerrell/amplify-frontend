@@ -1,5 +1,5 @@
 <div class="ion-padding">
-  <ion-button (click)="createNewConversation()" routerLink="/home" routerDirection="back">
+  <ion-button (click)="createNewConversation()" routerLink="/" routerDirection="back">
     <ion-icon slot="start" name="add"></ion-icon>
     New Conversation
   </ion-button>
@@ -23,7 +23,7 @@
         <div slot="content">
           @for(conversation of conversations | filter:folder.id; track conversation.id) {
             <!-- <ion-menu-toggle> -->
-              <ion-item (click)="setCurrentConversation(conversation)" routerLink="/home" routerDirection="back">
+              <ion-item (click)="setCurrentConversation(conversation)" routerLink="/" routerDirection="back">
                 <ion-icon name="chatbox-outline" color="secondary" slot="start"></ion-icon>
                 @if (conversationRename().conversationId === conversation.id && conversationRename().loading) {
                   <ion-label>
