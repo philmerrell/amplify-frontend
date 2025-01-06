@@ -4,13 +4,13 @@ import { IonGrid, IonRow, IonCol, IonSpinner, IonContent } from "@ionic/angular/
 import { MarkdownComponent } from 'ngx-markdown';
 
 @Component({
-  selector: 'app-conversation',
-  templateUrl: './conversation.component.html',
-  styleUrls: ['./conversation.component.scss'],
+  selector: 'app-conversation-text',
+  templateUrl: './conversation-text.component.html',
+  styleUrls: ['./conversation-text.component.scss'],
   imports: [IonSpinner, IonGrid, IonRow, IonCol, MarkdownComponent],
   standalone: true,
 })
-export class ConversationComponent  implements OnInit {
+export class ConversationTextComponent  implements OnInit {
   readonly conversation = input<Conversation>();
   readonly loading = input<boolean>();
   readonly scroller = input<IonContent>();

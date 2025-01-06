@@ -3,16 +3,12 @@ import { Routes } from '@angular/router';
 export const routes: Routes = [
   {
     path: '',
-    redirectTo: 'home',
+    redirectTo: '',
     pathMatch: 'full',
   },
   {
-    path: 'home',
-    loadComponent: () => import('./home/home.page').then( m => m.HomePage)
-  },
-  {
-    path: 'settings',
-    loadComponent: () => import('./settings/settings.page').then( m => m.SettingsPage)
+    path: '',
+    loadComponent: () => import('./conversation/conversation.page').then( m => m.ConversationPage)
   },
   {
     path: 'settings/import-conversations',

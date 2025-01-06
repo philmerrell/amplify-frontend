@@ -1,17 +1,17 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
-import { ConversationComponent } from './conversation.component';
+import { ConversationTextComponent } from './conversation-text.component';
 
-describe('ConversationComponent', () => {
-  let component: ConversationComponent;
-  let fixture: ComponentFixture<ConversationComponent>;
+describe('ConversationTextComponent', () => {
+  let component: ConversationTextComponent;
+  let fixture: ComponentFixture<ConversationTextComponent>;
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      imports: [ConversationComponent],
+      imports: [ConversationTextComponent],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(ConversationComponent);
+    fixture = TestBed.createComponent(ConversationTextComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   }));

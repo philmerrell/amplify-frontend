@@ -9,21 +9,21 @@ import { Conversation } from '../models/conversation.model';
 import { ChatRequestService } from './services/chat-request.service';
 import { ModelService } from '../services/model.service';
 import { Model } from '../models/model.model';
-import { ConversationComponent } from './components/conversation/conversation.component';
+import { ConversationTextComponent } from './components/conversation-text/conversation-text.component';
 import { DeveloperSettingsService } from '../settings/developer/developer-settings.service';
 import { Router } from '@angular/router';
 
 @Component({
-  selector: 'app-home',
-  templateUrl: './home.page.html',
-  styleUrls: ['./home.page.scss'],
+  selector: 'app-conversation',
+  templateUrl: './conversation.page.html',
+  styleUrls: ['./conversation.page.scss'],
   standalone: true,
   imports: [IonButton, IonModal, 
-    ConversationComponent,
+    ConversationTextComponent,
     ModelSettingsComponent,
     IonContent, IonHeader, IonButtons, IonTitle, IonToolbar, IonFooter, ChatInputComponent, IonMenuButton ]
 })
-export class HomePage implements OnInit {
+export class ConversationPage implements OnInit {
   currentConversation: Signal<Conversation> = this.conversationService.getCurrentConversation();
   chatLoading: Signal<boolean> = this.chatRequestService.getChatLoading();
   selectedModel: Signal<Model> = this.modelService.getSelectedModel();
