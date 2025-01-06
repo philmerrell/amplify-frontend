@@ -8,12 +8,13 @@ import { SettingsMenuComponent } from './side-nav/settings-menu/settings-menu.co
 import { ShareMenuComponent } from './side-nav/share-menu/share-menu.component';
 import { WorkspacesMenuComponent } from './side-nav/workspaces-menu/workspaces-menu.component';
 import { ThemeService } from './services/theme.service';
+import { TooltipDirective } from './core/tooltip.directive';
 
 @Component({
   selector: 'app-root',
   templateUrl: 'app.component.html',
   styleUrls: ['app.component.scss'],
-  imports: [IonHeader, IonToolbar, IonIcon, IonSegmentView, IonSegment, IonSegmentButton, IonSegmentContent, IonApp, IonSplitPane, IonMenu, IonContent, IonRouterOutlet, ConversationsMenuComponent, SettingsMenuComponent, SettingsMenuComponent, ShareMenuComponent, WorkspacesMenuComponent, IonImg],
+  imports: [IonHeader, IonToolbar, IonIcon, IonSegmentView, IonSegment, IonSegmentButton, IonSegmentContent, IonApp, IonSplitPane, IonMenu, IonContent, IonRouterOutlet, ConversationsMenuComponent, SettingsMenuComponent, SettingsMenuComponent, ShareMenuComponent, WorkspacesMenuComponent, IonImg, TooltipDirective],
 })
 export class AppComponent implements OnInit {
   logo: Signal<string> = this.themeService.getLogo();
@@ -24,6 +25,7 @@ export class AppComponent implements OnInit {
 
   ngOnInit() {
     this.themeService.initTheme();
+    
   }
   
 }

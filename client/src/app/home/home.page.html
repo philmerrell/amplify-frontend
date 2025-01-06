@@ -25,6 +25,25 @@
     <app-conversation [conversation]="currentConversation()" [loading]="chatLoading()" [scroller]="scroller"></app-conversation>
     
   </div>
+
+  <ion-modal [isOpen]="isModalOpen">
+    <ng-template>
+      <ion-header>
+        <ion-toolbar>
+          <ion-title>Welcom</ion-title>
+          <ion-buttons slot="end">
+            <ion-button (click)="setOpen(false)">Close</ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-header>
+      <ion-content class="ion-padding">
+        <h1>Amplify Demo</h1>
+        <h3>This is a POC demo of the Amplify GenAI platform</h3>
+        <p>To try out this demo you'll need to add your organizations CHAT_ENDPOINT in addition to a valid JWT.</p>
+        <ion-button (click)="navigateToDeveloperSettings()">Developer Settings</ion-button>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
 </ion-content>
 
 <ion-footer [translucent]="true">

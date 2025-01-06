@@ -4,7 +4,7 @@ import { addIcons } from 'ionicons';
 import { arrowUpOutline, addOutline, copyOutline, atOutline, stop, pin, close, documentsOutline, documentOutline } from 'ionicons/icons';
 import { ChatRequestService } from '../../services/chat-request.service';
 import { FormsModule } from '@angular/forms';
-import { FileDropZoneDirective } from '../file-drop-zone.directive';
+import { FileDropZoneDirective } from './file-drop-zone.directive';
 
 @Component({
   selector: 'app-chat-input',

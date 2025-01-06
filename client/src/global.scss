@@ -43,4 +43,8 @@
 
 ion-item {
     --transition: none;
-  }
+}
+
+.tooltip {
+    transition: opacity 0.3s ease;
+}
