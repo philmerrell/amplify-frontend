@@ -1,31 +1,41 @@
-<ion-card color="light">
-  <ion-card-content>
-    <ion-textarea
-      #input
-      [(ngModel)]="message"
-      (keypress)="handleEnterKey($event)"
-      [autoGrow]="true"
-      placeholder="Type something here"
-      value=""
-      [autofocus]="true"
-    >
-    <ion-button (click)="handleSubmitChat()" shape="round" slot="end" aria-label="Submit chat" [color]="chatLoading() ? 'danger' : 'primary'">
-      @if (chatLoading()) {
-        <ion-icon slot="icon-only" name="stop" aria-hidden="true"></ion-icon>
-      } @else {
-        <ion-icon slot="icon-only" name="arrow-up-outline" aria-hidden="true"></ion-icon>
-      }
-    </ion-button>
-    </ion-textarea>
 
-    <ion-button shape="round" aria-label="Submit">
-      <ion-icon slot="icon-only" name="copy-outline" aria-hidden="true"></ion-icon>
-    </ion-button>
-    <ion-button shape="round" aria-label="Submit">
-      <ion-icon slot="icon-only" name="add-outline" aria-hidden="true"></ion-icon>
-    </ion-button>
-    <ion-button shape="round" aria-label="Submit">
-      <ion-icon slot="icon-only" name="at-outline" aria-hidden="true"></ion-icon>
-    </ion-button>
-  </ion-card-content>
-</ion-card>
+  <ion-card appDropZone (fileDropped)="onFileDropped($event)" color="light">
+    <input type="file" #fileDropRef id="fileDropRef" multiple (change)="fileBrowseHandler($event.target)" />
+    <ion-card-content>
+      @for(file of files; let i = $index; track i) {
+        <ion-chip>
+          <ion-icon name="document-outline" color="primary"></ion-icon>
+          <ion-label>{{ file.name }}</ion-label>
+          <ion-icon (click)="deleteFile(i)" name="close"></ion-icon>
+        </ion-chip>
+      }
+      <ion-textarea
+        #input
+        [(ngModel)]="message"
+        (keypress)="handleEnterKey($event)"
+        [autoGrow]="true"
+        placeholder="Type something here"
+        value=""
+        [autofocus]="true"
+      >
+      <ion-button (click)="handleSubmitChat()" shape="round" slot="end" aria-label="Submit chat" [color]="chatLoading() ? 'danger' : 'primary'">
+        @if (chatLoading()) {
+          <ion-icon slot="icon-only" name="stop" aria-hidden="true"></ion-icon>
+        } @else {
+          <ion-icon slot="icon-only" name="arrow-up-outline" aria-hidden="true"></ion-icon>
+        }
+      </ion-button>
+      </ion-textarea>
+  
+      <ion-button shape="round" aria-label="Submit">
+        <ion-icon slot="icon-only" name="copy-outline" aria-hidden="true"></ion-icon>
+      </ion-button>
+      <ion-button shape="round" aria-label="Submit">
+        <ion-icon slot="icon-only" name="add-outline" aria-hidden="true"></ion-icon>
+      </ion-button>
+      <ion-button shape="round" aria-label="Submit">
+        <ion-icon slot="icon-only" name="at-outline" aria-hidden="true"></ion-icon>
+      </ion-button>
+    </ion-card-content>
+  </ion-card>
+

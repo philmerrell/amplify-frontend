@@ -4,8 +4,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { ModelService } from './model.service';
 import { Model } from '../models/model.model';
 import { PromptService } from './prompt.service';
-import { lzwUncompress } from './compression';
-import { FoldersService } from './folders.service';
+import { lzwCompress, lzwUncompress } from './compression';
 
 @Injectable({
   providedIn: 'root'
@@ -18,9 +17,11 @@ export class ConversationService {
   private conversations: WritableSignal<Conversation[]> = signal([]);
   
   constructor(
-    private folderService: FoldersService,
     private modelService: ModelService,
-    private promptService: PromptService) { }
+    private promptService: PromptService) {
+      
+  }
+
 
   getCurrentConversation(): WritableSignal<Conversation> {
     return this.currentConversation;
@@ -35,6 +36,8 @@ export class ConversationService {
   getConversations(): WritableSignal<Conversation[]> {
     return this.conversations;
   }
+
+
 
   initConversations() {
     if (!this.conversations().length) {
@@ -67,6 +70,16 @@ export class ConversationService {
     };
     return newConversation;
     
+  }
+
+  compressMessages(conversations: Conversation[]): Conversation[] {
+    for (let conversation of conversations) {
+      const json = JSON.stringify(conversations);
+      const compressedMessages = lzwCompress(json);
+      conversation.compressedMessages = compressedMessages;
+      conversation.messages = [];
+    }
+    return conversations;
   }
 
   private uncompressMessages(conversations: Conversation[]): Conversation[] {

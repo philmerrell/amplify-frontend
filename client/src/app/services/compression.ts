@@ -39,3 +39,37 @@ export function lzwUncompress(compressedData: number[]): string {
 
     return output;
 }
+
+export function lzwCompress(strInput: string): number[] {
+    if (!strInput) return [];
+    const dictionary: Map<string, number> = new Map<string, number>();
+    let nextCode = 256;
+    let compressedOutput: number[] = [];
+
+    for (let i = 0; i < 256; i++) {
+        dictionary.set(String.fromCharCode(i), i);
+    }
+
+    // Preprocessing to convert Unicode characters to a unique format
+    const processedInput = strInput.split('').map(char => {
+        return char.charCodeAt(0) > 255 ? `U+${char.charCodeAt(0).toString(16)}` : char;
+    }).join('');
+
+    let currentPattern = '';
+    for (let character of processedInput) {
+        const newPattern = currentPattern + character;
+        if (dictionary.has(newPattern)) {
+            currentPattern = newPattern;
+        } else {
+            compressedOutput.push(dictionary.get(currentPattern)!);
+            dictionary.set(newPattern, nextCode++);
+            currentPattern = character;
+        }
+    }
+
+    if (currentPattern !== '') {
+        compressedOutput.push(dictionary.get(currentPattern)!);
+    }
+
+    return compressedOutput;
+}
