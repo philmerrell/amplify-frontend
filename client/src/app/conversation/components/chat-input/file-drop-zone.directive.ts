@@ -33,7 +33,6 @@ export class FileDropZoneDirective {
     this.fileOver = false;
     let files = evt.dataTransfer.files;
     let valid_files : Array<File> = files;
-    console.log(valid_files);
     this.fileDropped.emit(valid_files);
   }
 

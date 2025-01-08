@@ -3,9 +3,9 @@
     <input type="file" #fileInput id="fileDropRef" multiple (change)="fileBrowseHandler($event.target)" />
     <ion-card-content>
       @for(file of files; let i = $index; track i) {
-        <ion-chip>
+        <ion-chip [disabled]="!file.uploaded">
           <ion-icon name="document-outline" color="primary"></ion-icon>
-          <ion-label>{{ file.name }}</ion-label>
+          <ion-label>{{ file.name }} {{ file.progress}}</ion-label>
           <ion-icon (click)="deleteFile(i)" name="close"></ion-icon>
         </ion-chip>
       }
