@@ -18,4 +18,5 @@ export const routes: Routes = [
     path: 'settings/developer',
     loadComponent: () => import('./settings/developer/developer.page').then( m => m.DeveloperPage)
   },
-];
+  { path: '**', redirectTo: '' }
+]
