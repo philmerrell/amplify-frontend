@@ -4,9 +4,21 @@
     <ion-card-content>
       @for(file of files; let i = $index; track i) {
         <ion-chip [disabled]="!file.uploaded">
-          <ion-icon name="document-outline" color="primary"></ion-icon>
-          <ion-label>{{ file.name }} {{ file.progress}}</ion-label>
-          <ion-icon (click)="deleteFile(i)" name="close"></ion-icon>
+          
+          @if(file.uploaded) {
+            <ion-icon name="document-outline" color="primary"></ion-icon>
+            <ion-label>{{ file.name }} {{ file.progress}}</ion-label>
+            <ion-icon (click)="deleteFile(i)" name="close"></ion-icon>
+
+          } @else {
+            <ion-avatar>
+              <div class="pulsating-circle"></div>
+            </ion-avatar>
+            <ion-label>{{ file.name }}</ion-label>
+            <ion-badge>{{ file.progress}}%</ion-badge>
+
+          }
+          
         </ion-chip>
       }
       <ion-textarea

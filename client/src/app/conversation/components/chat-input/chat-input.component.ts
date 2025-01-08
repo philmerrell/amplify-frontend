@@ -1,5 +1,5 @@
 import { Component, OnInit, Signal } from '@angular/core';
-import { IonButton, IonIcon, IonCard, IonCardContent, IonTextarea, IonChip, IonLabel } from '@ionic/angular/standalone';
+import { IonButton, IonIcon, IonCard, IonCardContent, IonTextarea, IonChip, IonLabel, IonAvatar, IonBadge } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { arrowUpOutline, addOutline, copyOutline, atOutline, stop, pin, close, documentsOutline, documentOutline } from 'ionicons/icons';
 import { ChatRequestService } from '../../services/chat-request.service';
@@ -12,7 +12,7 @@ import { FileUploadService } from '../../services/file-upload.service';
   templateUrl: './chat-input.component.html',
   styleUrls: ['./chat-input.component.scss'],
   standalone: true,
-  imports: [IonLabel, IonChip, IonButton, IonIcon, IonCard, IonCardContent, IonTextarea, FormsModule, FileDropZoneDirective]
+  imports: [IonBadge, IonAvatar, IonLabel, IonChip, IonButton, IonIcon, IonCard, IonCardContent, IonTextarea, FormsModule, FileDropZoneDirective]
 })
 export class ChatInputComponent  implements OnInit {
   chatLoading: Signal<boolean> = this.chatRequestService.getChatLoading();
@@ -66,20 +66,19 @@ export class ChatInputComponent  implements OnInit {
 
   async uploadFiles() {
     for (const file of this.files) {
-
       if (!file.uploaded) {
         const response = await this.fileUploadService.getPresignedUrl(file);
-            this.fileUploadService.uploadFileToS3(response.uploadUrl, file)
-              .subscribe((response) => {
-                if (response) {
-                  console.log(response);
-                  file.progress = response.progress;
-    
-                  if (response.type === 'complete') {
-                    file.uploaded = true;
-                  }
-                }
-              })
+        this.fileUploadService.uploadFileToS3(response.uploadUrl, file)
+          .subscribe((response) => {
+            if (response) {
+              console.log(response);
+              file.progress = response.progress;
+
+              if (response.status === 'complete') {
+                file.uploaded = true;
+              }
+            }
+          })
       }
     }
   }

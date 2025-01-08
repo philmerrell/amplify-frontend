@@ -61,11 +61,13 @@ export class FileUploadService {
             progress: event.total
               ? Math.round((100 * event.loaded) / event.total)
               : 0,
-            type: 'uploading'
+            status: 'uploading'
           }
         } else if (event.type === HttpEventType.Response) {
-          return { type: 'complete', body: event.body };
+          console.log(event);
+          return { status: 'complete', body: event.body };
         }
+        
         return null;
       }),
       catchError(error => {
