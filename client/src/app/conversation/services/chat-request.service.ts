@@ -137,7 +137,7 @@ export class ChatRequestService {
     const conversation = this.currentConversation();
     const systemMessage = conversation.messages[conversation.messages.length - 1];
     const userMessage = conversation.messages[0];
-    // console.log(messageEvent.data);
+    console.log(messageEvent.data);
     try {
       const message = JSON.parse(messageEvent.data);
       if (message.s === 'meta') {

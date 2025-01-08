@@ -8,6 +8,8 @@ export class DeveloperSettingsService {
   // intended for proof of concept only...
   jwt: WritableSignal<string> = signal('');
   chatEndpoint: WritableSignal<string> = signal('');
+  apiBaseUrl: WritableSignal<string> = signal('');
+
   constructor() { }
 
   setDeveloperChatEndpoint(url: string) {
@@ -38,5 +40,20 @@ export class DeveloperSettingsService {
       }
     }
     return this.jwt;
+  }
+
+  setDeveloperApiBaseUrl(url: string) {
+    localStorage.setItem('apiBaseUrl', url);
+    this.apiBaseUrl.set(url);
+  }
+
+  getDeveloperApiBaseUrl(): Signal<string> {
+    if (this.apiBaseUrl() === '') {
+      const result = localStorage.getItem('apiBaseUrl');
+      if (result) {
+        this.apiBaseUrl.set(result);
+      }
+    }
+    return this.apiBaseUrl;
   }
 }

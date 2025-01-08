@@ -30,6 +30,20 @@
       </ion-item>
       <ion-item>
         <ion-label>
+          @if (apiBaseUrl() === '') {
+            <ion-text color="danger">
+              Developer api base url not set.
+            </ion-text>
+          } @else {
+            {{ apiBaseUrl() }}
+          }
+        </ion-label>
+        <ion-button slot="end" id="present-api-base-url-alert">
+          Set Api Base Url
+        </ion-button>
+      </ion-item>
+      <ion-item>
+        <ion-label>
           @if (jwt() === '') {
             <ion-text color="danger">
               Bearer token not set.
@@ -38,13 +52,22 @@
             <ion-text style="font-size: 11px;">
               {{ jwt() }}
             </ion-text>
+            
           }
         </ion-label>
+        @if (isJwtExpired) {
+          <ion-badge slot="end" color="danger">Expired</ion-badge>
+        }
         <ion-button slot="end" id="present-token-alert">
           Set Bearer Token
         </ion-button>
       </ion-item>
     </ion-list>
+    <div class="padding">
+      <pre>
+        {{ decodedJwt | json }}
+      </pre>
+    </div>
   </div>
   <ion-alert
     trigger="present-token-alert"
@@ -59,5 +82,12 @@
     [buttons]="alertChatEndpointButtons"
     [inputs]="alertChatEndpointInput"
     (didDismiss)="setChatEndpoint($event)"
+></ion-alert>
+  <ion-alert
+    trigger="present-api-base-url-alert"
+    header="Api Base Url"
+    [buttons]="alertApiBaseUrlButtons"
+    [inputs]="alertApiBaseUrlInput"
+    (didDismiss)="setApiBaseUrl($event)"
 ></ion-alert>
 </ion-content>
