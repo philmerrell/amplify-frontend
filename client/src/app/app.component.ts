@@ -19,13 +19,13 @@ import { TooltipDirective } from './core/tooltip.directive';
 export class AppComponent implements OnInit {
   logo: Signal<string> = this.themeService.getLogo();
   
-  constructor(private themeService: ThemeService) {
+  constructor(
+    private themeService: ThemeService) {
     addIcons({chatbox, shareSocialOutline, settingsOutline, briefcaseOutline})
   }
 
   ngOnInit() {
     this.themeService.initTheme();
-    
   }
   
 }

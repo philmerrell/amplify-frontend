@@ -39,37 +39,27 @@ export class ChatInputComponent  implements OnInit {
     this.uploadFilesToS3();
   }
 
-  /**
-   * handle file from browsing
-   */
   async fileBrowseHandler(event: any) {
     this.prepareFilesList(event.files);
     await this.getPresignedUrlForUpload();
     this.uploadFilesToS3();
   }
 
-  /**
-   * Delete file from files list
-   * @param index (File index)
-   */
   deleteFile(index: number) {
+    // TODO: Remove from S3 or just from conversation?
     this.files.splice(index, 1);
   }
 
-  /**
-   * Convert Files list to normal array list
-   * @param files (Files List)
-   */
-    async prepareFilesList(files: Array<any>) {
+  async prepareFilesList(files: Array<any>) {
       
-      for (const file of files) {
-        file.progress = 0;
-        file.uploaded = false;
-        this.files.push(file);
-      }
+    for (const file of files) {
+      file.progress = 0;
+      file.uploaded = false;
+      this.files.push(file);
+    }
   }
 
-  async getPresignedUrlForUpload() {
+  private async getPresignedUrlForUpload() {
     for (const file of this.files) {
       if (!file.uploaded) {
         try {
@@ -84,7 +74,7 @@ export class ChatInputComponent  implements OnInit {
     }
   }
 
-  uploadFilesToS3() {
+  private uploadFilesToS3() {
     for (const file of this.files) {
       if (!file.uploaded) {
           this.fileUploadService.uploadFileToS3(file.uploadUrl, file)
@@ -107,22 +97,6 @@ export class ChatInputComponent  implements OnInit {
             })
       }
     }
-  }
-
-  /**
-   * format bytes
-   * @param bytes (File size in bytes)
-   * @param decimals (Decimals point)
-   */
-  formatBytes(bytes: any, decimals: any) {
-    if (bytes === 0) {
-      return '0 Bytes';
-    }
-    const k = 1024;
-    const dm = decimals <= 0 ? 0 : decimals || 2;
-    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
   }
 
   handleSubmitChat() {

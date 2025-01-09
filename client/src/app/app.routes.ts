@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { authGuard } from './auth/auth-route-guard';
 
 export const routes: Routes = [
   {
@@ -8,7 +9,8 @@ export const routes: Routes = [
   },
   {
     path: '',
-    loadComponent: () => import('./conversation/conversation.page').then( m => m.ConversationPage)
+    loadComponent: () => import('./conversation/conversation.page').then( m => m.ConversationPage),
+    canActivate: [authGuard]
   },
   {
     path: 'settings/import-conversations',
