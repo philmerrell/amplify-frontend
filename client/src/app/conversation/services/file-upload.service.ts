@@ -1,6 +1,7 @@
 import { HttpBackend, HttpClient, HttpEventType } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { catchError, firstValueFrom, map, Observable, throwError } from 'rxjs';
+import { DeveloperSettingsService } from 'src/app/settings/developer/developer-settings.service';
 import { environment } from 'src/environments/environment';
 
 export interface File {
@@ -29,13 +30,19 @@ export interface PresignedUrlResponse {
 export class FileUploadService {
   fileUploadClient: HttpClient;
 
-  constructor(private http: HttpClient, private handler: HttpBackend) {
+  constructor(
+    private http: HttpClient,
+    private handler: HttpBackend,
+    private developerSettingsService: DeveloperSettingsService
+  ) {
     // Create new instance so Bearer tokens are not automattically attached
     this.fileUploadClient = new HttpClient(this.handler);
   }
   
   getPresignedUrl(file: File): Promise<PresignedUrlResponse> {
-    const response = this.http.post<PresignedUrlResponse>(`${environment.apiBaseUrl}/files/upload`, {
+    // environment.apiBaseUrl
+    const url = this.developerSettingsService.getDeveloperApiBaseUrl();
+    const response = this.http.post<PresignedUrlResponse>(`${url()}/files/upload`, {
       data: { 
         knowledgeBase: "default",
         name: file.name,

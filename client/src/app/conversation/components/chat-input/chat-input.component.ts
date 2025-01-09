@@ -1,5 +1,5 @@
 import { Component, OnInit, Signal } from '@angular/core';
-import { IonButton, IonIcon, IonCard, IonCardContent, IonTextarea, IonChip, IonLabel, IonAvatar, IonBadge } from '@ionic/angular/standalone';
+import { IonButton, IonIcon, IonCard, IonCardContent, IonTextarea, IonChip, IonLabel, IonAvatar, IonBadge, ToastController } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { arrowUpOutline, addOutline, copyOutline, atOutline, stop, pin, close, documentsOutline, documentOutline } from 'ionicons/icons';
 import { ChatRequestService } from '../../services/chat-request.service';
@@ -21,7 +21,10 @@ export class ChatInputComponent  implements OnInit {
   error = '';
   files: any[] = [];
   
-  constructor(private chatRequestService: ChatRequestService, private fileUploadService: FileUploadService) {
+  constructor(
+    private chatRequestService: ChatRequestService,
+    private fileUploadService: FileUploadService,
+    private toastController: ToastController) {
     addIcons({documentOutline,close,stop,arrowUpOutline,copyOutline,addOutline,atOutline,documentsOutline,pin});
   }
 
@@ -30,9 +33,10 @@ export class ChatInputComponent  implements OnInit {
   /**
    * on file drop handler
    */
-  onFileDropped(files: File[]) {
+  async onFileDropped(files: File[]) {
     this.prepareFilesList(files);
-    this.uploadFiles();
+    await this.getPresignedUrlForUpload();
+    this.uploadFilesToS3();
   }
 
   /**
@@ -40,7 +44,8 @@ export class ChatInputComponent  implements OnInit {
    */
   async fileBrowseHandler(event: any) {
     this.prepareFilesList(event.files);
-    this.uploadFiles();
+    await this.getPresignedUrlForUpload();
+    this.uploadFilesToS3();
   }
 
   /**
@@ -64,21 +69,42 @@ export class ChatInputComponent  implements OnInit {
       }
   }
 
-  async uploadFiles() {
+  async getPresignedUrlForUpload() {
     for (const file of this.files) {
       if (!file.uploaded) {
-        const response = await this.fileUploadService.getPresignedUrl(file);
-        this.fileUploadService.uploadFileToS3(response.uploadUrl, file)
-          .subscribe((response) => {
-            if (response) {
-              console.log(response);
-              file.progress = response.progress;
+        try {
+          const response = await this.fileUploadService.getPresignedUrl(file);
+          file.uploadUrl = response.uploadUrl
+        } catch (error) {
+          this.presentToast('An error occured getting a presigned URL.', 'danger');
+          const index = this.files.indexOf(file);
+          this.files.splice(index, 1);
+        }
+      }
+    }
+  }
 
-              if (response.status === 'complete') {
-                file.uploaded = true;
+  uploadFilesToS3() {
+    for (const file of this.files) {
+      if (!file.uploaded) {
+          this.fileUploadService.uploadFileToS3(file.uploadUrl, file)
+            .subscribe({
+              next: (response) => {
+                if (response) {
+                  console.log(response);
+                  file.progress = response.progress;
+  
+                  if (response.status === 'complete') {
+                    file.uploaded = true;
+                  }
+                }
+              },
+              error: (error) => {
+                this.presentToast('An error occured uploading to S3.', 'danger');
+                const index = this.files.indexOf(file);
+                this.files.splice(index, 1);
               }
-            }
-          })
+            })
       }
     }
   }
@@ -94,7 +120,7 @@ export class ChatInputComponent  implements OnInit {
     }
     const k = 1024;
     const dm = decimals <= 0 ? 0 : decimals || 2;
-    const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
     return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
   }
@@ -124,6 +150,15 @@ export class ChatInputComponent  implements OnInit {
 
   private cancelChatRequest() {
     this.chatRequestService.cancelChatRequest();
+  }
+
+  private async presentToast(message: string, color: string) {
+    const toast = await this.toastController.create({
+      message,
+      color,
+      duration: 5000
+    });
+    toast.present();
   }
 
 }
