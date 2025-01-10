@@ -7,7 +7,7 @@
           
           @if(file.uploaded) {
             <ion-icon name="document-outline" color="primary"></ion-icon>
-            <ion-label>{{ file.name }} {{ file.progress}}</ion-label>
+            <ion-label>{{ file.name }}</ion-label>
             <ion-icon (click)="deleteFile(i)" name="close"></ion-icon>
 
           } @else {
@@ -15,7 +15,7 @@
               <div class="pulsating-circle"></div>
             </ion-avatar>
             <ion-label>{{ file.name }}</ion-label>
-            <ion-badge>{{ file.progress}}%</ion-badge>
+            <ion-badge>{{ file.progress || 0 }}%</ion-badge>
 
           }
           

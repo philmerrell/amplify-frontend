@@ -5,7 +5,7 @@ import { arrowUpOutline, addOutline, copyOutline, atOutline, stop, pin, close, d
 import { ChatRequestService } from '../../services/chat-request.service';
 import { FormsModule } from '@angular/forms';
 import { FileDropZoneDirective } from './file-drop-zone.directive';
-import { FileUploadService } from '../../services/file-upload.service';
+import { File, FileUploadService } from '../../services/file-upload.service';
 
 @Component({
   selector: 'app-chat-input',
@@ -36,13 +36,13 @@ export class ChatInputComponent  implements OnInit {
   async onFileDropped(files: File[]) {
     this.prepareFilesList(files);
     await this.getPresignedUrlForUpload();
-    this.uploadFilesToS3();
+    this.initiateFileUploads();
   }
 
   async fileBrowseHandler(event: any) {
     this.prepareFilesList(event.files);
     await this.getPresignedUrlForUpload();
-    this.uploadFilesToS3();
+    this.initiateFileUploads();
   }
 
   deleteFile(index: number) {
@@ -64,9 +64,9 @@ export class ChatInputComponent  implements OnInit {
       if (!file.uploaded) {
         try {
           const response = await this.fileUploadService.getPresignedUrl(file);
-          file.uploadUrl = response.uploadUrl
+          file.presignedUrls = response
         } catch (error) {
-          this.presentToast('An error occured getting a presigned URL.', 'danger');
+          this.presentErrorToast('An error occured getting a presigned URL.', 'danger');
           const index = this.files.indexOf(file);
           this.files.splice(index, 1);
         }
@@ -74,29 +74,32 @@ export class ChatInputComponent  implements OnInit {
     }
   }
 
-  private uploadFilesToS3() {
+  private initiateFileUploads() {
     for (const file of this.files) {
       if (!file.uploaded) {
-          this.fileUploadService.uploadFileToS3(file.uploadUrl, file)
-            .subscribe({
-              next: (response) => {
-                if (response) {
-                  console.log(response);
-                  file.progress = response.progress;
-  
-                  if (response.status === 'complete') {
-                    file.uploaded = true;
-                  }
-                }
-              },
-              error: (error) => {
-                this.presentToast('An error occured uploading to S3.', 'danger');
-                const index = this.files.indexOf(file);
-                this.files.splice(index, 1);
-              }
-            })
+        this.uploadFilesToS3(file);
       }
     }
+  }
+
+  private uploadFilesToS3(file: File) {
+    this.fileUploadService.uploadAndGetMetadata(file).subscribe({
+      next: result => {
+        if (result.type === 'upload') {
+          file.progress = result.data.progress;
+        } else if (result.type === 'metadata') {
+          console.log('Metadata received:', result.data);
+        }
+      },
+      error: (error) => {
+        this.presentErrorToast('An error occured uploading to S3.', 'danger');
+        const index = this.files.indexOf(file);
+        this.files.splice(index, 1);
+      },
+      complete: () => {
+        file.uploaded = true;
+      }
+    });
   }
 
   handleSubmitChat() {
@@ -126,11 +129,17 @@ export class ChatInputComponent  implements OnInit {
     this.chatRequestService.cancelChatRequest();
   }
 
-  private async presentToast(message: string, color: string) {
+  private async presentErrorToast(message: string, color: string) {
     const toast = await this.toastController.create({
       message,
       color,
-      duration: 5000
+      duration: 0,
+      buttons: [
+        {
+          text: 'Close', 
+          role: 'cancel' 
+        }
+      ]
     });
     toast.present();
   }

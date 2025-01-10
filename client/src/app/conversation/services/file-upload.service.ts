@@ -1,6 +1,6 @@
-import { HttpBackend, HttpClient, HttpEventType } from '@angular/common/http';
+import { HttpBackend, HttpClient, HttpErrorResponse, HttpEventType } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { catchError, firstValueFrom, map, Observable, throwError } from 'rxjs';
+import { catchError, delay, filter, firstValueFrom, map, mergeMap, Observable, of, retry, retryWhen, switchMap, tap, throwError, timer } from 'rxjs';
 import { DeveloperSettingsService } from 'src/app/settings/developer/developer-settings.service';
 import { environment } from 'src/environments/environment';
 
@@ -13,6 +13,7 @@ export interface File {
   size: number;
   type: string;
   webkitRelativePath: string;
+  presignedUrls: PresignedUrlResponse;
 }
 
 export interface PresignedUrlResponse {
@@ -54,6 +55,33 @@ export class FileUploadService {
     return firstValueFrom(response);
   }
 
+  uploadAndGetMetadata(file: File): Observable<any> {
+
+    return this.uploadFileToS3(file.presignedUrls.uploadUrl, file).pipe(
+      // Emit upload events directly to the subscriber
+      mergeMap(event => {
+        if (event.status === 'complete') {
+          // When the upload is complete, switch to fetching metadata
+          return this.getS3Metadata(file.presignedUrls.metadataUrl).pipe(
+            map(metadata => ({
+              type: 'metadata',
+              data: metadata
+            }))
+          );
+        }
+        // For other upload events, pass them along
+        return of({
+          type: 'upload',
+          data: event
+        });
+      }),
+      catchError(error => {
+        console.error('Error in upload and metadata chain:', error);
+        return throwError(() => error);
+      })
+    );
+  }
+
   uploadFileToS3(presignedUrl: string, file: File): Observable<any> {
     return this.fileUploadClient.put(presignedUrl, file, {
       headers: {
@@ -71,11 +99,10 @@ export class FileUploadService {
             status: 'uploading'
           }
         } else if (event.type === HttpEventType.Response) {
-          console.log(event);
           return { status: 'complete', body: event.body };
         }
         
-        return null;
+        return event;
       }),
       catchError(error => {
         console.error('Error uploading file:', error);
@@ -83,4 +110,18 @@ export class FileUploadService {
       })
     );
   }
+
+  getS3Metadata(url: string): Observable<any> {
+    return this.fileUploadClient.get(url).pipe(
+      retry({ count: 5, delay: this.shouldRetry})
+    )
+  }
+
+  private shouldRetry = (error: HttpErrorResponse) => {
+    if (error.status === 403 || error.status === 404) {
+      return timer(1000); // Adding a timer from RxJS to return observable to delay param.
+    }
+    throw error;
+  }
+  
 }
