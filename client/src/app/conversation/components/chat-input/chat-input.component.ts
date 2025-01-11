@@ -19,7 +19,7 @@ export class ChatInputComponent  implements OnInit {
   message: string = '';
   loading: boolean = false;
   error = '';
-  files: any[] = [];
+  files: File[] = [];
   
   constructor(
     private chatRequestService: ChatRequestService,
@@ -64,7 +64,7 @@ export class ChatInputComponent  implements OnInit {
       if (!file.uploaded) {
         try {
           const response = await this.fileUploadService.getPresignedUrl(file);
-          file.presignedUrls = response
+          file.presignedUrlResponse = response
         } catch (error) {
           this.presentErrorToast('An error occured getting a presigned URL.', 'danger');
           const index = this.files.indexOf(file);
@@ -105,7 +105,7 @@ export class ChatInputComponent  implements OnInit {
 
   private addFileMetaDataToChatRequestDataSources(s3MetadataResult: any, file: File) {
     const dataSource = {
-      id: `s3://${s3MetadataResult.contentKey}`,
+      id: `s3://${file.presignedUrlResponse.key}`,
       metadata: {
         ...s3MetadataResult
       },

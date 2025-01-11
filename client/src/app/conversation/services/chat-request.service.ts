@@ -13,20 +13,22 @@ import { FoldersService } from 'src/app/services/folders.service';
 import { ConversationRenameService } from 'src/app/services/conversation-rename.service';
 import { firstValueFrom, Subscription } from 'rxjs';
 import { DataSource } from 'src/app/models/chat-request.model';
+import { Assistant } from 'src/app/models/assistant.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ChatRequestService {
-  private responseContent = '';
   private chatLoading: WritableSignal<boolean> = signal(false);
+  private conversations: WritableSignal<Conversation[]> = this.conversationService.getConversations();
   private currentConversation: WritableSignal<Conversation> = this.conversationService.getCurrentConversation();
   private currentRequestId = '';
-  private conversations: WritableSignal<Conversation[]> = this.conversationService.getConversations();
   private dataSources: DataSource[] = [];
+  private responseContent = '';
+  private responseSubscription: Subscription = new Subscription();
+  // private selectedAssistant: WritableSignal<Assistant> = signal({} as Assistant); 
   private selectedModel: Signal<Model> = this.modelService.getSelectedModel();
   private selectedTemperature: Signal<number> = this.modelService.getSelectedTemperature();
-  private responseSubscription: Subscription = new Subscription();
 
   constructor(
     private http: HttpClient,
@@ -93,7 +95,7 @@ export class ChatRequestService {
       .subscribe((event) => {
         if (event.type === 'error') {
           const errorEvent = event as ErrorEvent;
-          // console.error(errorEvent);
+          // this.cancelChatRequest();
         } else {
           const message = event as MessageEvent;
           this.parseMessageEvent(message)
@@ -154,7 +156,6 @@ export class ChatRequestService {
     const userMessage = conversation.messages[0];
     try {
       const message = JSON.parse(messageEvent.data);
-      console.log(message);
       if (message.s === 'meta') {
         // TODO: Handle meta data from response...
         console.log(message);
@@ -221,14 +222,26 @@ export class ChatRequestService {
   
 
   private createMessage(role: 'assistant' | 'system' | 'user', content: string = ''): Message {
-    const dataSources = this.dataSources;
-    const data = dataSources.length > 0 ? { dataSources } : {}
+    const data = role === 'user' ? this.getMessageData() : {}
     return {
-      role,
       content,
       type: 'prompt',
       data,
       id: uuidv4(),
+      role
+    }
+  }
+
+  
+  private getMessageData() {
+    let data = {};
+    if (this.dataSources.length > 1) {
+      data = {
+        dataSources: this.dataSources
+      }
+    }
+    return {
+
     }
   }
 

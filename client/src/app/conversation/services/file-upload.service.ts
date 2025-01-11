@@ -13,7 +13,7 @@ export interface File {
   size: number;
   type: string;
   webkitRelativePath: string;
-  presignedUrls: PresignedUrlResponse;
+  presignedUrlResponse: PresignedUrlResponse;
 }
 
 export interface PresignedUrlResponse {
@@ -57,12 +57,11 @@ export class FileUploadService {
 
   uploadAndGetMetadata(file: File): Observable<any> {
 
-    return this.uploadFileToS3(file.presignedUrls.uploadUrl, file).pipe(
-      // Emit upload events directly to the subscriber
+    return this.uploadFileToS3(file.presignedUrlResponse.uploadUrl, file).pipe(
       mergeMap(event => {
         if (event.status === 'complete') {
           // When the upload is complete, switch to fetching metadata
-          return this.getS3Metadata(file.presignedUrls.metadataUrl).pipe(
+          return this.getS3Metadata(file.presignedUrlResponse.metadataUrl).pipe(
             map(metadata => ({
               type: 'metadata',
               data: metadata
@@ -113,7 +112,7 @@ export class FileUploadService {
 
   getS3Metadata(url: string): Observable<any> {
     return this.fileUploadClient.get(url).pipe(
-      retry({ count: 5, delay: this.shouldRetry})
+      retry({ count: 10, delay: this.shouldRetry})
     )
   }
 
