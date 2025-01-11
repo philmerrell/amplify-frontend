@@ -46,7 +46,7 @@ export class ChatInputComponent  implements OnInit {
   }
 
   deleteFile(index: number) {
-    // TODO: Remove from S3 or just from conversation?
+    // TODO: Remove from S3 or just from the chat request?
     this.files.splice(index, 1);
   }
 
@@ -77,18 +77,19 @@ export class ChatInputComponent  implements OnInit {
   private initiateFileUploads() {
     for (const file of this.files) {
       if (!file.uploaded) {
-        this.uploadFilesToS3(file);
+        this.uploadFileToS3(file);
       }
     }
   }
 
-  private uploadFilesToS3(file: File) {
+  private uploadFileToS3(file: File) {
     this.fileUploadService.uploadAndGetMetadata(file).subscribe({
       next: result => {
         if (result.type === 'upload') {
           file.progress = result.data.progress;
         } else if (result.type === 'metadata') {
           console.log('Metadata received:', result.data);
+          this.addFileMetaDataToChatRequestDataSources(result.data, file)
         }
       },
       error: (error) => {
@@ -100,6 +101,18 @@ export class ChatInputComponent  implements OnInit {
         file.uploaded = true;
       }
     });
+  }
+
+  private addFileMetaDataToChatRequestDataSources(s3MetadataResult: any, file: File) {
+    const dataSource = {
+      id: `s3://${s3MetadataResult.contentKey}`,
+      metadata: {
+        ...s3MetadataResult
+      },
+      name: s3MetadataResult.name,
+      type: file.type
+    };
+    this.chatRequestService.addDataSource(dataSource);
   }
 
   handleSubmitChat() {
@@ -120,6 +133,7 @@ export class ChatInputComponent  implements OnInit {
   private submitChatRequest() {
     const message = this.message.trim();
     if (message !== '') {
+      // this.chatRequestService.debugSSEMessages(message);
       this.chatRequestService.submitChatRequest(this.message);
     }
     this.message = ''

@@ -11,6 +11,8 @@ import { Model } from 'src/app/models/model.model';
 import { DEFAULT_SYSTEM_PROMPT } from 'src/app/services/prompts';
 import { FoldersService } from 'src/app/services/folders.service';
 import { ConversationRenameService } from 'src/app/services/conversation-rename.service';
+import { firstValueFrom, Subscription } from 'rxjs';
+import { DataSource } from 'src/app/models/chat-request.model';
 
 @Injectable({
   providedIn: 'root'
@@ -19,18 +21,27 @@ export class ChatRequestService {
   private responseContent = '';
   private chatLoading: WritableSignal<boolean> = signal(false);
   private currentConversation: WritableSignal<Conversation> = this.conversationService.getCurrentConversation();
+  private currentRequestId = '';
   private conversations: WritableSignal<Conversation[]> = this.conversationService.getConversations();
+  private dataSources: DataSource[] = [];
   private selectedModel: Signal<Model> = this.modelService.getSelectedModel();
   private selectedTemperature: Signal<number> = this.modelService.getSelectedTemperature();
+  private responseSubscription: Subscription = new Subscription();
 
   constructor(
-    private httpClient: HttpClient,
+    private http: HttpClient,
     private sseClient: SseClient,
     private conversationService: ConversationService,
     private conversationRenameService: ConversationRenameService,
     private developerSettingsService: DeveloperSettingsService,
     private folderService: FoldersService,
-    private modelService: ModelService) { }
+    private modelService: ModelService) {
+  }
+
+  
+  addDataSource(dataSource: DataSource) {
+    this.dataSources.push(dataSource);
+  }
 
   getChatLoading(): Signal<boolean> {
     return this.chatLoading;
@@ -38,7 +49,7 @@ export class ChatRequestService {
 
   debugSSEMessages(message: string) {
     const requestObject = this.createRequestObject(message);
-    this.httpClient
+    this.http
       .post(environment.chatEndpoint, requestObject, {
         observe: 'events',
         responseType: 'text',
@@ -78,7 +89,7 @@ export class ChatRequestService {
     
     this.chatLoading.set(true);
 
-    this.sseClient.stream(chatEndpoint(), { keepAlive: false, responseType: 'event' }, { body: requestObject }, 'POST' )
+    this.responseSubscription = this.sseClient.stream(chatEndpoint(), { keepAlive: false, responseType: 'event' }, { body: requestObject }, 'POST' )
       .subscribe((event) => {
         if (event.type === 'error') {
           const errorEvent = event as ErrorEvent;
@@ -127,19 +138,23 @@ export class ChatRequestService {
     
   }
 
-  
-
   cancelChatRequest() {
+    this.responseSubscription.unsubscribe();
+    this.chatLoading.set(false);
+    // TODO: Refactor after POC
+    const chatEndpoint = this.developerSettingsService.getDeveloperChatEndpoint();
+    const request = this.http.post(chatEndpoint(), { killSwitch: { requestId: this.currentRequestId, value: true}});
 
+    return firstValueFrom(request);
   }
 
   private parseMessageEvent(messageEvent: MessageEvent) {
     const conversation = this.currentConversation();
     const systemMessage = conversation.messages[conversation.messages.length - 1];
     const userMessage = conversation.messages[0];
-    console.log(messageEvent.data);
     try {
       const message = JSON.parse(messageEvent.data);
+      console.log(message);
       if (message.s === 'meta') {
         // TODO: Handle meta data from response...
         console.log(message);
@@ -151,12 +166,12 @@ export class ChatRequestService {
       }
       // We are done
       if (message.s === 0 && message.type === 'end') {
-        // console.log(this.text);
         this.chatLoading.set(false);
         if (conversation.name === 'New Conversation') {
           this.conversationRenameService.renameConversation(userMessage.content);
         }
         this.responseContent = '';
+        this.dataSources = [];
       }
     } catch(error) {
       this.responseContent = '';
@@ -167,13 +182,16 @@ export class ChatRequestService {
   private createRequestObject(userInput: string) {
     const model = this.selectedModel();
     const conversation = this.currentConversation();
+    this.currentRequestId = uuidv4();
     // const keysToExclude = ['messages', 'temperature', 'max_tokens', 'stream', 'dataSources'];
     // const vendorProps = Object.fromEntries(
     //     Object.entries(chatBody).filter(([key, _]) => !keysToExclude.includes(key))
     // );
 
     return {
-      dataSources: [], // TODO: 
+      dataSources: [
+        ...this.dataSources
+      ], // TODO: 
       max_tokens: 1000, // TODO: How is this derived?
       messages: [
         {
@@ -192,7 +210,7 @@ export class ChatRequestService {
             period: 'Unlimited',
             rate: null
           },
-          requestId: uuidv4(),
+          requestId: this.currentRequestId,
           
       },
       stream: true,
@@ -203,11 +221,13 @@ export class ChatRequestService {
   
 
   private createMessage(role: 'assistant' | 'system' | 'user', content: string = ''): Message {
+    const dataSources = this.dataSources;
+    const data = dataSources.length > 0 ? { dataSources } : {}
     return {
       role,
       content,
       type: 'prompt',
-      data: {}, // TODO
+      data,
       id: uuidv4(),
     }
   }
