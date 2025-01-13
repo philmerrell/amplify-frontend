@@ -49,42 +49,42 @@ export class ChatRequestService {
     return this.chatLoading;
   }
 
-  debugSSEMessages(message: string) {
-    const requestObject = this.createRequestObject(message);
-    this.http
-      .post(environment.chatEndpoint, requestObject, {
-        observe: 'events',
-        responseType: 'text',
-        reportProgress: true,
-      })
-      .subscribe({
-        next: (event: HttpEvent<string>) => {
-          if (event.type === HttpEventType.Sent) {
-            console.log('Sent: ', event);
-          }
-          if (event.type === HttpEventType.ResponseHeader) {
-            console.log('Response Header: ', event);
-          }
-          if (event.type === HttpEventType.User) {
-            console.log('User: ', event);
-          }
-          if (event.type === HttpEventType.DownloadProgress) {
-            const text = (
-              event as HttpDownloadProgressEvent
-            ).partialText + '…';
-            console.log(text);
-          } else if (event.type === HttpEventType.Response) {
-            console.log(event)
-          }
-        },
-        error: () => {
+  // debugSSEMessages(message: string) {
+  //   const requestObject = this.createRequestObject(message);
+  //   this.http
+  //     .post(environment.chatEndpoint, requestObject, {
+  //       observe: 'events',
+  //       responseType: 'text',
+  //       reportProgress: true,
+  //     })
+  //     .subscribe({
+  //       next: (event: HttpEvent<string>) => {
+  //         if (event.type === HttpEventType.Sent) {
+  //           console.log('Sent: ', event);
+  //         }
+  //         if (event.type === HttpEventType.ResponseHeader) {
+  //           console.log('Response Header: ', event);
+  //         }
+  //         if (event.type === HttpEventType.User) {
+  //           console.log('User: ', event);
+  //         }
+  //         if (event.type === HttpEventType.DownloadProgress) {
+  //           const text = (
+  //             event as HttpDownloadProgressEvent
+  //           ).partialText + '…';
+  //           console.log(text);
+  //         } else if (event.type === HttpEventType.Response) {
+  //           console.log(event)
+  //         }
+  //       },
+  //       error: () => {
           
-        },
-      });
-  }
+  //       },
+  //     });
+  // }
   
   async submitChatRequest(userInput: string) {
-    this.updateCurrentConversation(userInput);
+    this.updateCurrentConversationWithUserInput(userInput);
     const requestObject = this.createRequestObject(userInput);
     // Refactor after POC
     const chatEndpoint = this.developerSettingsService.getDeveloperChatEndpoint();
@@ -103,9 +103,9 @@ export class ChatRequestService {
       });
   }
 
-  updateCurrentConversation(userInput: string) {
-    const userMessage = this.createMessage('user', userInput);
-    const systemMessage = this.createMessage('system');
+  updateCurrentConversationWithUserInput(userInput: string) {
+    const userMessage = this.initUserMessage(userInput);
+    const systemMessage = this.initSystemMessage();
     
     // If folderId is an empty string, then it is a new conversation
     if (this.currentConversation().folderId === '') {
@@ -219,30 +219,67 @@ export class ChatRequestService {
     }
   }
 
-  
+  private initUserMessage(content: string = ''): Message {
 
-  private createMessage(role: 'assistant' | 'system' | 'user', content: string = ''): Message {
-    const data = role === 'user' ? this.getMessageData() : {}
     return {
       content,
-      type: 'prompt',
-      data,
+      data: this.getUserMessageData(),
       id: uuidv4(),
-      role
+      role: 'user',
+      type: 'prompt'
+    }
+  }
+
+  private initSystemMessage(): Message {
+    return {
+      content: '',
+      type: 'prompt',
+      id: uuidv4(),
+      role: 'system'
+    }
+  }
+
+  private initAssistantMessage(): Message {
+    return {
+      content: '',
+      type: 'prompt',
+      id: uuidv4(),
+      role: 'assistant'
     }
   }
 
   
-  private getMessageData() {
+  private getUserMessageData() {
+    return {
+     
+      dataSources: [
+        {
+          id: "s3://philmerrell/2025-01-13/0418329b-07c4-466b-84e2-fdc8f209c77d.json",
+          name: "Amplify_API_Documentation.pdf",
+          type: "application/pdf",
+          metadata: {
+            name: "Amplify_API_Documentation.pdf",
+            totalItems: 14,
+            locationProperties: [
+              "page_number"
+            ],
+            contentKey: "philmerrell/2025-01-13/0418329b-07c4-466b-84e2-fdc8f209c77d.json.content.json",
+            createdAt: "2025-01-13T19:17:19.540504",
+            totalTokens: 4594,
+            tags: [],
+            props: {}
+          }
+        }
+      ]
+      
+    }
     let data = {};
-    if (this.dataSources.length > 1) {
+    if (this.dataSources.length > 0) {
       data = {
         dataSources: this.dataSources
       }
     }
-    return {
-
-    }
+    return data
   }
 
 }

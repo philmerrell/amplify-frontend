@@ -1,19 +1,18 @@
 import { HttpBackend, HttpClient, HttpErrorResponse, HttpEventType } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { catchError, delay, filter, firstValueFrom, map, mergeMap, Observable, of, retry, retryWhen, switchMap, tap, throwError, timer } from 'rxjs';
+import { catchError, firstValueFrom, map, mergeMap, Observable, of, retry, throwError, timer } from 'rxjs';
 import { DeveloperSettingsService } from 'src/app/settings/developer/developer-settings.service';
 import { environment } from 'src/environments/environment';
+import { v4 as uuidv4 } from 'uuid';
 
-export interface File {
-  progress: number;
-  uploaded: boolean;
-  lastModified: number;
-  lasModifiedDate: Date;
+
+export interface FileWrapper {
+  file: File;
   name: string;
-  size: number;
-  type: string;
-  webkitRelativePath: string;
-  presignedUrlResponse: PresignedUrlResponse;
+  id: string;
+  uploaded: boolean;
+  progress: number;
+  presignedUrlResponse: PresignedUrlResponse
 }
 
 export interface PresignedUrlResponse {
@@ -40,28 +39,29 @@ export class FileUploadService {
     this.fileUploadClient = new HttpClient(this.handler);
   }
   
-  getPresignedUrl(file: File): Promise<PresignedUrlResponse> {
+  getPresignedUrl(fw: FileWrapper): Promise<PresignedUrlResponse> {
     // environment.apiBaseUrl
     const url = this.developerSettingsService.getDeveloperApiBaseUrl();
     const response = this.http.post<PresignedUrlResponse>(`${url()}/files/upload`, {
-      data: { 
+      data: {
+        actions: [],
+        data: {},
         knowledgeBase: "default",
-        name: file.name,
+        name: fw.name,
         tags: [],
-        type: file.type,
-        data: {}
+        type: fw.file.type,
       }
     });
     return firstValueFrom(response);
   }
 
-  uploadAndGetMetadata(file: File): Observable<any> {
+  uploadAndGetMetadata(fw: FileWrapper): Observable<any> {
 
-    return this.uploadFileToS3(file.presignedUrlResponse.uploadUrl, file).pipe(
+    return this.uploadFileToS3(fw.presignedUrlResponse.uploadUrl, fw.file).pipe(
       mergeMap(event => {
         if (event.status === 'complete') {
           // When the upload is complete, switch to fetching metadata
-          return this.getS3Metadata(file.presignedUrlResponse.metadataUrl).pipe(
+          return this.getS3Metadata(fw.presignedUrlResponse.metadataUrl).pipe(
             map(metadata => ({
               type: 'metadata',
               data: metadata
@@ -84,7 +84,7 @@ export class FileUploadService {
   uploadFileToS3(presignedUrl: string, file: File): Observable<any> {
     return this.fileUploadClient.put(presignedUrl, file, {
       headers: {
-        'Content-Type': file.type,
+        'Content-Type': file.type || 'application/octet-stream',
       },
       reportProgress: true,
       observe: 'events'
@@ -108,6 +108,18 @@ export class FileUploadService {
         return throwError(() => error);
       })
     );
+  }
+
+  createFileWrapperObj(file: File): FileWrapper {
+    const fileName = file.name.replace(/[_\s]+/g, '_');
+    return {
+      file,
+      id: uuidv4(),
+      name: fileName,
+      progress: 0,
+      uploaded: false,
+      presignedUrlResponse: {} as PresignedUrlResponse
+    }
   }
 
   getS3Metadata(url: string): Observable<any> {

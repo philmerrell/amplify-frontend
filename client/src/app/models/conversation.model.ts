@@ -29,7 +29,7 @@ export interface Conversation {
     content: string;
     id: string;
     type: string | undefined;
-    data: any | undefined;
+    data?: any | undefined;
     label?: string;
     codeInterpreterMessageData?: any | undefined;
     topicData?: MessageTopicData;

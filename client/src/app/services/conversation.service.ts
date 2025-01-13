@@ -38,7 +38,6 @@ export class ConversationService {
   }
 
 
-
   initConversations() {
     if (!this.conversations().length) {
       const conversationHistoryJson = localStorage.getItem('conversationHistory');

@@ -5,7 +5,7 @@ import { arrowUpOutline, addOutline, copyOutline, atOutline, stop, pin, close, d
 import { ChatRequestService } from '../../services/chat-request.service';
 import { FormsModule } from '@angular/forms';
 import { FileDropZoneDirective } from './file-drop-zone.directive';
-import { File, FileUploadService } from '../../services/file-upload.service';
+import { FileUploadService, FileWrapper } from '../../services/file-upload.service';
 
 @Component({
   selector: 'app-chat-input',
@@ -19,7 +19,7 @@ export class ChatInputComponent  implements OnInit {
   message: string = '';
   loading: boolean = false;
   error = '';
-  files: File[] = [];
+  files: FileWrapper[] = [];
   
   constructor(
     private chatRequestService: ChatRequestService,
@@ -40,7 +40,8 @@ export class ChatInputComponent  implements OnInit {
   }
 
   async fileBrowseHandler(event: any) {
-    this.prepareFilesList(event.files);
+    const files: File[] = event.files;
+    this.prepareFilesList(files);
     await this.getPresignedUrlForUpload();
     this.initiateFileUploads();
   }
@@ -50,12 +51,10 @@ export class ChatInputComponent  implements OnInit {
     this.files.splice(index, 1);
   }
 
-  async prepareFilesList(files: Array<any>) {
-      
+  async prepareFilesList(files: Array<any>) {  
     for (const file of files) {
-      file.progress = 0;
-      file.uploaded = false;
-      this.files.push(file);
+      const fw = this.fileUploadService.createFileWrapperObj(file)
+      this.files.push(fw);
     }
   }
 
@@ -82,35 +81,35 @@ export class ChatInputComponent  implements OnInit {
     }
   }
 
-  private uploadFileToS3(file: File) {
-    this.fileUploadService.uploadAndGetMetadata(file).subscribe({
+  private uploadFileToS3(fw: FileWrapper) {
+    this.fileUploadService.uploadAndGetMetadata(fw).subscribe({
       next: result => {
         if (result.type === 'upload') {
-          file.progress = result.data.progress;
+          fw.progress = result.data.progress;
         } else if (result.type === 'metadata') {
           console.log('Metadata received:', result.data);
-          this.addFileMetaDataToChatRequestDataSources(result.data, file)
+          this.addFileMetaDataToChatRequestDataSources(result.data, fw)
         }
       },
       error: (error) => {
         this.presentErrorToast('An error occured uploading to S3.', 'danger');
-        const index = this.files.indexOf(file);
+        const index = this.files.indexOf(fw);
         this.files.splice(index, 1);
       },
       complete: () => {
-        file.uploaded = true;
+        fw.uploaded = true;
       }
     });
   }
 
-  private addFileMetaDataToChatRequestDataSources(s3MetadataResult: any, file: File) {
+  private addFileMetaDataToChatRequestDataSources(s3MetadataResult: any, fw: FileWrapper) {
     const dataSource = {
-      id: `s3://${file.presignedUrlResponse.key}`,
+      id: `s3://${fw.presignedUrlResponse.key}`,
       metadata: {
         ...s3MetadataResult
       },
       name: s3MetadataResult.name,
-      type: file.type
+      type: fw.file.type
     };
     this.chatRequestService.addDataSource(dataSource);
   }
