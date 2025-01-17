@@ -41,6 +41,7 @@ export class FileUploadService {
   
   getPresignedUrl(fw: FileWrapper): Promise<PresignedUrlResponse> {
     // environment.apiBaseUrl
+    console.log(fw);
     const url = this.developerSettingsService.getDeveloperApiBaseUrl();
     const response = this.http.post<PresignedUrlResponse>(`${url()}/files/upload`, {
       data: {
@@ -112,6 +113,7 @@ export class FileUploadService {
 
   createFileWrapperObj(file: File): FileWrapper {
     const fileName = file.name.replace(/[_\s]+/g, '_');
+    console.log(file);
     return {
       file,
       id: uuidv4(),

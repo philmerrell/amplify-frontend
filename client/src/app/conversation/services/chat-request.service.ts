@@ -105,8 +105,7 @@ export class ChatRequestService {
 
   updateCurrentConversationWithUserInput(userInput: string) {
     const userMessage = this.initUserMessage(userInput);
-    const systemMessage = this.initSystemMessage();
-    
+
     // If folderId is an empty string, then it is a new conversation
     if (this.currentConversation().folderId === '') {
 
@@ -115,7 +114,7 @@ export class ChatRequestService {
         return {
           ...c,
           folderId: folderId,
-          messages: [...c.messages, userMessage, systemMessage]
+          messages: [...c.messages, userMessage]
         }
       });
 
@@ -127,13 +126,13 @@ export class ChatRequestService {
       this.currentConversation.update((c: Conversation) => {
         return {
           ...c,
-          messages: [...c.messages, userMessage, systemMessage]
+          messages: [...c.messages, userMessage]
         }
       });
 
       this.conversations.update((c: Conversation[]) => {
         return c.map(conversation => 
-          conversation.id === this.currentConversation().id ? { ...conversation, messages: [...conversation.messages, userMessage, systemMessage] } : conversation
+          conversation.id === this.currentConversation().id ? { ...conversation, messages: [...conversation.messages, userMessage] } : conversation
         )
       })
     }
@@ -150,10 +149,31 @@ export class ChatRequestService {
     return firstValueFrom(request);
   }
 
+  private getSystemMessageForChatResponse(conversation: Conversation): Message {
+
+    const lastMessage = conversation.messages[conversation.messages.length - 1];
+    let systemMessage: Message;
+
+    if (lastMessage.role !== 'system') {
+      systemMessage = this.initSystemMessage();
+      this.currentConversation.update((c: Conversation) => {
+        return {
+          ...c,
+          messages: [...c.messages, systemMessage]
+        }
+      });
+    } else {
+      systemMessage = lastMessage
+    }
+
+    return systemMessage;
+  }
+
   private parseMessageEvent(messageEvent: MessageEvent) {
     const conversation = this.currentConversation();
-    const systemMessage = conversation.messages[conversation.messages.length - 1];
+    const systemMessage = this.getSystemMessageForChatResponse(conversation);    
     const userMessage = conversation.messages[0];
+
     try {
       const message = JSON.parse(messageEvent.data);
       if (message.s === 'meta') {
@@ -223,7 +243,7 @@ export class ChatRequestService {
 
     return {
       content,
-      data: this.getUserMessageData(),
+      data: [],
       id: uuidv4(),
       role: 'user',
       type: 'prompt'

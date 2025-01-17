@@ -103,6 +103,7 @@ export class ChatInputComponent  implements OnInit {
   }
 
   private addFileMetaDataToChatRequestDataSources(s3MetadataResult: any, fw: FileWrapper) {
+    console.log(s3MetadataResult);
     const dataSource = {
       id: `s3://${fw.presignedUrlResponse.key}`,
       metadata: {
