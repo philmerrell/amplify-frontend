@@ -1,29 +1,32 @@
 import { Component, OnInit, Signal } from '@angular/core';
-import { IonButton, IonIcon, IonCard, IonCardContent, IonTextarea, IonChip, IonLabel, IonAvatar, IonBadge, ToastController } from '@ionic/angular/standalone';
+import { IonButton, IonIcon, IonCard, IonCardContent, IonTextarea, IonChip, IonLabel, IonAvatar, IonBadge, ToastController, ModalController } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { arrowUpOutline, addOutline, copyOutline, atOutline, stop, pin, close, documentsOutline, documentOutline } from 'ionicons/icons';
 import { ChatRequestService } from '../../services/chat-request.service';
 import { FormsModule } from '@angular/forms';
 import { FileDropZoneDirective } from './file-drop-zone.directive';
 import { FileUploadService, FileWrapper } from '../../services/file-upload.service';
+import { SelectUploadedFileComponent } from '../select-uploaded-file/select-uploaded-file.component';
+import { TooltipDirective } from 'src/app/core/tooltip.directive';
 
 @Component({
   selector: 'app-chat-input',
   templateUrl: './chat-input.component.html',
   styleUrls: ['./chat-input.component.scss'],
   standalone: true,
-  imports: [IonBadge, IonAvatar, IonLabel, IonChip, IonButton, IonIcon, IonCard, IonCardContent, IonTextarea, FormsModule, FileDropZoneDirective]
+  imports: [TooltipDirective, IonBadge, IonAvatar, IonLabel, IonChip, IonButton, IonIcon, IonCard, IonCardContent, IonTextarea, FormsModule, FileDropZoneDirective]
 })
 export class ChatInputComponent  implements OnInit {
   chatLoading: Signal<boolean> = this.chatRequestService.getChatLoading();
   message: string = '';
   loading: boolean = false;
   error = '';
-  files: FileWrapper[] = [];
+  files: Signal<FileWrapper[]> = this.chatRequestService.getFiles();
   
   constructor(
     private chatRequestService: ChatRequestService,
     private fileUploadService: FileUploadService,
+    private modalController: ModalController,
     private toastController: ToastController) {
     addIcons({documentOutline,close,stop,arrowUpOutline,copyOutline,addOutline,atOutline,documentsOutline,pin});
   }
@@ -46,35 +49,40 @@ export class ChatInputComponent  implements OnInit {
     this.initiateFileUploads();
   }
 
-  deleteFile(index: number) {
-    // TODO: Remove from S3 or just from the chat request?
-    this.files.splice(index, 1);
+  async presentSelectUploadedFileModal() {
+    const modal = await this.modalController.create({
+      component: SelectUploadedFileComponent
+    });
+    modal.present();
+  }
+
+  removeFile(file: FileWrapper) {
+    this.chatRequestService.removeFile(file);
   }
 
   async prepareFilesList(files: Array<any>) {  
     for (const file of files) {
       const fw = this.fileUploadService.createFileWrapperObj(file)
-      this.files.push(fw);
+      this.chatRequestService.addFile(fw);
     }
   }
 
   private async getPresignedUrlForUpload() {
-    for (const file of this.files) {
+    for (const file of this.files()) {
       if (!file.uploaded) {
         try {
           const response = await this.fileUploadService.getPresignedUrl(file);
           file.presignedUrlResponse = response
         } catch (error) {
           this.presentErrorToast('An error occured getting a presigned URL.', 'danger');
-          const index = this.files.indexOf(file);
-          this.files.splice(index, 1);
+          this.chatRequestService.removeFile(file);
         }
       }
     }
   }
 
   private initiateFileUploads() {
-    for (const file of this.files) {
+    for (const file of this.files()) {
       if (!file.uploaded) {
         this.uploadFileToS3(file);
       }
@@ -93,8 +101,7 @@ export class ChatInputComponent  implements OnInit {
       },
       error: (error) => {
         this.presentErrorToast('An error occured uploading to S3.', 'danger');
-        const index = this.files.indexOf(fw);
-        this.files.splice(index, 1);
+        this.chatRequestService.removeFile(fw);
       },
       complete: () => {
         fw.uploaded = true;
@@ -103,14 +110,13 @@ export class ChatInputComponent  implements OnInit {
   }
 
   private addFileMetaDataToChatRequestDataSources(s3MetadataResult: any, fw: FileWrapper) {
-    console.log(s3MetadataResult);
     const dataSource = {
-      id: `s3://${fw.presignedUrlResponse.key}`,
+      id: `s3://${fw.presignedUrlResponse!.key}`,
       metadata: {
         ...s3MetadataResult
       },
       name: s3MetadataResult.name,
-      type: fw.file.type
+      type: fw.file!.type
     };
     this.chatRequestService.addDataSource(dataSource);
   }

@@ -1,0 +1,63 @@
+<ion-list>
+  @for (file of files; track file.id) {
+    <ion-item (click)="handleFileSelect(file)" button>
+      @if (file.selected) {
+        <ion-icon color="success" name="checkmark-outline" slot="start"></ion-icon>
+      } @else {
+        <ion-icon [name]="file.type | fileTypeIcon" slot="start" color="secondary"></ion-icon>
+      }
+      <ion-label>
+        <h2><ion-text [color]="file.selected ? 'medium' : ''">{{ file.name }}</ion-text></h2>
+        <p>{{ file.createdAt | date }}</p>
+      </ion-label>
+      <ion-badge>{{ file.type | fileType }}</ion-badge>
+    </ion-item>
+  }
+  @if (!filesRequestComplete) {
+    <ion-item>
+      <ion-skeleton-text animated></ion-skeleton-text>
+    </ion-item>
+    <ion-item>
+      <ion-skeleton-text animated></ion-skeleton-text>
+    </ion-item>
+    <ion-item>
+      <ion-skeleton-text animated></ion-skeleton-text>
+    </ion-item>
+    <ion-item>
+      <ion-skeleton-text animated></ion-skeleton-text>
+    </ion-item>
+    <ion-item>
+      <ion-skeleton-text animated></ion-skeleton-text>
+    </ion-item>
+    <ion-item>
+      <ion-skeleton-text animated></ion-skeleton-text>
+    </ion-item>
+    <ion-item>
+      <ion-skeleton-text animated></ion-skeleton-text>
+    </ion-item>
+    <ion-item>
+      <ion-skeleton-text animated></ion-skeleton-text>
+    </ion-item>
+    <ion-item>
+      <ion-skeleton-text animated></ion-skeleton-text>
+    </ion-item>
+    <ion-item>
+      <ion-skeleton-text animated></ion-skeleton-text>
+    </ion-item>
+    <ion-item>
+      <ion-skeleton-text animated></ion-skeleton-text>
+    </ion-item>
+    <ion-item>
+      <ion-skeleton-text animated></ion-skeleton-text>
+    </ion-item>
+  }
+  @if (filesRequestComplete && !files.length) {
+    <ion-item>
+      <ion-label>
+        <h2>You have not uploaded any files yet</h2>
+        <p>But this is where they'd be if you did.</p>
+      </ion-label>
+    </ion-item>
+  }
+  
+</ion-list>

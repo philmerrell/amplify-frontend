@@ -7,12 +7,12 @@ import { v4 as uuidv4 } from 'uuid';
 
 
 export interface FileWrapper {
-  file: File;
+  file?: File;
   name: string;
   id: string;
   uploaded: boolean;
   progress: number;
-  presignedUrlResponse: PresignedUrlResponse
+  presignedUrlResponse?: PresignedUrlResponse
 }
 
 export interface PresignedUrlResponse {
@@ -50,7 +50,7 @@ export class FileUploadService {
         knowledgeBase: "default",
         name: fw.name,
         tags: [],
-        type: fw.file.type,
+        type: fw.file?.type,
       }
     });
     return firstValueFrom(response);
@@ -58,11 +58,11 @@ export class FileUploadService {
 
   uploadAndGetMetadata(fw: FileWrapper): Observable<any> {
 
-    return this.uploadFileToS3(fw.presignedUrlResponse.uploadUrl, fw.file).pipe(
+    return this.uploadFileToS3(fw.presignedUrlResponse!.uploadUrl, fw.file!).pipe(
       mergeMap(event => {
         if (event.status === 'complete') {
           // When the upload is complete, switch to fetching metadata
-          return this.getS3Metadata(fw.presignedUrlResponse.metadataUrl).pipe(
+          return this.getS3Metadata(fw.presignedUrlResponse!.metadataUrl).pipe(
             map(metadata => ({
               type: 'metadata',
               data: metadata

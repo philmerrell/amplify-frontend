@@ -1,0 +1,37 @@
+
+  <ion-header>
+    <ion-toolbar>
+      <ion-title>Uploaded Files</ion-title>
+    </ion-toolbar>
+  </ion-header>
+  <ion-content class="ion-padding">
+    <ion-segment>
+      <ion-segment-button value="files" content-id="files">
+        <ion-label>Files</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="tags" content-id="tags">
+        <ion-label>Tags</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="docs" content-id="docs">
+        <ion-label>Docs</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="slides" content-id="slides">
+        <ion-label>Slides</ion-label>
+      </ion-segment-button>
+    </ion-segment>
+    <ion-segment-view>
+      <ion-segment-content id="files">
+        <app-uploaded-files-list></app-uploaded-files-list>
+        
+      </ion-segment-content>
+      <ion-segment-content id="tags">Second</ion-segment-content>
+      <ion-segment-content id="docs">Third</ion-segment-content>
+      <ion-segment-content id="slides">Third</ion-segment-content>
+    </ion-segment-view>
+
+  </ion-content>
+  <ion-footer>
+    <ion-toolbar color="light">
+        <ion-button (click)="dismiss()" expand="block" fill="outline">Dismiss</ion-button>
+    </ion-toolbar>
+  </ion-footer>

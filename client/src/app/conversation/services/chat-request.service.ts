@@ -13,7 +13,7 @@ import { FoldersService } from 'src/app/services/folders.service';
 import { ConversationRenameService } from 'src/app/services/conversation-rename.service';
 import { firstValueFrom, Subscription } from 'rxjs';
 import { DataSource } from 'src/app/models/chat-request.model';
-import { Assistant } from 'src/app/models/assistant.model';
+import { FileWrapper } from './file-upload.service';
 
 @Injectable({
   providedIn: 'root'
@@ -24,6 +24,7 @@ export class ChatRequestService {
   private currentConversation: WritableSignal<Conversation> = this.conversationService.getCurrentConversation();
   private currentRequestId = '';
   private dataSources: DataSource[] = [];
+  private files: WritableSignal<FileWrapper[]> = signal([]);
   private responseContent = '';
   private responseSubscription: Subscription = new Subscription();
   // private selectedAssistant: WritableSignal<Assistant> = signal({} as Assistant); 
@@ -38,6 +39,23 @@ export class ChatRequestService {
     private developerSettingsService: DeveloperSettingsService,
     private folderService: FoldersService,
     private modelService: ModelService) {
+  }
+
+  addFile(fw: FileWrapper) {
+    this.files.update(files => {
+      return [
+        ...files,
+        fw
+      ]
+    });
+  }
+
+  removeFile(fileToBeRemoved: FileWrapper) {
+    this.files.update(files => files.filter(file => file.id !== fileToBeRemoved.id))
+  }
+
+  getFiles(): Signal<FileWrapper[]> {
+    return this.files;
   }
 
   
@@ -243,7 +261,7 @@ export class ChatRequestService {
 
     return {
       content,
-      data: [],
+      data: this.getUserMessageData(),
       id: uuidv4(),
       role: 'user',
       type: 'prompt'
@@ -270,29 +288,7 @@ export class ChatRequestService {
 
   
   private getUserMessageData() {
-    return {
-     
-      dataSources: [
-        {
-          id: "s3://philmerrell/2025-01-13/0418329b-07c4-466b-84e2-fdc8f209c77d.json",
-          name: "Amplify_API_Documentation.pdf",
-          type: "application/pdf",
-          metadata: {
-            name: "Amplify_API_Documentation.pdf",
-            totalItems: 14,
-            locationProperties: [
-              "page_number"
-            ],
-            contentKey: "philmerrell/2025-01-13/0418329b-07c4-466b-84e2-fdc8f209c77d.json.content.json",
-            createdAt: "2025-01-13T19:17:19.540504",
-            totalTokens: 4594,
-            tags: [],
-            props: {}
-          }
-        }
-      ]
-      
-    }
+    
     let data = {};
     if (this.dataSources.length > 0) {
       data = {

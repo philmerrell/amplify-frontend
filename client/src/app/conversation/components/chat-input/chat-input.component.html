@@ -2,13 +2,13 @@
   <ion-card appDropZone (fileDropped)="onFileDropped($event)" color="light">
     <input type="file" #fileInput id="fileDropRef" multiple (change)="fileBrowseHandler($event.target)" />
     <ion-card-content>
-      @for(file of files; let i = $index; track i) {
+      @for(file of files(); track file.id) {
         <ion-chip [disabled]="!file.uploaded">
           
           @if(file.uploaded) {
             <ion-icon name="document-outline" color="primary"></ion-icon>
             <ion-label>{{ file.name }}</ion-label>
-            <ion-icon (click)="deleteFile(i)" name="close"></ion-icon>
+            <ion-icon (click)="removeFile(file)" name="close"></ion-icon>
 
           } @else {
             <ion-avatar>
@@ -37,10 +37,10 @@
       </ion-button>
       </ion-textarea>
   
-      <!-- <ion-button shape="round" aria-label="Submit">
+      <ion-button (click)="presentSelectUploadedFileModal()" appTooltip="Select uploaded file" shape="round" aria-label="Submit">
         <ion-icon slot="icon-only" name="copy-outline" aria-hidden="true"></ion-icon>
-      </ion-button> -->
-      <ion-button (click)="fileInput.click()" shape="round" aria-label="Add files">
+      </ion-button>
+      <ion-button (click)="fileInput.click()" appTooltip="Uploaded a file" shape="round" aria-label="Add files">
         <ion-icon slot="icon-only" name="add-outline" aria-hidden="true"></ion-icon>
       </ion-button>
       <!-- <ion-button shape="round" aria-label="Submit">
