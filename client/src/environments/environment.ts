@@ -3,6 +3,7 @@
 // The list of file replacements can be found in `angular.json`.
 
 export const environment = {
+  // apiBaseUrl: 'https://pm5i3z1g3h.execute-api.us-east-1.amazonaws.com/dev',
   apiBaseUrl: 'http://localhost:3015/dev',
   chatEndpoint: 'https://si62aopn4bfch4cyohmfcvrz4y0gsiab.lambda-url.us-east-1.on.aws/',
   production: false

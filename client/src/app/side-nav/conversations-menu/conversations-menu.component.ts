@@ -7,7 +7,7 @@ import { Conversation } from 'src/app/models/conversation.model';
 import { ConversationService } from 'src/app/services/conversation.service';
 import { Folder, FoldersService } from 'src/app/services/folders.service';
 import { ConversationFilterPipe } from './conversation-filter.pipe';
-import { ConversationRenameService } from 'src/app/services/conversation-rename.service';
+import { ConversationRenameService } from 'src/app/conversation/services/conversation-rename.service';
 
 @Component({
   selector: 'app-conversations-menu',
@@ -49,6 +49,7 @@ export class ConversationsMenuComponent  implements OnInit {
   }
 
   setCurrentConversation(conversation: Conversation) {
+    console.log(conversation);
     this.conversationService.setCurrentConversation(conversation);
     this.menu()?.close();
   }

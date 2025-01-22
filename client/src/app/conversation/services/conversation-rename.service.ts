@@ -1,11 +1,12 @@
 import { Injectable, signal, Signal, WritableSignal } from '@angular/core';
 import { SseClient } from 'ngx-sse-client';
+import { Conversation } from 'src/app/models/conversation.model';
+import { Model } from 'src/app/models/model.model';
+import { ConversationService } from 'src/app/services/conversation.service';
+import { ModelService } from 'src/app/services/model.service';
+import { DeveloperSettingsService } from 'src/app/settings/developer/developer-settings.service';
 import { v4 as uuidv4 } from 'uuid';
-import { ModelService } from './model.service';
-import { ConversationService } from './conversation.service';
-import { DeveloperSettingsService } from '../settings/developer/developer-settings.service';
-import { Conversation } from '../models/conversation.model';
-import { Model } from '../models/model.model';
+
 
 @Injectable({
   providedIn: 'root'
@@ -16,7 +17,6 @@ export class ConversationRenameService {
   private currentConversation: WritableSignal<Conversation> = this.conversationService.getCurrentConversation();
   private selectedModel: Signal<Model> = this.modelService.getSelectedModel();
   private conversations: WritableSignal<Conversation[]> = this.conversationService.getConversations();
-
 
   constructor(
     private sseClient: SseClient,

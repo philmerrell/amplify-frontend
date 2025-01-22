@@ -10,10 +10,10 @@ import { ModelService } from 'src/app/services/model.service';
 import { Model } from 'src/app/models/model.model';
 import { DEFAULT_SYSTEM_PROMPT } from 'src/app/services/prompts';
 import { FoldersService } from 'src/app/services/folders.service';
-import { ConversationRenameService } from 'src/app/services/conversation-rename.service';
 import { firstValueFrom, Subscription } from 'rxjs';
 import { DataSource } from 'src/app/models/chat-request.model';
 import { FileWrapper } from './file-upload.service';
+import { ConversationRenameService } from './conversation-rename.service';
 
 @Injectable({
   providedIn: 'root'
@@ -109,7 +109,7 @@ export class ChatRequestService {
     
     this.chatLoading.set(true);
 
-    this.responseSubscription = this.sseClient.stream(chatEndpoint(), { keepAlive: false, responseType: 'event' }, { body: requestObject }, 'POST' )
+    this.responseSubscription = this.sseClient.stream(environment.chatEndpoint, { keepAlive: false, responseType: 'event' }, { body: requestObject }, 'POST' )
       .subscribe((event) => {
         if (event.type === 'error') {
           const errorEvent = event as ErrorEvent;
@@ -211,6 +211,7 @@ export class ChatRequestService {
         }
         this.responseContent = '';
         this.dataSources = [];
+        this.files.set([])
       }
     } catch(error) {
       this.responseContent = '';
