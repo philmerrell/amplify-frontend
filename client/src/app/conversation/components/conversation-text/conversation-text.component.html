@@ -11,15 +11,22 @@
                   <div class="user-message">
                     <div>{{ message.content }}</div>
                   </div>
-      
               </ion-col>
             </ion-row>
           } @else {
             <ion-row class="assistant-response-row">
               <ion-col size="12">
                 <div class="assistant-message">
-                  @if(loading() && message.content === '') {
+                  @if(loading()) {
                     <ion-spinner name="circular"></ion-spinner>
+                  }
+                  @if(message.data?.state?.sources?.documentContext?.sources?.length) {
+                    <b>Included documents:</b><br>
+                    @for(file of message.data.state.sources.documentContext.sources; let i = $index; track i) {
+                      <ion-chip><ion-icon [name]="file.type | fileTypeIcon"></ion-icon>
+                        <ion-label>{{ file.name }}</ion-label>
+                      </ion-chip>
+                    }
                   }
                   <markdown clipboard [data]="message.content"></markdown>
                 </div>

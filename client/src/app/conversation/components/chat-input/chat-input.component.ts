@@ -1,20 +1,21 @@
 import { Component, OnInit, Signal } from '@angular/core';
 import { IonButton, IonIcon, IonCard, IonCardContent, IonTextarea, IonChip, IonLabel, IonAvatar, IonBadge, ToastController, ModalController } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-import { arrowUpOutline, addOutline, copyOutline, atOutline, stop, pin, close, documentsOutline, documentOutline } from 'ionicons/icons';
+import { arrowUpOutline, addOutline, copyOutline, atOutline, stop, pin, close, documentsOutline, documentOutline, checkmarkOutline, imageOutline, listOutline, readerOutline } from 'ionicons/icons';
 import { ChatRequestService } from '../../services/chat-request.service';
 import { FormsModule } from '@angular/forms';
 import { FileDropZoneDirective } from './file-drop-zone.directive';
 import { FileUploadService, FileWrapper } from '../../services/file-upload.service';
 import { SelectUploadedFileComponent } from '../select-uploaded-file/select-uploaded-file.component';
 import { TooltipDirective } from 'src/app/core/tooltip.directive';
+import { FileTypeIconPipe } from "../select-uploaded-file/pipes/file-type-icon.pipe";
 
 @Component({
   selector: 'app-chat-input',
   templateUrl: './chat-input.component.html',
   styleUrls: ['./chat-input.component.scss'],
   standalone: true,
-  imports: [TooltipDirective, IonBadge, IonAvatar, IonLabel, IonChip, IonButton, IonIcon, IonCard, IonCardContent, IonTextarea, FormsModule, FileDropZoneDirective]
+  imports: [TooltipDirective, IonBadge, IonAvatar, IonLabel, IonChip, IonButton, IonIcon, IonCard, IonCardContent, IonTextarea, FormsModule, FileDropZoneDirective, FileTypeIconPipe]
 })
 export class ChatInputComponent  implements OnInit {
   chatLoading: Signal<boolean> = this.chatRequestService.getChatLoading();
@@ -28,7 +29,7 @@ export class ChatInputComponent  implements OnInit {
     private fileUploadService: FileUploadService,
     private modalController: ModalController,
     private toastController: ToastController) {
-    addIcons({documentOutline,close,stop,arrowUpOutline,copyOutline,addOutline,atOutline,documentsOutline,pin});
+    addIcons({documentOutline,close,stop,arrowUpOutline,copyOutline,addOutline,atOutline,documentsOutline,pin,checkmarkOutline,readerOutline,imageOutline,listOutline});
   }
 
   ngOnInit() {}

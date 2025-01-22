@@ -6,7 +6,7 @@ import { Pipe, PipeTransform } from '@angular/core';
 })
 export class FileTypeIconPipe implements PipeTransform {
 
-  transform(value: string): unknown {
+  transform(value: string | undefined): unknown {
     switch(value) {
       case 'application/vnd.openxmlformats-officedocument.wordprocessingml.document':
         return 'document-outline'
@@ -18,6 +18,8 @@ export class FileTypeIconPipe implements PipeTransform {
         return 'image-outline'
       case 'image/png':
         return 'image-outline'
+      case 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet':
+        return 'list-outline'
       default: 
         return value;
     }

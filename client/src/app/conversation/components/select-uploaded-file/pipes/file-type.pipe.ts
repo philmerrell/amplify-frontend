@@ -18,6 +18,8 @@ export class FileTypePipe implements PipeTransform {
         return 'Image'
       case 'image/png':
         return 'Image'
+      case 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet':
+        return 'Excel'
       default: 
         return value;
     }

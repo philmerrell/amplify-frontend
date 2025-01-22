@@ -7,7 +7,7 @@ import { FileTypePipe } from "../../pipes/file-type.pipe";
 import { FileTypeIconPipe } from "../../pipes/file-type-icon.pipe";
 import { DatePipe } from '@angular/common';
 import { addIcons } from 'ionicons';
-import { checkmarkOutline, documentOutline, imageOutline, readerOutline } from 'ionicons/icons';
+import { checkmarkOutline, documentOutline, imageOutline, listOutline, readerOutline } from 'ionicons/icons';
 
 @Component({
   selector: 'app-uploaded-files-list',
@@ -25,7 +25,7 @@ export class UploadedFilesListComponent  implements OnInit {
     private chatRequestService: ChatRequestService,
     private toastController: ToastController
   ) {
-    addIcons({checkmarkOutline,readerOutline,documentOutline,imageOutline});
+    addIcons({checkmarkOutline,readerOutline,documentOutline,imageOutline,listOutline});
   }
 
   ngOnInit() {
