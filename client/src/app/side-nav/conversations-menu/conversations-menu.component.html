@@ -11,7 +11,7 @@
   <ion-item-divider color="medium" sticky>
     Conversations
   </ion-item-divider>
-  <ion-accordion-group #accordionGroup>
+  <ion-accordion-group #accordionGroup [multiple]="true">
     @for (folder of folders(); track folder.id) {
       <ion-accordion [value]="folder.id">
         <ion-item slot="header" color="light">

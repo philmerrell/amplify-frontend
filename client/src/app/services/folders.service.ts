@@ -2,7 +2,7 @@ import { Injectable, Signal, signal, WritableSignal } from '@angular/core';
 import { v4 as uuidv4 } from 'uuid';
 
 export interface Folder {
-  date: string;
+  date?: string;
   id: string;
   name: string;
   type: string;
@@ -46,7 +46,7 @@ export class FoldersService {
   filterFoldersByType(folders: Folder[], type: string) {
     return folders
       .filter((folder: Folder) => folder.type === type)
-      .sort((a: Folder, b: Folder) => new Date(b.date).getTime() - new Date(a.date).getTime());
+      .sort((a: Folder, b: Folder) => new Date(b.date!).getTime() - new Date(a.date!).getTime());
   }
 
   getFolderId(): string {

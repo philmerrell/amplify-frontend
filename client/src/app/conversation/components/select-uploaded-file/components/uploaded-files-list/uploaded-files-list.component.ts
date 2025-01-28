@@ -73,7 +73,10 @@ export class UploadedFilesListComponent  implements OnInit {
       name: uploadedFile.name,
       id: `s3://${uploadedFile.id}`,
       uploaded: true,
-      progress: 100
+      progress: 100,
+      file: {
+        type: uploadedFile.type
+      } as File
     }
   }
 

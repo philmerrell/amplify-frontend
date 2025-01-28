@@ -4,7 +4,7 @@ import { IonGrid, IonRow, IonCol, IonSpinner, IonContent, IonChip, IonIcon, IonL
 import { MarkdownComponent } from 'ngx-markdown';
 import { FileTypeIconPipe } from "../select-uploaded-file/pipes/file-type-icon.pipe";
 import { addIcons } from 'ionicons';
-import { documentOutline, imageOutline, listOutline, readerOutline } from 'ionicons/icons';
+import { documentOutline, downloadOutline, imageOutline, listOutline, readerOutline } from 'ionicons/icons';
 
 @Component({
   selector: 'app-conversation-text',
@@ -19,7 +19,7 @@ export class ConversationTextComponent  implements OnInit {
   readonly scroller = input<IonContent>();
   
   constructor() {
-    addIcons({readerOutline,documentOutline,imageOutline,listOutline})
+    addIcons({downloadOutline,readerOutline,documentOutline,imageOutline,listOutline});
     effect(() => {
         if (this.conversation()!.messages.length > 3) {
           this.scrollToLatestUserMessage()
@@ -37,6 +37,11 @@ export class ConversationTextComponent  implements OnInit {
         this.scroller()?.scrollByPoint(0, element!.offsetTop, 700)
       }, 300)
     }
+  }
+
+  downloadFile(file: any) {
+    console.log(file.key);
+    // TODO: download file service...
   }
 
   

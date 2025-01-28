@@ -9,12 +9,13 @@ import { ShareMenuComponent } from './side-nav/share-menu/share-menu.component';
 import { WorkspacesMenuComponent } from './side-nav/workspaces-menu/workspaces-menu.component';
 import { ThemeService } from './services/theme.service';
 import { TooltipDirective } from './core/tooltip.directive';
+import { BasePromptsComponent } from "./core/base-prompts/base-prompts.component";
 
 @Component({
   selector: 'app-root',
   templateUrl: 'app.component.html',
   styleUrls: ['app.component.scss'],
-  imports: [IonHeader, IonToolbar, IonIcon, IonSegmentView, IonSegment, IonSegmentButton, IonSegmentContent, IonApp, IonSplitPane, IonMenu, IonContent, IonRouterOutlet, ConversationsMenuComponent, SettingsMenuComponent, SettingsMenuComponent, ShareMenuComponent, WorkspacesMenuComponent, IonImg, TooltipDirective],
+  imports: [IonHeader, IonToolbar, IonIcon, IonSegmentView, IonSegment, IonSegmentButton, IonSegmentContent, IonApp, IonSplitPane, IonMenu, IonContent, IonRouterOutlet, ConversationsMenuComponent, SettingsMenuComponent, SettingsMenuComponent, ShareMenuComponent, WorkspacesMenuComponent, IonImg, TooltipDirective, BasePromptsComponent],
 })
 export class AppComponent implements OnInit {
   logo: Signal<string> = this.themeService.getLogo();

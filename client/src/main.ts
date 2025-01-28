@@ -6,7 +6,7 @@ import { routes } from './app/app.routes';
 import { AppComponent } from './app/app.component';
 import { provideHttpClient, withFetch, withInterceptors } from '@angular/common/http';
 import { addBearerTokenInterceptor } from './app/auth/bearer-token.interceptor';
-import { provideMarkdown } from 'ngx-markdown';
+import { MERMAID_OPTIONS, provideMarkdown } from 'ngx-markdown';
 
 bootstrapApplication(AppComponent, {
   providers: [
@@ -19,6 +19,13 @@ bootstrapApplication(AppComponent, {
     provideHttpClient(
       withInterceptors([addBearerTokenInterceptor])
     ),
-    provideMarkdown()
+    provideMarkdown({
+      mermaidOptions: {
+        provide: MERMAID_OPTIONS,
+        useValue: {
+          darkMode: true
+        },
+      },
+    })
   ],
 });

@@ -27,7 +27,7 @@
     "@capacitor/haptics": "6.0.2",
     "@capacitor/keyboard": "6.0.3",
     "@capacitor/status-bar": "6.0.2",
-    "@ionic/angular": "^8.0.0",
+    "@ionic/angular": "^8.4.2",
     "clipboard": "^2.0.11",
     "ionicons": "^7.0.0",
     "marked": "^15.0.4",
