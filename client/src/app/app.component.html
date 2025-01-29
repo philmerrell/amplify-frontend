@@ -13,15 +13,18 @@
             <ion-segment-button appTooltip="Conversations" aria-label="conversations" value="conversations" content-id="conversations">
               <ion-icon name="chatbox-outline"></ion-icon>
             </ion-segment-button>
+            <ion-segment-button aria-label="Assistants" value="assistants" content-id="assistants">
+              <ion-icon name="body-outline"></ion-icon>
+            </ion-segment-button>
             <ion-segment-button aria-label="shared" value="shared" content-id="shared">
               <ion-icon name="share-social-outline"></ion-icon>
             </ion-segment-button>
             <ion-segment-button aria-label="workspaces" value="workspaces" content-id="workspaces">
               <ion-icon name="briefcase-outline"></ion-icon>
             </ion-segment-button>
-            <ion-segment-button aria-label="settings" value="settings" content-id="settings">
+            <!-- <ion-segment-button aria-label="settings" value="settings" content-id="settings">
               <ion-icon name="settings-outline"></ion-icon>
-            </ion-segment-button>
+            </ion-segment-button> -->
           </ion-segment>
         </ion-toolbar>
       </ion-header>
@@ -30,15 +33,19 @@
           <ion-segment-content id="conversations">
             <app-conversations-menu [menu]="mainMenu"></app-conversations-menu>
           </ion-segment-content>
+          <ion-segment-content id="assistants">
+            <div>Assistants</div>
+            <!-- <app-conversations-menu [menu]="mainMenu"></app-conversations-menu> -->
+          </ion-segment-content>
           <ion-segment-content id="shared">
             <app-share-menu [menu]="mainMenu"></app-share-menu>
           </ion-segment-content>
           <ion-segment-content id="workspaces">
             <app-workspaces-menu [menu]="mainMenu"></app-workspaces-menu>
           </ion-segment-content>
-          <ion-segment-content id="settings">
+          <!-- <ion-segment-content id="settings">
             <app-settings-menu [menu]="mainMenu"></app-settings-menu>
-          </ion-segment-content>
+          </ion-segment-content> -->
         </ion-segment-view>
       </ion-content>
     </ion-menu>

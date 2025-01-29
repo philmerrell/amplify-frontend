@@ -4,13 +4,19 @@
       <ion-menu-button></ion-menu-button>
     </ion-buttons>
     <ion-title>{{ currentConversation().name }}</ion-title>
-    <!-- <ion-buttons slot="end">
-      <ion-menu-button menu="end"></ion-menu-button>
-    </ion-buttons> -->
+    <ion-buttons slot="end">
+      <ion-button id="settings-popover-trigger" fill="clear">Settings</ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true" #scroller>
+  
+  <ion-popover #settingsPopover trigger="settings-popover-trigger" triggerAction="click" translucent="true">
+    <ng-template>
+      <app-settings-menu [popover]="settingsPopover"></app-settings-menu>
+    </ng-template>
+  </ion-popover>
   
   <div class="container">
     <ion-header collapse="condense">
