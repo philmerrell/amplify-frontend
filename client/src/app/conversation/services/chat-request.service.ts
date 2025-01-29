@@ -1,4 +1,4 @@
-import { HttpClient, HttpDownloadProgressEvent, HttpEvent, HttpEventType } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Injectable, Signal, signal, WritableSignal } from '@angular/core';
 import { environment } from 'src/environments/environment';
 import { SseClient } from 'ngx-sse-client';
