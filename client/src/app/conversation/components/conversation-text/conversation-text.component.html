@@ -28,7 +28,7 @@
               <ion-col size="12">
                 <div class="assistant-message">
                   <!-- This displays files that were selected from previously uploaded files and also not listed in the datasources -->
-                  @if(message.data?.state?.sources?.documentContext?.sources?.length && !message.data?.dataSources?.length) {
+                  @if(message.data?.state?.sources?.documentContext?.sources?.length) {
                     <b>Included documents:</b><br>
                     @for(file of message.data.state.sources.documentContext.sources; let i = $index; track i) {
                       <ion-chip (click)="downloadFile(file)">

@@ -15,22 +15,87 @@ import { DataSource } from 'src/app/models/chat-request.model';
 import { FileWrapper } from './file-upload.service';
 import { ConversationRenameService } from './conversation-rename.service';
 
+
+/**
+ * ChatRequestService
+ * 
+ * This Angular service manages sending messages to a Large Language Model (LLM) and 
+ * handles the structuring of conversation state in real-time. It leverages Angular signals 
+ * for reactive data management, supports streaming responses via Server-Sent Events (SSE),
+ * and stores metadata about data sources and files that the user can attach to a request.
+ */
 @Injectable({
   providedIn: 'root'
 })
 export class ChatRequestService {
+  /**
+   * Indicates whether a chat request is currently in progress (true) or not (false).
+   */
   private chatLoading: WritableSignal<boolean> = signal(false);
+
+  /**
+   * List of all conversations from the ConversationService as an Angular signal.
+   */
   private conversations: WritableSignal<Conversation[]> = this.conversationService.getConversations();
+
+  /**
+   * The currently active conversation as an Angular signal.
+   */
   private currentConversation: WritableSignal<Conversation> = this.conversationService.getCurrentConversation();
+
+  /**
+   * A unique identifier for the current chat request. Used to match server responses
+   * or signal the server to kill a specific request mid-stream.
+   */
   private currentRequestId = '';
+
+  /**
+   * A collection of data sources that can be attached to the chat request, 
+   * e.g., references or external context the user wants to include.
+   */
   private dataSources: DataSource[] = [];
+
+  /**
+   * List of files attached to the chat request, wrapped in a custom FileWrapper 
+   * to include additional metadata if needed.
+   */
   private files: WritableSignal<FileWrapper[]> = signal([]);
+
+  /**
+   * Used to accumulate the SSE stream's partial responses into a full response 
+   * before finalizing.
+   */
   private responseContent = '';
+
+  /**
+   * Tracks the subscription to the SSE stream so it can be canceled (unsubscribed) 
+   * if needed (e.g., user clicks "Stop" or "Cancel").
+   */
   private responseSubscription: Subscription = new Subscription();
-  // private selectedAssistant: WritableSignal<Assistant> = signal({} as Assistant); 
+
+  /**
+   * The currently selected model that will handle the chat requests. 
+   * This is exposed as a read-only Angular signal from the ModelService.
+   */
   private selectedModel: Signal<Model> = this.modelService.getSelectedModel();
+
+  /**
+   * The currently selected temperature (creativity parameter) for the model 
+   * requests, also exposed as a read-only Angular signal.
+   */
   private selectedTemperature: Signal<number> = this.modelService.getSelectedTemperature();
 
+  /**
+   * @constructor
+   * 
+   * @param http - Angular's HttpClient for standard HTTP requests.
+   * @param sseClient - A custom SSE client that handles streaming of server-sent events.
+   * @param conversationService - Manages all conversations and the active conversation state.
+   * @param conversationRenameService - Handles renaming of conversations (e.g., after the first user message).
+   * @param developerSettingsService - Provides developer/configuration settings such as the chat endpoint.
+   * @param folderService - Manages folder IDs for new and existing conversations.
+   * @param modelService - Provides which LLM model is currently selected and related configuration.
+   */
   constructor(
     private http: HttpClient,
     private sseClient: SseClient,
@@ -38,9 +103,14 @@ export class ChatRequestService {
     private conversationRenameService: ConversationRenameService,
     private developerSettingsService: DeveloperSettingsService,
     private folderService: FoldersService,
-    private modelService: ModelService) {
+    private modelService: ModelService
+  ) {
   }
 
+  /**
+   * Add a file to the internal file list. 
+   * This function updates the signal to include the new file.
+   */
   addFile(fw: FileWrapper) {
     this.files.update(files => {
       return [
@@ -50,83 +120,91 @@ export class ChatRequestService {
     });
   }
 
+  /**
+   * Remove a file from the internal file list by matching its ID. 
+   * This function updates the signal to exclude the removed file.
+   */
   removeFile(fileToBeRemoved: FileWrapper) {
     this.files.update(files => files.filter(file => file.id !== fileToBeRemoved.id))
   }
 
+  /**
+   * Returns the current list of file attachments as a read-only Signal. 
+   * Useful for binding in templates or read-only operations.
+   */
   getFiles(): Signal<FileWrapper[]> {
     return this.files;
   }
-
   
+  /**
+   * Add a new data source object to the request. Data sources can be domain-specific 
+   * references or additional context for the LLM.
+   */
   addDataSource(dataSource: DataSource) {
     this.dataSources.push(dataSource);
   }
 
+  /**
+   * Returns whether a chat is currently in progress or not as a read-only Signal.
+   */
   getChatLoading(): Signal<boolean> {
     return this.chatLoading;
   }
-
-  // debugSSEMessages(message: string) {
-  //   const requestObject = this.createRequestObject(message);
-  //   this.http
-  //     .post(environment.chatEndpoint, requestObject, {
-  //       observe: 'events',
-  //       responseType: 'text',
-  //       reportProgress: true,
-  //     })
-  //     .subscribe({
-  //       next: (event: HttpEvent<string>) => {
-  //         if (event.type === HttpEventType.Sent) {
-  //           console.log('Sent: ', event);
-  //         }
-  //         if (event.type === HttpEventType.ResponseHeader) {
-  //           console.log('Response Header: ', event);
-  //         }
-  //         if (event.type === HttpEventType.User) {
-  //           console.log('User: ', event);
-  //         }
-  //         if (event.type === HttpEventType.DownloadProgress) {
-  //           const text = (
-  //             event as HttpDownloadProgressEvent
-  //           ).partialText + '…';
-  //           console.log(text);
-  //         } else if (event.type === HttpEventType.Response) {
-  //           console.log(event)
-  //         }
-  //       },
-  //       error: () => {
-          
-  //       },
-  //     });
-  // }
   
+  /**
+   * Submits the user input as a new message to the LLM. 
+   * 
+   * Steps:
+   * 1. Add the user's input to the current conversation state.
+   * 2. Create a request object that includes model, temperature, data sources, etc.
+   * 3. Initiate an SSE connection to the server endpoint.
+   * 4. Listen for streaming responses (partial or final) and handle them via parseMessageEvent().
+   */
   async submitChatRequest(userInput: string) {
+    // First, update conversation with the user's text.
     this.updateCurrentConversationWithUserInput(userInput);
+
+    // Build the request payload for the chat endpoint.
     const requestObject = this.createRequestObject(userInput);
-    // Refactor after POC
+
+    // The actual endpoint for SSE streaming from developer settings.
     const chatEndpoint = this.developerSettingsService.getDeveloperChatEndpoint();
     
     this.chatLoading.set(true);
 
-    this.responseSubscription = this.sseClient.stream(environment.chatEndpoint, { keepAlive: false, responseType: 'event' }, { body: requestObject }, 'POST' )
-      .subscribe((event) => {
-        if (event.type === 'error') {
-          const errorEvent = event as ErrorEvent;
-          // this.cancelChatRequest();
-        } else {
-          const message = event as MessageEvent;
-          this.parseMessageEvent(message)
-        }
-      });
+    // Start streaming the response from our environment's chat endpoint using SSE.
+    this.responseSubscription = this.sseClient.stream(
+      environment.chatEndpoint, 
+      { keepAlive: false, responseType: 'event' }, 
+      { body: requestObject }, 
+      'POST'
+    ).subscribe((event) => {
+      if (event.type === 'error') {
+        // Handle error events. 
+        const errorEvent = event as ErrorEvent;
+        // Possibly call cancelChatRequest() or handle error UI.
+      } else {
+        // Handle normal message events from SSE.
+        const message = event as MessageEvent;
+        this.parseMessageEvent(message)
+      }
+    });
   }
 
+  /**
+   * Updates the currentConversation with a new user message. 
+   * 
+   * If this is the first message in a brand-new conversation (folderId is empty),
+   * then a folder ID is generated, and the conversation is added to the main list.
+   * Otherwise, it simply updates the existing conversation messages.
+   */
   updateCurrentConversationWithUserInput(userInput: string) {
     const userMessage = this.initUserMessage(userInput);
 
-    // If folderId is an empty string, then it is a new conversation
+    // Check if it's a new conversation (folderId is empty).
     if (this.currentConversation().folderId === '') {
 
+      // Create a new folderId for this conversation.
       const folderId = this.folderService.getFolderId();
       this.currentConversation.update((c: Conversation) => {
         return {
@@ -136,11 +214,11 @@ export class ChatRequestService {
         }
       });
 
+      // Add the new conversation to the list of all conversations.
       this.conversations.update((conversations) => [...conversations, this.currentConversation()]);
 
     } else {
-      // This is an existing conversation. Update the currentConversation and update convesations array.
-
+      // This is an existing conversation. Just append the user message.
       this.currentConversation.update((c: Conversation) => {
         return {
           ...c,
@@ -148,32 +226,56 @@ export class ChatRequestService {
         }
       });
 
+      // Also update the master list of conversations in place.
       this.conversations.update((c: Conversation[]) => {
         return c.map(conversation => 
-          conversation.id === this.currentConversation().id ? { ...conversation, messages: [...conversation.messages, userMessage] } : conversation
+          conversation.id === this.currentConversation().id 
+            ? { ...conversation, messages: [...conversation.messages, userMessage] } 
+            : conversation
         )
       })
     }
-    
   }
 
+  /**
+   * Cancels the current SSE-based chat request by unsubscribing from the stream 
+   * and signaling the server to kill the request using the current request ID.
+   * 
+   * Returns a Promise that resolves when the POST request is completed.
+   */
   cancelChatRequest() {
+    // Unsubscribe from SSE events so no more data is received.
     this.responseSubscription.unsubscribe();
     this.chatLoading.set(false);
-    // TODO: Refactor after POC
+
+    // Notify the server to kill the current request (kill switch).
     const chatEndpoint = this.developerSettingsService.getDeveloperChatEndpoint();
-    const request = this.http.post(chatEndpoint(), { killSwitch: { requestId: this.currentRequestId, value: true}});
+    const request = this.http.post(chatEndpoint(), { 
+      killSwitch: { 
+        requestId: this.currentRequestId, 
+        value: true
+      }
+    });
 
     return firstValueFrom(request);
   }
 
+  /**
+   * Internal helper that returns a system Message object intended to hold LLM responses.
+   * If the last message in the conversation is NOT system role, it creates a new system
+   * message and appends it to the conversation. Otherwise, it returns the last existing system message.
+   *
+   * @param conversation - The conversation to check for the last message's role.
+   * @returns A system message object (either newly created or the last one in conversation).
+   */
   private getSystemMessageForChatResponse(conversation: Conversation): Message {
-
     const lastMessage = conversation.messages[conversation.messages.length - 1];
     let systemMessage: Message;
 
     if (lastMessage.role !== 'system') {
       systemMessage = this.initSystemMessage();
+
+      // Append this new system message to the conversation.
       this.currentConversation.update((c: Conversation) => {
         return {
           ...c,
@@ -183,10 +285,15 @@ export class ChatRequestService {
     } else {
       systemMessage = lastMessage
     }
-
     return systemMessage;
   }
 
+  /**
+   * Called whenever a new SSE message event arrives. It handles partial response 
+   * concatenation and conversation updates, and signals when the response has ended.
+   * 
+   * @param messageEvent - The MessageEvent object containing streamed text or metadata.
+   */
   private parseMessageEvent(messageEvent: MessageEvent) {
     const conversation = this.currentConversation();
     const systemMessage = this.getSystemMessageForChatResponse(conversation);    
@@ -194,72 +301,107 @@ export class ChatRequestService {
 
     try {
       const message = JSON.parse(messageEvent.data);
+
       if (message.s === 'meta') {
-        // TODO: Handle meta data from response...
+        // Metadata returned by the server. You can handle it here as needed.
         console.log(message);
       }
-      // This case contains the response text we want to compile
+
+      // When s=0 and d is a string, it's partial or complete LLM-generated text to append.
       if (message.s === 0 && typeof message.d === 'string') {
         this.responseContent = this.responseContent += message.d;
-        systemMessage.content = this.responseContent;
+        // Instead of just mutating systemMessage, reassign it in a signal update
+        this.currentConversation.update((c: Conversation) => {
+          // Find the current system message in the conversation
+          const updatedMessages = c.messages.map(msg => {
+            if (msg.id === systemMessage.id) {
+              // Return a new object with updated content
+              return { ...msg, content: this.responseContent };
+            }
+            return msg;
+          });
+          
+          return {
+            ...c,
+            messages: updatedMessages
+          };
+        });
       }
-      // We are done
+
+      // When s=0 and message.type='end', the server signals the completion of the response.
       if (message.s === 0 && message.type === 'end') {
         this.chatLoading.set(false);
+
+        // If the conversation name is still default, rename it based on first user message.
         if (conversation.name === 'New Conversation') {
           this.conversationRenameService.renameConversation(userMessage.content);
         }
+
+        // Reset buffers and data for the next request.
         this.responseContent = '';
         this.dataSources = [];
-        this.files.set([])
+        this.files.set([]);
+        this.currentConversation.set(conversation);
+        this.conversations.update(conversations => 
+          conversations.map(c => c.id === conversation.id ? conversation : c)
+        );
       }
     } catch(error) {
+      // If an error occurs, reset the response content. 
+      // The SSE might have malformed JSON or a server glitch.
       this.responseContent = '';
-      // console.error(`Error in JSON.parse: ${error}`)
+      // console.error(`Error in JSON.parse: ${error}`);
     }
   }
 
+  /**
+   * Generates the request payload for sending a message to the LLM. 
+   * It includes conversation messages, model, temperature, and a unique request ID.
+   * 
+   * @param userInput - The user's prompt/message text.
+   * @returns A structured object that can be sent to the SSE endpoint via POST.
+   */
   private createRequestObject(userInput: string) {
     const model = this.selectedModel();
     const conversation = this.currentConversation();
     this.currentRequestId = uuidv4();
-    // const keysToExclude = ['messages', 'temperature', 'max_tokens', 'stream', 'dataSources'];
-    // const vendorProps = Object.fromEntries(
-    //     Object.entries(chatBody).filter(([key, _]) => !keysToExclude.includes(key))
-    // );
 
     return {
       dataSources: [
         ...this.dataSources
-      ], // TODO: 
-      max_tokens: 1000, // TODO: How is this derived?
+      ],
+      max_tokens: 1000, // Example fixed token limit; could be derived from UI or config.
       messages: [
         {
-            role: 'system',
-            content: DEFAULT_SYSTEM_PROMPT, // TODO: Get user selected prompt
+          role: 'system',
+          content: DEFAULT_SYSTEM_PROMPT, // Default or user-selected system prompt.
         },
         ...conversation.messages
       ],
-      model: model.id, // Can model change in a conversation?
-      options: { // TODO: Better understand what options can be and where derived... 
-          accountId: 'general_account', // TODO: Where/how is this derived?
-          conversationId: conversation.id,
-          model: model,
-          prompt: DEFAULT_SYSTEM_PROMPT, // TODO: getSelectedPrompt
-          rateLimit: { // Where/how is this derived?
-            period: 'Unlimited',
-            rate: null
-          },
-          requestId: this.currentRequestId,
-          
+      model: model.id, // Model ID to be used, e.g. "gpt-3.5-turbo".
+      options: {
+        accountId: 'general_account', // Example placeholder. Adjust to your use case.
+        conversationId: conversation.id,
+        model: model,
+        prompt: DEFAULT_SYSTEM_PROMPT, // The system prompt again (if needed).
+        rateLimit: {
+          period: 'Unlimited',
+          rate: null
+        },
+        requestId: this.currentRequestId,
       },
       stream: true,
       temperature: this.selectedTemperature(),
     }
   }
 
+  /**
+   * Initializes a Message object with the user's prompt.
+   * 
+   * @param content - The text input from the user.
+   * @returns A new Message object representing the user's prompt.
+   */
   private initUserMessage(content: string = ''): Message {
-
     return {
       content,
       data: this.getUserMessageData(),
@@ -269,6 +411,9 @@ export class ChatRequestService {
     }
   }
 
+  /**
+   * Initializes a Message object for system role, typically used to hold LLM responses.
+   */
   private initSystemMessage(): Message {
     return {
       content: '',
@@ -278,6 +423,10 @@ export class ChatRequestService {
     }
   }
 
+  /**
+   * (Not currently used) Initializes a Message object for an assistant role. 
+   * Could be useful if you separate "system" messages from "assistant" messages.
+   */
   private initAssistantMessage(): Message {
     return {
       content: '',
@@ -287,9 +436,11 @@ export class ChatRequestService {
     }
   }
 
-  
+  /**
+   * Gathers any additional data (e.g., attached data sources) to be associated 
+   * with a user message. If there are no data sources, returns an empty object.
+   */
   private getUserMessageData() {
-    
     let data = {};
     if (this.dataSources.length > 0) {
       data = {
@@ -298,5 +449,4 @@ export class ChatRequestService {
     }
     return data
   }
-
 }
