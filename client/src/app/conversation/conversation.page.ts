@@ -13,6 +13,7 @@ import { ConversationTextComponent } from './components/conversation-text/conver
 import { DeveloperSettingsService } from '../settings/developer/developer-settings.service';
 import { Router } from '@angular/router';
 import { SettingsMenuComponent } from '../side-nav/settings-menu/settings-menu.component';
+import { fadeInOut } from '../core/animations/fadeInOut';
 
 @Component({
   selector: 'app-conversation',

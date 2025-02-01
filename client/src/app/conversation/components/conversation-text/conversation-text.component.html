@@ -4,15 +4,37 @@
 @if(conversation()?.messages!.length > 0) {
   <div class="ion-padding">
       <ion-grid>
-        @for(message of conversation()?.messages; track message.id) {
+        @for(message of conversation()?.messages; track message.id; let count = $count;) {
           @if(message.role === 'user') {
-            <ion-row [id]="message.id">
-              <ion-col offset="3" size="9" style="text-align: right;">
+            <ion-row [id]="message.id" [@fadeInOut]>
+              <ion-col size="3">
+                <!-- @if(loading()) {
+                    <ion-spinner name="circular"></ion-spinner>
+                  } -->
+              </ion-col>
+              <ion-col size="9" style="text-align: right;">
                   <div class="user-message">
                     <div>{{ message.content }}</div>
                   </div>
               </ion-col>
             </ion-row>
+
+            <ion-row class="metadata-row">
+              <ion-col>
+                <!-- <ion-spinner name="circular"></ion-spinner> -->
+                @for(metadata of responseMetadata(); let i = $index; track i;) {
+                  @if(metadata?.sticky && metadata.sticky !== undefined) {
+                    <ion-chip [@fadeInOut]>
+                      <ion-avatar>
+                        <div class="pulsating-circle"></div>
+                      </ion-avatar>
+                      <ion-label>{{ metadata.message }}</ion-label>
+                    </ion-chip>
+                  }
+                }
+              </ion-col>
+            </ion-row>
+            
             <!-- This displays files that were just uploaded for the conversation -->
             @if(message.data?.dataSources?.length) {
               <b>Included documents:</b><br>
@@ -26,7 +48,7 @@
           } @else {
             <ion-row class="assistant-response-row">
               <ion-col size="12">
-                <div class="assistant-message">
+                <div class="assistant-message" [@fadeInOut]>
                   <!-- This displays files that were selected from previously uploaded files and also not listed in the datasources -->
                   @if(message.data?.state?.sources?.documentContext?.sources?.length) {
                     <b>Included documents:</b><br>
@@ -37,9 +59,7 @@
                       </ion-chip>
                     }
                   }
-                  @if(loading()) {
-                    <ion-spinner name="circular"></ion-spinner>
-                  }
+                  
                   <markdown clipboard mermaid [data]="message.content"></markdown>
                 </div>
               </ion-col>

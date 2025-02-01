@@ -14,6 +14,7 @@ import { firstValueFrom, Subscription } from 'rxjs';
 import { DataSource } from 'src/app/models/chat-request.model';
 import { FileWrapper } from './file-upload.service';
 import { ConversationRenameService } from './conversation-rename.service';
+import { ResponseMetadataService } from './response-metadata.service';
 
 
 /**
@@ -95,6 +96,7 @@ export class ChatRequestService {
    * @param developerSettingsService - Provides developer/configuration settings such as the chat endpoint.
    * @param folderService - Manages folder IDs for new and existing conversations.
    * @param modelService - Provides which LLM model is currently selected and related configuration.
+   * @param responseMetadataService - Handles metadata responses from the LLM to display to user.
    */
   constructor(
     private http: HttpClient,
@@ -103,7 +105,8 @@ export class ChatRequestService {
     private conversationRenameService: ConversationRenameService,
     private developerSettingsService: DeveloperSettingsService,
     private folderService: FoldersService,
-    private modelService: ModelService
+    private modelService: ModelService,
+    private responseMetadataService: ResponseMetadataService
   ) {
   }
 
@@ -296,40 +299,31 @@ export class ChatRequestService {
    */
   private parseMessageEvent(messageEvent: MessageEvent) {
     const conversation = this.currentConversation();
-    const systemMessage = this.getSystemMessageForChatResponse(conversation);    
     const userMessage = conversation.messages[0];
 
     try {
       const message = JSON.parse(messageEvent.data);
-
+      console.log(message);
       if (message.s === 'meta') {
         // Metadata returned by the server. You can handle it here as needed.
-        console.log(message);
+
+        if (message.st) {
+          this.responseMetadataService.setResponseMetaData(message.st);
+        }
       }
 
       // When s=0 and d is a string, it's partial or complete LLM-generated text to append.
       if (message.s === 0 && typeof message.d === 'string') {
-        this.responseContent = this.responseContent += message.d;
-        // Instead of just mutating systemMessage, reassign it in a signal update
-        this.currentConversation.update((c: Conversation) => {
-          // Find the current system message in the conversation
-          const updatedMessages = c.messages.map(msg => {
-            if (msg.id === systemMessage.id) {
-              // Return a new object with updated content
-              return { ...msg, content: this.responseContent };
-            }
-            return msg;
-          });
-          
-          return {
-            ...c,
-            messages: updatedMessages
-          };
-        });
+        this.updateSystemMessageResponse(message.d, conversation);
       }
 
-      // When s=0 and message.type='end', the server signals the completion of the response.
-      if (message.s === 0 && message.type === 'end') {
+      // This case handles when multiple datasources are attached to the request.
+      if (message.s === 'result') {
+        this.updateSystemMessageResponse(message.d, conversation);
+      }
+
+      // message.type='end', the server signals the completion of the response.
+      if ((message.s === 0 || message.s === 'result') && message.type === 'end') {
         this.chatLoading.set(false);
 
         // If the conversation name is still default, rename it based on first user message.
@@ -341,6 +335,7 @@ export class ChatRequestService {
         this.responseContent = '';
         this.dataSources = [];
         this.files.set([]);
+        this.responseMetadataService.resetResponseMetaData(); 
         this.currentConversation.set(conversation);
         this.conversations.update(conversations => 
           conversations.map(c => c.id === conversation.id ? conversation : c)
@@ -352,6 +347,35 @@ export class ChatRequestService {
       this.responseContent = '';
       // console.error(`Error in JSON.parse: ${error}`);
     }
+  }
+
+  /**
+   * Called whenever the LLM provides a response intended for the user. It is called frequently 
+   * and concatenates partial responses for immediate display for the user.
+   * 
+   * @param systemResponse - The string to be added to the conversations system response.
+   * @param conversation - The conversation the system response is a part of.
+   */
+  private updateSystemMessageResponse(systemResponse: string, conversation: Conversation) {
+    this.responseContent = this.responseContent += systemResponse;
+    const systemMessage = this.getSystemMessageForChatResponse(conversation);    
+
+    // Instead of just mutating systemMessage, reassign it in a signal update
+    this.currentConversation.update((c: Conversation) => {
+      // Find the current system message in the conversation
+      const updatedMessages = c.messages.map(msg => {
+        if (msg.id === systemMessage.id) {
+          // Return a new object with updated content
+          return { ...msg, content: this.responseContent };
+        }
+        return msg;
+      });
+      
+      return {
+        ...c,
+        messages: updatedMessages
+      };
+    });
   }
 
   /**

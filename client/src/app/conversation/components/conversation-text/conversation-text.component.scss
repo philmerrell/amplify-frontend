@@ -22,3 +22,9 @@
 .assistant-response-row:last-of-type {
     min-height: calc(100vh - 320px);
 }
+
+.metadata-row {
+    min-height: 30px;
+    padding: 0;
+    margin: 0;
+}
