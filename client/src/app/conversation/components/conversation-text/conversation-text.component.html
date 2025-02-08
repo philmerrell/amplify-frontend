@@ -6,7 +6,7 @@
       <ion-grid>
         @for(message of conversation()?.messages; track message.id; let count = $count;) {
           @if(message.role === 'user') {
-            <ion-row [id]="message.id" [@fadeInOut]>
+            <ion-row [id]="message.id" [@slide]>
               <ion-col size="3">
                 <!-- @if(loading()) {
                     <ion-spinner name="circular"></ion-spinner>
@@ -21,7 +21,6 @@
 
             <ion-row class="metadata-row">
               <ion-col>
-                <!-- <ion-spinner name="circular"></ion-spinner> -->
                 @for(metadata of responseMetadata(); let i = $index; track i;) {
                   @if(metadata?.sticky && metadata.sticky !== undefined) {
                     <ion-chip [@fadeInOut]>

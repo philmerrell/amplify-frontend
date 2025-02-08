@@ -8,13 +8,13 @@ import { addIcons } from 'ionicons';
 import { documentTextOutline } from 'ionicons/icons';
 
 @Component({
-  selector: 'app-base-prompts',
-  templateUrl: './base-prompts.component.html',
-  styleUrls: ['./base-prompts.component.scss'],
+  selector: 'app-custom-instructions',
+  templateUrl: './custom-instructions.component.html',
+  styleUrls: ['./custom-instructions.component.scss'],
   standalone: true,
   imports: [IonIcon, IonAccordion, IonAccordionGroup, IonItemDivider, IonLabel, IonItem, PromptFilterPipe]
 })
-export class BasePromptsComponent  implements OnInit {
+export class CustomInstructionsComponent  implements OnInit {
   folders: Folder[] = [];
   basePrompts: Prompt[] = [];
 
@@ -26,6 +26,10 @@ export class BasePromptsComponent  implements OnInit {
     this.folders = this.basePromptService.getBasePromptFolders();
     this.basePrompts = this.basePromptService.getBasePrompts();
     console.log(this.basePrompts);
+  }
+
+  selectPromptTemplate(template: Prompt) {
+    console.log(template);
   }
 
 }

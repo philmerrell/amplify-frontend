@@ -164,6 +164,7 @@ export class ChatRequestService {
    * 4. Listen for streaming responses (partial or final) and handle them via parseMessageEvent().
    */
   async submitChatRequest(userInput: string) {
+    this.setResponseMetadata();
     // First, update conversation with the user's text.
     this.updateCurrentConversationWithUserInput(userInput);
 
@@ -433,6 +434,17 @@ export class ChatRequestService {
       role: 'user',
       type: 'prompt'
     }
+  }
+
+  private setResponseMetadata() {
+    this.responseMetadataService.setResponseMetaData({
+      id: uuidv4(),
+      inProgress: true,
+      message: 'Your request is being sent',
+      summary: '',
+      type: '',
+      sticky: true
+    })
   }
 
   /**

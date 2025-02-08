@@ -3,7 +3,7 @@ import { trigger, state, style, animate, transition, animation } from '@angular/
 export const slide = trigger('slide', [
   // Initial state
   state('void', style({
-    transform: 'translateX(-100%)'
+    transform: 'translateX(-10%)'
   })),
   
   // End state
@@ -17,9 +17,9 @@ export const slide = trigger('slide', [
   ]),
   
   // Leave animation
-  transition(':leave', [
-    animate('300ms ease-in', style({
-      transform: 'translateX(100%)'
-    }))
-  ])
+//   transition(':leave', [
+//     animate('300ms ease-in', style({
+//       transform: 'translateX(10%)'
+//     }))
+//   ])
 ]);

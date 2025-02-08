@@ -1,17 +1,17 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
-import { BasePromptsComponent } from './base-prompts.component';
+import { AssistantsMenuComponent } from './assistants-menu.component';
 
-describe('BasePromptsComponent', () => {
-  let component: BasePromptsComponent;
-  let fixture: ComponentFixture<BasePromptsComponent>;
+describe('AssistantsMenuComponent', () => {
+  let component: AssistantsMenuComponent;
+  let fixture: ComponentFixture<AssistantsMenuComponent>;
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      imports: [BasePromptsComponent],
+      imports: [AssistantsMenuComponent],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(BasePromptsComponent);
+    fixture = TestBed.createComponent(AssistantsMenuComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   }));

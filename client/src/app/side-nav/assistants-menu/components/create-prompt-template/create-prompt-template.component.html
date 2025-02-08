@@ -1,0 +1,47 @@
+<ion-header>
+  <ion-toolbar>
+      <ion-title>Prompt Template</ion-title>
+      <ion-buttons slot="end">
+        <ion-button (click)="dismiss()">Dismiss</ion-button>
+      </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+<ion-content>
+  <div class="ion-padding">
+    <form [formGroup]="form" (ngSubmit)="handleSubmit()">
+        <ion-input
+          label="Name"
+          labelPlacement="floating"
+          placeholder="Enter a name"
+          formControlName="name"
+          helperText="Enter a valid email"
+          errorText="Name is required"
+          ></ion-input>
+        <ion-textarea
+          label="Description"
+          placeholder="Describe your prompt"
+          labelPlacement="floating"
+          formControlName="description"
+          ></ion-textarea>
+        <ion-textarea
+          label="Prompt"
+          rows="5"
+          labelPlacement="floating"
+          [placeholder]="'Prompt content. Use {{ }} to denote a variable. Ex: {{name}} is a {{adjective}} {{noun}}'"
+          formControlName="prompt"
+          errorText="A prompt is required"
+          ></ion-textarea>
+        <ion-input
+          label="Tags"
+          labelPlacement="floating"
+          placeholder="Separate tags with commas"
+          formControlName="tags"
+          ></ion-input>
+        </form>
+      </div>
+</ion-content>
+<ion-footer>
+  <ion-toolbar color="light">
+    <ion-button expand="block">Save</ion-button>
+  </ion-toolbar>
+</ion-footer>

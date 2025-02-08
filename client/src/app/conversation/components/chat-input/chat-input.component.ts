@@ -140,7 +140,6 @@ export class ChatInputComponent  implements OnInit {
   private submitChatRequest() {
     const message = this.message.trim();
     if (message !== '') {
-      // this.chatRequestService.debugSSEMessages(message);
       this.chatRequestService.submitChatRequest(this.message);
     }
     this.message = ''
