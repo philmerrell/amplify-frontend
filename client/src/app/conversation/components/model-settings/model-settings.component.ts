@@ -1,5 +1,5 @@
 import { Component, OnInit, Signal } from '@angular/core';
-import { IonButton, IonTitle, IonHeader, IonToolbar, IonContent, IonItem, IonSelect, IonSelectOption, IonLabel, IonRange, IonCard, ModalController, IonGrid, IonRow, IonCol } from '@ionic/angular/standalone';
+import { IonButton, IonTitle, IonHeader, IonToolbar, IonContent, IonItem, IonSelect, IonSelectOption, IonLabel, IonRange, IonCard, ModalController, IonGrid, IonRow, IonCol, IonAccordionGroup, IonAccordion } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { Model } from 'src/app/models/model.model';
 import { ModelService } from 'src/app/services/model.service';
@@ -9,7 +9,7 @@ import { ModelService } from 'src/app/services/model.service';
   templateUrl: './model-settings.component.html',
   styleUrls: ['./model-settings.component.scss'],
   standalone: true,
-  imports: [IonCol, IonRow, IonGrid, IonButton, IonTitle, IonHeader, IonToolbar, IonContent, IonCard, IonItem, IonSelect, IonSelectOption, IonLabel, IonRange]
+  imports: [IonAccordion, IonAccordionGroup, IonCol, IonRow, IonGrid, IonButton, IonTitle, IonHeader, IonToolbar, IonContent, IonCard, IonItem, IonSelect, IonSelectOption, IonLabel, IonRange]
 })
 export class ModelSettingsComponent  implements OnInit {
   modelPopoverOptions = {
