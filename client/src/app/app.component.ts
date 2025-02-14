@@ -1,5 +1,6 @@
 
-import { Component, OnInit, Signal } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { AsyncPipe, NgIf } from '@angular/common';
 import { IonHeader, IonToolbar, IonIcon, IonSegmentView, IonSegment, IonSegmentButton, IonSegmentContent, IonApp, IonSplitPane, IonMenu, IonContent, IonRouterOutlet, IonImg } from '@ionic/angular/standalone';
 import { ConversationsMenuComponent } from './side-nav/conversations-menu/conversations-menu.component';
 import { addIcons } from 'ionicons';
@@ -9,15 +10,16 @@ import { WorkspacesMenuComponent } from './side-nav/workspaces-menu/workspaces-m
 import { ThemeService } from './services/theme.service';
 import { TooltipDirective } from './core/tooltip.directive';
 import { AssistantsMenuComponent } from './side-nav/assistants-menu/assistants-menu.component';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-root',
   templateUrl: 'app.component.html',
   styleUrls: ['app.component.scss'],
-  imports: [IonHeader, IonToolbar, IonIcon, IonSegmentView, IonSegment, IonSegmentButton, IonSegmentContent, IonApp, IonSplitPane, IonMenu, IonContent, IonRouterOutlet, ConversationsMenuComponent, ShareMenuComponent, WorkspacesMenuComponent, IonImg, TooltipDirective, AssistantsMenuComponent],
+  imports: [NgIf, AsyncPipe, IonHeader, IonToolbar, IonIcon, IonSegmentView, IonSegment, IonSegmentButton, IonSegmentContent, IonApp, IonSplitPane, IonMenu, IonContent, IonRouterOutlet, ConversationsMenuComponent, ShareMenuComponent, WorkspacesMenuComponent, TooltipDirective, AssistantsMenuComponent],
 })
 export class AppComponent implements OnInit {
-  logo: Signal<string> = this.themeService.getLogo();
+  logo$: Observable<string> = this.themeService.logo$;
   
   constructor(
     private themeService: ThemeService) {
@@ -25,7 +27,6 @@ export class AppComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.themeService.initTheme();
   }
   
 }

@@ -1,81 +1,99 @@
-import { Injectable, signal, Signal, WritableSignal } from '@angular/core';
+import { Injectable, OnInit } from '@angular/core';
+import { BehaviorSubject } from 'rxjs';
 
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
-export class ThemeService {
-  theme: WritableSignal<string> = signal('system');
-  logo: WritableSignal<string> = signal('dark');
-  paletteToggle: boolean = false;
+export class ThemeService{
+  private prefDark = window.matchMedia('(prefers-color-scheme: dark)');
+  private _logoSubject = new BehaviorSubject<string>('logo-light.png');
+  private _logo$ = this._logoSubject.asObservable();
+  private _theme = new BehaviorSubject<ColorMode>(ColorMode.AUTO);
+  private _theme$ = this._theme.asObservable();
 
-
-  constructor() { }
-
-  initTheme() {
-    const theme = localStorage.getItem('theme') || 'system';
-    this.theme.set(theme);
-    this.switchTheme(theme);
+  get logo$() {
+    return this._logo$;
   }
 
-  switchTheme(preference: string) {
-    switch(preference) {
-      case 'dark':
-        this.initializeDarkPalette(true);
-        break;
-      case 'light':
-        this.initializeDarkPalette(false);
-        break;
-      case 'system':
-        this.enableSystemPreference();
-        break;
-      default:
-        this.enableSystemPreference();
+  get theme$() {
+    return this._theme$;
+  }
+
+  constructor() {
+    this.prefDark.addEventListener('change', this.handleMediaListenerChange);
+    let savedMode : ColorMode = localStorage.getItem('theme') as ColorMode;
+    if(savedMode) {
+      this._logoSubject.next(savedMode);
+      this._theme.next(savedMode);
+      this.changeTheme(savedMode);
+    } else {
+      localStorage.setItem('theme', ColorMode.AUTO);
+      this._logoSubject.next(ColorMode.AUTO);
     }
   }
 
-  setTheme(preference: string) {
-    localStorage.setItem('theme', preference);
-    this.theme.set(preference);
-    this.initTheme();
+  public changeTheme(colorTheme: string) {
+    switch (colorTheme) {
+      case ColorMode.AUTO: {
+        this._logoSubject.next(ColorMode.AUTO);
+        this._theme.next(ColorMode.AUTO);
+        localStorage.setItem('theme', ColorMode.AUTO);
+        this.prefDark.addEventListener('change', this.handleMediaListenerChange);
+        if (this.prefDark.matches) {
+          this.applyDarkMode();
+        } else {
+          this.applyLightMode();
+        }
+        break;
+      }
+      case ColorMode.DARK: {
+        this._logoSubject.next(ColorMode.DARK);
+        this._theme.next(ColorMode.DARK);
+        localStorage.setItem('theme', ColorMode.DARK);
+        this.removeMediaListener();
+        this.applyDarkMode();
+        break;
+      }
+      case ColorMode.LIGHT: {
+        this._logoSubject.next(ColorMode.LIGHT);
+        this._theme.next(ColorMode.LIGHT)
+        localStorage.setItem('theme', ColorMode.LIGHT);
+        this.removeMediaListener();
+        this.applyLightMode();
+        break;
+      }
+      default: {
+        break;
+      }
+    }
   }
 
-  getTheme(): Signal<string> {
-    return this.theme
+  private removeMediaListener() {
+    this.prefDark.removeEventListener('change', this.handleMediaListenerChange);
   }
 
-  getLogo(): Signal<string> {
-    return this.logo;
-  }
+  private handleMediaListenerChange = (event: MediaQueryListEvent) => {
+    if (event.matches) {
+      this.applyDarkMode();
+    } else {
+      this.applyLightMode();
+    }
+  };
 
-  enableSystemPreference() {
-     // Use matchMedia to check the user preference
-     const prefersDark = window.matchMedia('(prefers-color-scheme: dark)');
-  
-     // Initialize the dark palette based on the initial
-     // value of the prefers-color-scheme media query
-     this.initializeDarkPalette(prefersDark.matches);
- 
-     // Listen for changes to the prefers-color-scheme media query
-     prefersDark.addEventListener('change', (mediaQuery) => this.initializeDarkPalette(mediaQuery.matches));
+  private applyLightMode = () => {
+    document.body.setAttribute('color-theme', 'Light');
+    this._logoSubject.next('logo-light.png');
+  };
 
-  }
+  private applyDarkMode = () => {
+    document.body.setAttribute('color-theme', 'Dark');
+    this._logoSubject.next('logo-dark.png');
+  };
+}
 
-  // Check/uncheck the toggle and update the palette based on isDark
-  initializeDarkPalette(isDark: boolean) {
-    console.log(isDark);
-    this.paletteToggle = isDark;
-    this.logo.set(isDark ? 'dark' : 'light');
-    this.toggleDarkPalette(isDark);
-  }
-
-  // Listen for the toggle check/uncheck to toggle the dark palette
-  toggleChange(event: CustomEvent) {
-    this.toggleDarkPalette(event.detail.checked);
-  }
-
-  // Add or remove the "ion-palette-dark" class on the html element
-  toggleDarkPalette(shouldAdd: boolean) {
-    document.documentElement.classList.toggle('ion-palette-dark', shouldAdd);
-  }
+export enum ColorMode {
+  AUTO = 'Auto',
+  DARK = 'Dark',
+  LIGHT = 'Light',
 }

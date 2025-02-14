@@ -2,12 +2,9 @@
   <ion-split-pane contentId="main-content">
     <ion-menu #mainMenu contentId="main-content" type="overlay" [swipeGesture]="false" menuId="main">
       <ion-header style="background: var(--ion-color-light)">
-        @if (logo() === 'light') {
-          <ion-img src="/assets/logo-light.png"></ion-img>
-        } @else {
-          <ion-img src="/assets/logo-dark.png"></ion-img>
-        }
-
+        <a routerLink="/" *ngIf="logo$ | async as logo">
+          <img [src]="'/assets/' + logo" alt="Home" />
+        </a>
         <ion-toolbar>
           <ion-segment value="conversations">
             <ion-segment-button appTooltip="Conversations" aria-label="conversations" value="conversations" content-id="conversations">

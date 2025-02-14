@@ -15,7 +15,7 @@ import { slide } from 'src/app/core/animations/slide';
   templateUrl: './conversation-text.component.html',
   styleUrls: ['./conversation-text.component.scss'],
   animations: [fadeInOut, slide],
-  imports: [IonBadge, IonAvatar, IonLabel, IonIcon, IonChip, IonSpinner, IonGrid, IonRow, IonCol, MarkdownComponent, FileTypeIconPipe, JsonPipe],
+  imports: [IonAvatar, IonLabel, IonIcon, IonChip, IonGrid, IonRow, IonCol, MarkdownComponent, FileTypeIconPipe],
   standalone: true,
 })
 export class ConversationTextComponent  implements OnInit {
