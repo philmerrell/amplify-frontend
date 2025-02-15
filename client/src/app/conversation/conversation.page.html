@@ -2,8 +2,16 @@
   <ion-toolbar>
     <ion-buttons slot="start">
       <ion-menu-button></ion-menu-button>
+      <ion-button id="open-modal" class="ion-hide-lg-down" size="small">
+        {{ selectedModel().name }}
+        <ion-icon name="chevron-forward-outline" slot="end" size="small"></ion-icon>
+      </ion-button>
     </ion-buttons>
-    <ion-title>{{ currentConversation().name }}</ion-title>
+    <ion-title>
+      <span class="ion-hide-lg-down">
+        {{ currentConversation().name }}
+      </span>
+    </ion-title>
     <ion-buttons slot="end">
       <ion-button id="settings-popover-trigger" fill="clear">Settings</ion-button>
     </ion-buttons>
@@ -26,27 +34,22 @@
     </ion-header>
     
     @if(currentConversation().messages.length === 0) {
-      <app-model-settings></app-model-settings>
+      <!-- <app-model-settings></app-model-settings> -->
     }
     <app-conversation-text [conversation]="currentConversation()" [loading]="chatLoading()" [scroller]="scroller"></app-conversation-text>
     
   </div>
 
-  <ion-modal [isOpen]="isModalOpen">
+  <ion-modal trigger="open-modal">
     <ng-template>
       <ion-header>
         <ion-toolbar>
-          <ion-title>Welcome</ion-title>
-          <ion-buttons slot="end">
-            <ion-button (click)="setOpen(false)">Close</ion-button>
-          </ion-buttons>
+          <ion-title>Model Settings</ion-title>
+          <!-- <ion-button (click)="dismiss()" slot="end" fill="clear">Dismiss</ion-button> -->
         </ion-toolbar>
       </ion-header>
-      <ion-content class="ion-padding">
-        <h1>Amplify Demo</h1>
-        <h3>This is a POC demo of the Amplify GenAI platform</h3>
-        <p>To try out this demo you'll need to add your organizations CHAT_ENDPOINT in addition to a valid JWT.</p>
-        <ion-button (click)="navigateToDeveloperSettings()">Developer Settings</ion-button>
+      <ion-content>
+        <app-model-settings></app-model-settings>
       </ion-content>
     </ng-template>
   </ion-modal>

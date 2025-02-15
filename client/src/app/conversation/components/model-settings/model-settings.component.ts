@@ -2,6 +2,9 @@ import { Component, OnInit, Signal } from '@angular/core';
 import { IonButton, IonTitle, IonHeader, IonToolbar, IonContent, IonItem, IonSelect, IonSelectOption, IonLabel, IonRange, IonCard, ModalController, IonGrid, IonRow, IonCol, IonAccordionGroup, IonAccordion } from '@ionic/angular/standalone';
 import { Model } from 'src/app/models/model.model';
 import { ModelService } from 'src/app/services/model.service';
+import { SelectCustomInstructionsComponent } from './select-custom-instructions/select-custom-instructions.component';
+import { CustomInstructionService } from 'src/app/services/custom-instruction.service';
+import { Prompt } from 'src/app/models/prompt.model';
 
 @Component({
   selector: 'app-model-settings',
@@ -22,8 +25,13 @@ export class ModelSettingsComponent  implements OnInit {
   models: Model[] = [];
   selectedModel: Signal<Model> = this.modelService.getSelectedModel();
   selectedTemperature: Signal<number> = this.modelService.getSelectedTemperature();
+  selectedCustomInstructions: Signal<Prompt> = this.customInstructionService.getSelectedCustomInstruction();
+  customInstructions: Signal<Prompt[]> = this.customInstructionService.getCustomInstructions();
 
-  constructor(private modalController: ModalController, private modelService: ModelService) { }
+  constructor(
+    private customInstructionService: CustomInstructionService,
+    private modalController: ModalController,
+    private modelService: ModelService) { }
 
   ngOnInit() {
     this.getModels();
@@ -33,8 +41,22 @@ export class ModelSettingsComponent  implements OnInit {
     this.modalController.dismiss();
   }
 
+  async presentCustomInstructionsModal() {
+    const modal = await this.modalController.create({
+      component: SelectCustomInstructionsComponent,
+      componentProps: {
+        customInstructions: this.customInstructions
+      }
+    });
+    modal.present();
+  }
+
   getModels() {
     this.models = this.modelService.getModels();
+  }
+
+  getCustomInstructions() {
+    this.customInstructions = this.customInstructionService.getCustomInstructions();
   }
 
   handleModelChange(event: any) {

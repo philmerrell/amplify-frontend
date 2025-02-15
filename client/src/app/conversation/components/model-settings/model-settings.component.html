@@ -1,12 +1,6 @@
-<!-- <ion-header>
-  <ion-toolbar>
-    <ion-title>Model Settings</ion-title>
-    <ion-button (click)="dismiss()" slot="end" fill="clear">Dismiss</ion-button>
-  </ion-toolbar>
-</ion-header>
 
-<ion-content> -->
-  <ion-card color="light">
+  <!-- <ion-card color="light"> -->
+    <!-- <ion-item-divider>Conversation Settings</ion-item-divider> -->
     <ion-item color="light">
       <ion-select
         (ionChange)="handleModelChange($event)"
@@ -21,21 +15,20 @@
         
       </ion-select>
     </ion-item>
-    <ion-item color="light">
-      <ion-select
+    <ion-item (click)="presentCustomInstructionsModal()" color="light" button>
+      <ion-label>
+        <p>Custom Instructions</p>
+        <h2>{{ selectedCustomInstructions().name }}</h2>
+      </ion-label>
+      <!-- <ion-select
         [interfaceOptions]="customInstructionsPopoverOptions"
         value="default"
         interface="popover"
         label="Custom Instructions"
         label-placement="floating">
         <ion-select-option value="default">Default</ion-select-option>
-      </ion-select>
+      </ion-select> -->
     </ion-item>
-    <ion-accordion-group>
-      <ion-accordion value="first">
-        <ion-item slot="header" color="light">
-          <ion-label>Advanced Settings</ion-label>
-        </ion-item>
         <div class="ion-padding" slot="content">
 
           <ion-item lines="none">
@@ -85,10 +78,7 @@
           </ion-grid>
 
         </div>
-      </ion-accordion>
-    </ion-accordion-group>
     
 
     
-  </ion-card>
-<!-- </ion-content> -->
+  <!-- </ion-card> -->

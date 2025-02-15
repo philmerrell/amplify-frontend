@@ -6,7 +6,7 @@
           <ion-label>{{ folder.name }}</ion-label>
         </ion-item>
         <div slot="content">
-          @for(prompt of basePrompts | promptFilter:folder.id; track prompt.id) {
+          @for(prompt of customInstructions() | promptFilter:folder.id; track prompt.id) {
             <ion-item (click)="selectPromptTemplate(prompt)" detail>
               <ion-icon slot="start" name="document-text-outline" color="secondary"></ion-icon>
               <ion-label>

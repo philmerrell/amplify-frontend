@@ -1,5 +1,5 @@
 import { Component, OnInit, Signal } from '@angular/core';
-import { IonContent, IonHeader, IonTitle, IonToolbar, IonFooter, IonButtons, ModalController, IonMenuButton, IonModal, IonButton, IonPopover } from '@ionic/angular/standalone';
+import { IonContent, IonHeader, IonTitle, IonToolbar, IonFooter, IonButtons, ModalController, IonMenuButton, IonModal, IonButton, IonPopover, IonIcon } from '@ionic/angular/standalone';
 import { ChatInputComponent } from './components/chat-input/chat-input.component';
 import { ModelSettingsComponent } from './components/model-settings/model-settings.component';
 import { addIcons } from 'ionicons';
@@ -19,7 +19,7 @@ import { SettingsMenuComponent } from '../side-nav/settings-menu/settings-menu.c
   templateUrl: './conversation.page.html',
   styleUrls: ['./conversation.page.scss'],
   standalone: true,
-  imports: [IonPopover, IonButton, IonModal, 
+  imports: [IonIcon, IonPopover, IonButton, IonModal, 
     ConversationTextComponent,
     SettingsMenuComponent,
     ModelSettingsComponent,

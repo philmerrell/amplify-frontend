@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { BasePromptService } from 'src/app/services/base-prompt.service';
+import { Component, OnInit, Signal } from '@angular/core';
+import { CustomInstructionService } from 'src/app/services/custom-instruction.service';
 import { Folder } from 'src/app/services/folders.service';
 import { IonItem, IonLabel, IonItemDivider, IonAccordionGroup, IonAccordion, IonIcon } from "@ionic/angular/standalone";
 import { Prompt } from 'src/app/models/prompt.model';
@@ -16,16 +16,15 @@ import { documentTextOutline } from 'ionicons/icons';
 })
 export class CustomInstructionsComponent  implements OnInit {
   folders: Folder[] = [];
-  basePrompts: Prompt[] = [];
+  customInstructions: Signal<Prompt[]> = this.customInstructionService.getCustomInstructions();;
 
-  constructor(private basePromptService: BasePromptService) {
+  constructor(private customInstructionService: CustomInstructionService) {
     addIcons({documentTextOutline});
   }
 
   ngOnInit() {
-    this.folders = this.basePromptService.getBasePromptFolders();
-    this.basePrompts = this.basePromptService.getBasePrompts();
-    console.log(this.basePrompts);
+    this.folders = this.customInstructionService.getBasePromptFolders();
+    console.log(this.customInstructions());
   }
 
   selectPromptTemplate(template: Prompt) {
