@@ -9,6 +9,9 @@ import { FileUploadService, FileWrapper } from '../../services/file-upload.servi
 import { SelectUploadedFileComponent } from '../select-uploaded-file/select-uploaded-file.component';
 import { TooltipDirective } from 'src/app/core/tooltip.directive';
 import { FileTypeIconPipe } from "../select-uploaded-file/pipes/file-type-icon.pipe";
+import { CustomInstructionService } from 'src/app/services/custom-instruction.service';
+import { Prompt } from 'src/app/models/prompt.model';
+import { SelectCustomInstructionsComponent } from '../model-settings/select-custom-instructions/select-custom-instructions.component';
 
 @Component({
   selector: 'app-chat-input',
@@ -19,12 +22,14 @@ import { FileTypeIconPipe } from "../select-uploaded-file/pipes/file-type-icon.p
 })
 export class ChatInputComponent  implements OnInit {
   chatLoading: Signal<boolean> = this.chatRequestService.getChatLoading();
+  selectedInstructions: Signal<Prompt> = this.customInstructionService.getSelectedCustomInstruction();
   message: string = '';
   loading: boolean = false;
   error = '';
   files: Signal<FileWrapper[]> = this.chatRequestService.getFiles();
   
   constructor(
+    private customInstructionService: CustomInstructionService,
     private chatRequestService: ChatRequestService,
     private fileUploadService: FileUploadService,
     private modalController: ModalController,
@@ -33,6 +38,10 @@ export class ChatInputComponent  implements OnInit {
   }
 
   ngOnInit() {}
+
+  clearInstructions() {
+    this.customInstructionService.clearInstructions();
+  }
 
   /**
    * on file drop handler
@@ -68,6 +77,13 @@ export class ChatInputComponent  implements OnInit {
     }
   }
 
+  async presentCustomInstructionsModal() {
+      const modal = await this.modalController.create({
+        component: SelectCustomInstructionsComponent
+      });
+      modal.present();
+    }
+  
   private async getPresignedUrlForUpload() {
     for (const file of this.files()) {
       if (!file.uploaded) {

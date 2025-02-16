@@ -1,4 +1,4 @@
-import { Component, input, OnInit } from '@angular/core';
+import { Component, input, OnInit, Signal } from '@angular/core';
 import { IonHeader, IonToolbar, IonContent, IonTitle, IonList, IonItem, IonLabel, IonButtons, IonButton, ModalController, IonItemDivider } from "@ionic/angular/standalone";
 import { Prompt } from 'src/app/models/prompt.model';
 import { CustomInstructionService } from 'src/app/services/custom-instruction.service';
@@ -12,7 +12,8 @@ import { FilterInstructionsPipe } from "./filter.pipe";
   imports: [IonItemDivider, IonButton, IonButtons, IonLabel, IonItem, IonList, IonTitle, IonContent, IonToolbar, IonHeader, FilterInstructionsPipe]
 })
 export class SelectCustomInstructionsComponent  implements OnInit {
-  customInstructions = input<Prompt[]>([]);
+  customInstructions: Signal<Prompt[]> = this.customInstructionService.getCustomInstructions();
+
   constructor(
     private customInstructionService: CustomInstructionService,
     private modalController: ModalController) { }

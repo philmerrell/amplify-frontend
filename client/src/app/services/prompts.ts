@@ -25,7 +25,7 @@ export const DEFAULT_SYSTEM_PROMPT =
         }
       },
       {
-        id: "Default_instructions",
+        id: "default_instructions",
         name: "Default Instructions",
         description: "",
         content: DEFAULT_SYSTEM_PROMPT, 

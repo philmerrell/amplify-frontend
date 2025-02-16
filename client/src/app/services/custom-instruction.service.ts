@@ -7,9 +7,16 @@ import { Prompt } from '../models/prompt.model';
 })
 export class CustomInstructionService {
   private customInstructions: WritableSignal<Prompt[]> = signal(basePrompt.prompts as Prompt[]); //
-  private selectedCustomInstruction: WritableSignal<Prompt> = signal(basePrompt.prompts[0] as Prompt); //
+  private selectedCustomInstruction: WritableSignal<Prompt> = signal(this.getDefaultInstructions() as Prompt); //
   
-  constructor() {}
+  constructor() {
+    this.getDefaultInstructions();
+  }
+
+  clearInstructions() {
+    const instructions = this.getDefaultInstructions();
+    this.selectedCustomInstruction.set(instructions);
+  }
 
   getCustomInstructions(): Signal<Prompt[]> {
     return this.customInstructions;
@@ -29,6 +36,11 @@ export class CustomInstructionService {
 
   getBasePromptFolders() {
     return basePrompt.folders;
+  }
+
+  getDefaultInstructions(): Prompt {
+    const instruction = basePrompt.prompts.find(instruction => instruction.id === 'Default_instructions');
+    return instruction as Prompt;
   }
 
 }

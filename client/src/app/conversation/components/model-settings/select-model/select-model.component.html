@@ -13,7 +13,7 @@
       <ion-icon slot="start" color="secondary" name="settings-outline"></ion-icon>
       Advanced Settings
     </ion-item>
-    
+    <ion-item-divider sticky>Models</ion-item-divider>
     @for(model of models; track model.id) {
       <ion-item (click)="selectModel(model)" button>
         <ion-label>

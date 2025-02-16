@@ -15,6 +15,7 @@ import { DataSource } from 'src/app/models/chat-request.model';
 import { FileWrapper } from './file-upload.service';
 import { ConversationRenameService } from './conversation-rename.service';
 import { ResponseMetadataService } from './response-metadata.service';
+import { CustomInstructionService } from 'src/app/services/custom-instruction.service';
 
 
 /**
@@ -103,6 +104,7 @@ export class ChatRequestService {
     private sseClient: SseClient,
     private conversationService: ConversationService,
     private conversationRenameService: ConversationRenameService,
+    private customInstructionService: CustomInstructionService,
     private developerSettingsService: DeveloperSettingsService,
     private folderService: FoldersService,
     private modelService: ModelService,
@@ -389,6 +391,7 @@ export class ChatRequestService {
   private createRequestObject(userInput: string) {
     const model = this.selectedModel();
     const conversation = this.currentConversation();
+    const selectedInstructions = this.customInstructionService.getSelectedCustomInstruction();
     this.currentRequestId = uuidv4();
 
     return {
@@ -399,7 +402,7 @@ export class ChatRequestService {
       messages: [
         {
           role: 'system',
-          content: DEFAULT_SYSTEM_PROMPT, // Default or user-selected system prompt.
+          content: selectedInstructions().content, // Default or user-selected system prompt.
         },
         ...conversation.messages
       ],
@@ -408,7 +411,7 @@ export class ChatRequestService {
         accountId: 'general_account', // Example placeholder. Adjust to your use case.
         conversationId: conversation.id,
         model: model,
-        prompt: DEFAULT_SYSTEM_PROMPT, // The system prompt again (if needed).
+        prompt: selectedInstructions().content, // The system prompt again (if needed).
         rateLimit: {
           period: 'Unlimited',
           rate: null

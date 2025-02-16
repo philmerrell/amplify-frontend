@@ -1,5 +1,5 @@
 import { Component, Input, OnInit, Signal } from '@angular/core';
-import { IonHeader, IonToolbar, IonTitle, IonContent, ModalController, IonList, IonItem, IonLabel, IonButtons, IonButton, IonIcon, IonNav, IonNavLink } from "@ionic/angular/standalone";
+import { IonHeader, IonToolbar, IonTitle, IonContent, ModalController, IonList, IonItem, IonLabel, IonButtons, IonButton, IonIcon, IonNav, IonNavLink, IonItemDivider } from "@ionic/angular/standalone";
 import { addIcons } from 'ionicons';
 import { checkmarkCircle, cog, settings, settingsOutline } from 'ionicons/icons';
 import { Model } from 'src/app/models/model.model';
@@ -11,7 +11,7 @@ import { AdvancedSettingsComponent } from '../advanced-settings/advanced-setting
   templateUrl: './select-model.component.html',
   styleUrls: ['./select-model.component.scss'],
   standalone: true,
-  imports: [IonIcon, IonButton, IonButtons, IonLabel, IonItem, IonList, IonContent, IonTitle, IonToolbar, IonHeader, ]
+  imports: [IonItemDivider, IonIcon, IonButton, IonButtons, IonLabel, IonItem, IonList, IonContent, IonTitle, IonToolbar, IonHeader, ]
 })
 export class SelectModelComponent  implements OnInit {
   @Input() nav!: IonNav;

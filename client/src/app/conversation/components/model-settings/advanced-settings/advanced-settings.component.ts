@@ -11,7 +11,7 @@ import { SelectCustomInstructionsComponent } from '../select-custom-instructions
   templateUrl: './advanced-settings.component.html',
   styleUrls: ['./advanced-settings.component.scss'],
   standalone: true,
-  imports: [IonButton, IonButtons, IonBackButton, IonContent, IonHeader, IonTitle, IonToolbar, IonItemDivider, IonCol, IonRow, IonGrid, IonItem, IonSelect, IonSelectOption, IonLabel, IonRange]
+  imports: [IonButton, IonButtons, IonBackButton, IonContent, IonHeader, IonTitle, IonToolbar, IonCol, IonRow, IonGrid, IonItem, IonSelect, IonSelectOption, IonLabel, IonRange]
 })
 export class AdvancedSettingsComponent  implements OnInit {
   modelPopoverOptions = {
@@ -26,7 +26,6 @@ export class AdvancedSettingsComponent  implements OnInit {
   selectedModel: Signal<Model> = this.modelService.getSelectedModel();
   selectedTemperature: Signal<number> = this.modelService.getSelectedTemperature();
   selectedCustomInstructions: Signal<Prompt> = this.customInstructionService.getSelectedCustomInstruction();
-  customInstructions: Signal<Prompt[]> = this.customInstructionService.getCustomInstructions();
 
   constructor(
     private customInstructionService: CustomInstructionService,
@@ -43,20 +42,13 @@ export class AdvancedSettingsComponent  implements OnInit {
 
   async presentCustomInstructionsModal() {
     const modal = await this.modalController.create({
-      component: SelectCustomInstructionsComponent,
-      componentProps: {
-        customInstructions: this.customInstructions
-      }
+      component: SelectCustomInstructionsComponent
     });
     modal.present();
   }
 
   getModels() {
     this.models = this.modelService.getModels();
-  }
-
-  getCustomInstructions() {
-    this.customInstructions = this.customInstructionService.getCustomInstructions();
   }
 
   handleModelChange(event: any) {
