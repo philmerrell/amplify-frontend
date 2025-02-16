@@ -178,7 +178,7 @@ export class ChatRequestService {
 
     // Start streaming the response from our environment's chat endpoint using SSE.
     this.responseSubscription = this.sseClient.stream(
-      environment.chatEndpoint, 
+      chatEndpoint(), 
       { keepAlive: false, responseType: 'event' }, 
       { body: requestObject }, 
       'POST'

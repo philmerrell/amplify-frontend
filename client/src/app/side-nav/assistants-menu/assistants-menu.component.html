@@ -1,11 +1,11 @@
-<div class="ion-padding">
-  <ion-button (click)="createNewAssistant()">
-    <ion-icon slot="start" name="add-outline"></ion-icon>
-    Assistant
-  </ion-button>
-  <ion-button (click)="presentCreatePromptTemplateModal()">
-    <ion-icon slot="start" name="add-outline"></ion-icon>
-    Prompt Template
-  </ion-button>
-</div>
+<!-- <ion-button (click)="createNewAssistant()">
+  <ion-icon slot="start" name="add-outline"></ion-icon>
+  Assistant
+</ion-button> -->
+<ion-item (click)="presentCreateCustomInstructionsModal()" color="light" button>
+  <ion-icon slot="start" name="add-outline" color="secondary"></ion-icon>
+  <ion-label>
+    Create Custom Instructions
+  </ion-label>
+</ion-item>
 <app-custom-instructions></app-custom-instructions>

@@ -1,20 +1,20 @@
 <ion-item-divider color="medium">Helpers</ion-item-divider>
 <ion-accordion-group [multiple]="true">
-    @for (folder of folders; track folder.id) {
-      <ion-accordion [value]="folder.id">
-        <ion-item slot="header" color="light">
-          <ion-label>{{ folder.name }}</ion-label>
-        </ion-item>
-        <div slot="content">
-          @for(prompt of customInstructions() | promptFilter:folder.id; track prompt.id) {
-            <ion-item (click)="selectPromptTemplate(prompt)" detail>
-              <ion-icon slot="start" name="document-text-outline" color="secondary"></ion-icon>
-              <ion-label>
-                {{ prompt.name }}
-              </ion-label>
-            </ion-item>
-          }
-        </div>
-      </ion-accordion>
-    }
-  </ion-accordion-group>
+  @for (folder of folders; track folder.id) {
+    <ion-accordion [value]="folder.id">
+      <ion-item slot="header" color="light">
+        <ion-label>{{ folder.name }}</ion-label>
+      </ion-item>
+      <div slot="content">
+        @for(prompt of customInstructions() | promptFilter:folder.id; track prompt.id) {
+          <ion-item (click)="selectPromptTemplate(prompt)" detail>
+            <ion-icon slot="start" name="document-text-outline" color="secondary"></ion-icon>
+            <ion-label>
+              {{ prompt.name }}
+            </ion-label>
+          </ion-item>
+        }
+      </div>
+    </ion-accordion>
+  }
+</ion-accordion-group>

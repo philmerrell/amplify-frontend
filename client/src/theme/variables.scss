@@ -138,31 +138,7 @@
 }
 
 ion-split-pane {
-  ion-menu {
-    --background: var(--ion-color-primary);
-    --color: #fff;
-
-    ion-content {
-      --background: var(--ion-color-primary);
-      --color: #fff;
-
-      ion-list-header {
-        --background: var(--ion-color-primary);
-        --color: var(--ion-color-light);
-      }
-
-      ion-list {
-        ion-item {
-          --background: var(--ion-color-primary);
-          --color: #fff;
-
-          ion-icon {
-            color: #fff;
-          }
-        }
-      }
-    }
-  }
+  
 }
 
 //@media (prefers-color-scheme: dark) {

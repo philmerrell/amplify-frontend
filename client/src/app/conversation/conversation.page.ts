@@ -1,7 +1,6 @@
 import { Component, OnInit, Signal } from '@angular/core';
-import { IonContent, IonHeader, IonTitle, IonToolbar, IonFooter, IonButtons, ModalController, IonMenuButton, IonModal, IonButton, IonPopover, IonIcon } from '@ionic/angular/standalone';
+import { IonContent, IonHeader, IonTitle, IonToolbar, IonFooter, IonButtons, ModalController, IonMenuButton, IonModal, IonButton, IonPopover, IonIcon, IonNav } from '@ionic/angular/standalone';
 import { ChatInputComponent } from './components/chat-input/chat-input.component';
-import { ModelSettingsComponent } from './components/model-settings/model-settings.component';
 import { addIcons } from 'ionicons';
 import { chevronForwardOutline } from 'ionicons/icons';
 import { ConversationService } from '../services/conversation.service';
@@ -13,16 +12,18 @@ import { ConversationTextComponent } from './components/conversation-text/conver
 import { DeveloperSettingsService } from '../settings/developer/developer-settings.service';
 import { Router } from '@angular/router';
 import { SettingsMenuComponent } from '../side-nav/settings-menu/settings-menu.component';
+import { SelectModelComponent } from './components/model-settings/select-model/select-model.component';
+import { ModelSettingsComponent } from './components/model-settings/model-settings.component';
 
 @Component({
   selector: 'app-conversation',
   templateUrl: './conversation.page.html',
   styleUrls: ['./conversation.page.scss'],
   standalone: true,
-  imports: [IonIcon, IonPopover, IonButton, IonModal, 
+  imports: [ IonIcon, IonPopover, IonButton, 
     ConversationTextComponent,
     SettingsMenuComponent,
-    ModelSettingsComponent,
+
     IonPopover,
     IonContent, IonHeader, IonButtons, IonTitle, IonToolbar, IonFooter, ChatInputComponent, IonMenuButton ]
 })
@@ -51,9 +52,20 @@ export class ConversationPage implements OnInit {
     }
   }
 
+  dismiss() {
+    this.modalController.dismiss();
+  }
+
   navigateToDeveloperSettings() {
     this.modalController.dismiss();
     this.router.navigateByUrl('/settings/developer')
+  }
+
+  async presentSelectModelModal() {
+    const modal = await this.modalController.create({
+      component: SelectModelComponent
+    });
+    modal.present();
   }
 
   setOpen(isOpen: boolean) {
