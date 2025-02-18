@@ -1,6 +1,6 @@
 import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 import { IonNav } from '@ionic/angular/standalone';
-import { SelectModelComponent } from './select-model/select-model.component';
+import { SelectModelComponent } from '../select-model/select-model.component';
 
 @Component({
   selector: 'app-model-settings',

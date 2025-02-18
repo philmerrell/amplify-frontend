@@ -1,7 +1,7 @@
 <!-- <ion-card color="light"> -->
 <!-- <ion-item-divider>Conversation Settings</ion-item-divider> -->
 <ion-header>
-  <ion-toolbar>
+  <ion-toolbar color="light">
     <ion-buttons slot="start">
       <ion-back-button></ion-back-button>
     </ion-buttons>
@@ -19,7 +19,7 @@
     <ion-select (ionChange)="handleModelChange($event)" [interfaceOptions]="modelPopoverOptions"
       [value]="selectedModel()" interface="popover" label="Model" label-placement="floating">
       @for(model of models; track model.id) {
-      <ion-select-option [value]="model">{{ model.name }}</ion-select-option>
+      <ion-select-option [value]="model">{{ model.displayName }}</ion-select-option>
       }
 
     </ion-select>
@@ -75,7 +75,8 @@
 
   </div>
 </ion-content>
-
-
-
-<!-- </ion-card> -->
+<ion-footer>
+  <ion-toolbar color="light">
+    <ion-button (click)="dismiss()" expand="block">Done</ion-button>
+  </ion-toolbar>
+</ion-footer>

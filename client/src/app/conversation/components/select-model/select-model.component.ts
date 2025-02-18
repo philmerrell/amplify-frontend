@@ -4,7 +4,7 @@ import { addIcons } from 'ionicons';
 import { checkmarkCircle, cog, settings, settingsOutline } from 'ionicons/icons';
 import { Model } from 'src/app/models/model.model';
 import { ModelService } from 'src/app/services/model.service';
-import { AdvancedSettingsComponent } from '../advanced-settings/advanced-settings.component';
+import { AdvancedSettingsComponent } from '../model-settings/advanced-settings/advanced-settings.component';
 
 @Component({
   selector: 'app-select-model',

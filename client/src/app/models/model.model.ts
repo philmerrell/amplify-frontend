@@ -1,6 +1,7 @@
 export interface Model {
     id: string;
     name: string;
+    displayName: string;
     maxLength: number; // maximum length of a message
     tokenLimit: number;
     actualTokenLimit: number;
@@ -185,13 +186,15 @@ export const Models: Record<ModelID, Model> = {
     [ModelID.CLAUDE_3_5_SONNET_v2]: {
         id: ModelID.CLAUDE_3_5_SONNET_v2,
         name: 'Claude-3-5-Sonnet-v2',
+        displayName: 'Claude 3.5 Sonnet v2',
         maxLength: 24000,
         tokenLimit: 4000,
         actualTokenLimit: 4096,
         visible: false,
         outputCost: 0.015,
         inputCost: 0.003,
-        description: "Consider for advanced tasks with the most up-to-date information.\nClaude 3.5 is Anthropic's most current, powerful, and cost-efficient model.\nCan write, edit, and execute code with sophisticated reasoning, understands user context, offers orchestrating multi-step workflows, can navigate unstructured data, write creatively, understands nuance and humor, and supports images as input.\nTrained on information available through April 2024."
+        // description: "Consider for advanced tasks with the most up-to-date information.\nClaude 3.5 is Anthropic's most current, powerful, and cost-efficient model.\nCan write, edit, and execute code with sophisticated reasoning, understands user context, offers orchestrating multi-step workflows, can navigate unstructured data, write creatively, understands nuance and humor, and supports images as input.\nTrained on information available through April 2024."
+        description: "Claude 3.5, Anthropic's most current and cost-efficient model, can handle advanced tasks including code execution, creative writing, and image analysis while understanding context and nuance. It was trained on data through April 2024, representing the most up-to-date information available for the model."
     },
     // [ModelID.CLAUDE_3_HAIKU]: {
     //     id: ModelID.CLAUDE_3_HAIKU,
@@ -207,6 +210,7 @@ export const Models: Record<ModelID, Model> = {
     [ModelID.CLAUDE_3_5_HAIKU]: {
         id: ModelID.CLAUDE_3_5_HAIKU,
         name: 'Claude-3-5-Haiku',
+        displayName: 'Claude 3.5 Haiku',
         maxLength: 24000,
         tokenLimit: 4000,
         actualTokenLimit: 4096,

@@ -1,5 +1,5 @@
 import { Component, OnInit, Signal } from '@angular/core';
-import { IonItem, IonSelect, IonSelectOption, IonLabel, IonRange, ModalController, IonGrid, IonRow, IonCol, IonItemDivider, IonToolbar, IonTitle, IonHeader, IonContent, IonBackButton, IonButtons, IonButton } from '@ionic/angular/standalone';
+import { IonItem, IonSelect, IonSelectOption, IonLabel, IonRange, ModalController, IonGrid, IonRow, IonCol, IonItemDivider, IonToolbar, IonTitle, IonHeader, IonContent, IonBackButton, IonButtons, IonButton, IonFooter } from '@ionic/angular/standalone';
 import { Model } from 'src/app/models/model.model';
 import { ModelService } from 'src/app/services/model.service';
 import { CustomInstructionService } from 'src/app/services/custom-instruction.service';
@@ -11,7 +11,7 @@ import { SelectCustomInstructionsComponent } from '../select-custom-instructions
   templateUrl: './advanced-settings.component.html',
   styleUrls: ['./advanced-settings.component.scss'],
   standalone: true,
-  imports: [IonButton, IonButtons, IonBackButton, IonContent, IonHeader, IonTitle, IonToolbar, IonCol, IonRow, IonGrid, IonItem, IonSelect, IonSelectOption, IonLabel, IonRange]
+  imports: [IonFooter, IonButton, IonButtons, IonBackButton, IonContent, IonHeader, IonTitle, IonToolbar, IonCol, IonRow, IonGrid, IonItem, IonSelect, IonSelectOption, IonLabel, IonRange]
 })
 export class AdvancedSettingsComponent  implements OnInit {
   modelPopoverOptions = {

@@ -12,7 +12,7 @@ import { ConversationTextComponent } from './components/conversation-text/conver
 import { DeveloperSettingsService } from '../settings/developer/developer-settings.service';
 import { Router } from '@angular/router';
 import { SettingsMenuComponent } from '../side-nav/settings-menu/settings-menu.component';
-import { SelectModelComponent } from './components/model-settings/select-model/select-model.component';
+import { SelectModelComponent } from './components/select-model/select-model.component';
 import { ModelSettingsComponent } from './components/model-settings/model-settings.component';
 
 @Component({

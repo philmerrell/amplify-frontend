@@ -35,13 +35,13 @@
         value=""
         [autofocus]="true"
       >
-      <ion-button (click)="handleSubmitChat()" shape="round" slot="end" aria-label="Submit chat" [color]="chatLoading() ? 'danger' : 'primary'">
-        @if (chatLoading()) {
-          <ion-icon slot="icon-only" name="stop" aria-hidden="true"></ion-icon>
-        } @else {
-          <ion-icon slot="icon-only" name="arrow-up-outline" aria-hidden="true"></ion-icon>
-        }
-      </ion-button>
+        <ion-button (click)="handleSubmitChat()" shape="round" slot="end" aria-label="Submit chat" [color]="chatLoading() ? 'danger' : 'primary'">
+          @if (chatLoading()) {
+            <ion-icon slot="icon-only" name="stop" aria-hidden="true"></ion-icon>
+          } @else {
+            <ion-icon slot="icon-only" name="arrow-up-outline" aria-hidden="true"></ion-icon>
+          }
+        </ion-button>
       </ion-textarea>
   
       <ion-button (click)="presentSelectUploadedFileModal()" appTooltip="Select a file" shape="round" aria-label="Select a file">
