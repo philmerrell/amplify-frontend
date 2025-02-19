@@ -15,7 +15,7 @@ import { Folder, FoldersService } from 'src/app/services/folders.service';
 })
 export class ImportConversationsPage implements OnInit {
   conversations: Signal<Conversation[]> = this.conversationService.getConversations();
-  folders: Signal<Folder[]> = this.foldersService.getFolders();
+  folders = this.foldersService.getFolders();
   isToastOpen: boolean = false;
   isAlertOpen: boolean = false;
   alertButtons = [
@@ -78,7 +78,7 @@ export class ImportConversationsPage implements OnInit {
       }
       if(data.folders) {
         localStorage.setItem('folders', JSON.stringify(data.folders));
-        this.foldersService.initFolders();
+        // this.foldersService.initFolders();
       }
       if(data.prompts) {
         localStorage.setItem('prompts', JSON.stringify(data.prompts));
@@ -92,7 +92,7 @@ export class ImportConversationsPage implements OnInit {
     localStorage.removeItem('folders');
     localStorage.removeItem('prompts');
     this.conversationService.setConversations([]);
-    this.foldersService.setFolders([]);
+    // this.foldersService.setFolders([]);
   }
 
   setToastOpen(isOpen: boolean) {

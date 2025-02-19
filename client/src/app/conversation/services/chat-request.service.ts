@@ -155,6 +155,13 @@ export class ChatRequestService {
   getChatLoading(): Signal<boolean> {
     return this.chatLoading;
   }
+
+  /**
+   * Returns the current conversation as a read-only Signal. 
+   */
+  getCurrentConversation(): Signal<Conversation> {
+    return this.currentConversation;
+  }
   
   /**
    * Submits the user input as a new message to the LLM. 
@@ -211,7 +218,8 @@ export class ChatRequestService {
     if (this.currentConversation().folderId === '') {
 
       // Create a new folderId for this conversation.
-      const folderId = this.folderService.getFolderId();
+      // const folderId = this.folderService.getFolderId();
+      const folderId = uuidv4();
       this.currentConversation.update((c: Conversation) => {
         return {
           ...c,

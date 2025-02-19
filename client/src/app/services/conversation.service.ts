@@ -5,6 +5,11 @@ import { ModelService } from './model.service';
 import { Model } from '../models/model.model';
 import { PromptService } from './prompt.service';
 import { lzwCompress, lzwUncompress } from './compression';
+import { HttpBackend, HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs/internal/Observable';
+import { switchMap, map, catchError, of, firstValueFrom } from 'rxjs';
+import { Folder, FoldersService } from './folders.service';
+import { DeveloperSettingsService } from '../settings/developer/developer-settings.service';
 
 @Injectable({
   providedIn: 'root'
@@ -15,11 +20,25 @@ export class ConversationService {
   private selectedPrompt: Signal<string> = this.promptService.getSelectedPrompt();
   private currentConversation: WritableSignal<Conversation> = signal(this.createConversation());
   private conversations: WritableSignal<Conversation[]> = signal([]);
+
+  // private folderResource = resource({})
+
+  private folderConversations: WritableSignal<{
+    folders: Folder[];
+    conversations: Record<string, Conversation[]>;
+  }> = signal({folders: [], conversations: {}});
+  private s3Client: HttpClient;
+
   
   constructor(
     private modelService: ModelService,
-    private promptService: PromptService) {
-      
+    private promptService: PromptService,
+    private httpClient: HttpClient,
+    private developerSettings: DeveloperSettingsService,
+    private folderService: FoldersService,
+    handler: HttpBackend,
+  ) {
+    this.s3Client = new HttpClient(handler);
   }
 
 
@@ -27,8 +46,9 @@ export class ConversationService {
     return this.currentConversation;
   }
 
-  setCurrentConversation(conversation: Conversation) {
-    this.currentConversation.set(conversation);
+  async setCurrentConversation(conversation: Conversation) {
+    const conversationToSet = await this.getConversationById(conversation.id)
+    this.currentConversation.set(conversationToSet);
   }
 
   getConversationName() {}
@@ -37,19 +57,83 @@ export class ConversationService {
     return this.conversations;
   }
 
-
-  initConversations() {
-    if (!this.conversations().length) {
-      const conversationHistoryJson = localStorage.getItem('conversationHistory');
-      try {
-        const conversations = JSON.parse(conversationHistoryJson || '')
-        this.uncompressMessages(conversations);
-        this.conversations.set(conversations);
-      } catch (error) {
-        console.error(error);
-      }
-    }
+  getFolderConversations(): Signal<{ folders: Folder[]; conversations: Record<string, Conversation[]> }> {
+    return this.folderConversations;
   }
+
+  async initConversations() {
+    const folderConversations = await this.getAllConversations();
+    this.folderConversations.set(folderConversations);
+    console.log('message:', folderConversations);
+  }
+
+  getAllConversations(): Promise<{ folders: Folder[]; conversations: Record<string, Conversation[]> }> {
+    const url = this.developerSettings.getDeveloperApiBaseUrl();
+    const apiBase = `${url()}/state/conversation/get_all`;
+
+    return firstValueFrom(this.httpClient.get<{ statusCode: number; body: string }>(apiBase).pipe(
+      switchMap(response => {
+        if (response.statusCode !== 200) {
+          throw new Error('Failed to fetch S3 URL');
+        }
+        const parsed = JSON.parse(response.body);
+        if(parsed.presignedUrl === undefined) {
+          throw new Error('S3 Presigned URL is undefined');
+        }
+        return this.s3Client.get<ConversationResponse[]>(parsed.presignedUrl);
+      }),
+      map(data => {
+        const conversations: Conversation[] = data.map(entry => entry.conversation);
+        
+        // Use folder service to extract and group conversations
+        const folders = this.folderService.extractFolders(conversations);
+        const groupedConversations = this.folderService.groupConversationsByFolder(conversations);
+
+        return { folders, conversations: groupedConversations };
+      }),
+      catchError(error => {
+        console.error('Error fetching conversations:', error);
+        return of({ folders: [], conversations: {} });
+      })
+    ));
+  }
+
+  getConversationById(conversationId: string): Promise<Conversation> {
+    const url = this.developerSettings.getDeveloperApiBaseUrl();
+    const apiBase = `${url()}/state/conversation/get?conversationId=${conversationId}`;
+
+    return firstValueFrom(this.httpClient.get<{statusCode: number; body:string}>(apiBase).pipe(
+      map(response => {
+        if (response.statusCode !== 200) {
+          throw new Error('Failed to fetch conversation');
+        }
+
+        const body: {success: boolean; conversation: number[]} = JSON.parse(response.body);
+        
+        const conversationString = lzwUncompress(body.conversation);
+        const conversation: Conversation = JSON.parse(conversationString);
+
+        return conversation;
+      }),
+      catchError(error => {
+        console.error('Error fetching conversation:', error);
+        return of({} as Conversation);
+      })
+    ));
+  }
+
+  // initConversations() {
+  //   if (!this.conversations().length) {
+  //     const conversationHistoryJson = localStorage.getItem('conversationHistory');
+  //     try {
+  //       const conversations = JSON.parse(conversationHistoryJson || '')
+  //       this.uncompressMessages(conversations);
+  //       this.conversations.set(conversations);
+  //     } catch (error) {
+  //       console.error(error);
+  //     }
+  //   }
+  // }
 
   // getConversationsByFolderId(folderId: string): Conversation[] {
   //   // console.log(folderId, this.conversations())
@@ -68,7 +152,6 @@ export class ConversationService {
       folderId: ''
     };
     return newConversation;
-    
   }
 
   compressMessages(conversations: Conversation[]): Conversation[] {
@@ -146,4 +229,9 @@ export class ConversationService {
   //     }
   //   }
   // }
+}
+
+interface ConversationResponse {
+  conversation: Conversation;
+  folder: Folder;
 }

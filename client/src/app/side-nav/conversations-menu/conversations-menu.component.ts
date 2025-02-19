@@ -1,6 +1,6 @@
 import { Component, effect, input, OnInit, Signal, ViewChild, WritableSignal } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { IonAccordionGroup, IonAccordion, IonItemDivider, IonLabel, IonItem, IonIcon, IonList, IonCard, IonButton, IonRouterLink, IonSkeletonText, IonText, IonMenu } from "@ionic/angular/standalone";
+import { IonAccordionGroup, IonAccordion, IonItemDivider, IonLabel, IonItem, IonIcon, IonList, IonCard, IonButton, IonRouterLink, IonSkeletonText, IonText, IonMenu, IonItemGroup } from "@ionic/angular/standalone";
 import { addIcons } from 'ionicons';
 import { chatbubbleOutline, chatboxOutline, add, folder, chevronForwardOutline, trash } from 'ionicons/icons';
 import { Conversation } from 'src/app/models/conversation.model';
@@ -8,12 +8,13 @@ import { ConversationService } from 'src/app/services/conversation.service';
 import { Folder, FoldersService } from 'src/app/services/folders.service';
 import { ConversationFilterPipe } from './conversation-filter.pipe';
 import { ConversationRenameService } from 'src/app/conversation/services/conversation-rename.service';
+import { RemoteConversationService } from '../../services/remote-conversation-service';
 
 @Component({
   selector: 'app-conversations-menu',
   templateUrl: './conversations-menu.component.html',
   styleUrls: ['./conversations-menu.component.scss'],
-  imports: [IonText, IonSkeletonText,  ConversationFilterPipe, IonButton, IonCard, IonList, IonIcon, IonItem, IonAccordion, IonAccordionGroup, IonLabel, IonItemDivider, RouterLink, IonRouterLink ],
+  imports: [IonText, IonSkeletonText,  ConversationFilterPipe, IonButton, IonCard, IonList, IonIcon, IonItem, IonAccordion, IonAccordionGroup, IonLabel, IonItemDivider, RouterLink, IonRouterLink, IonItemGroup ],
   standalone: true,
 })
 export class ConversationsMenuComponent  implements OnInit {
@@ -23,20 +24,24 @@ export class ConversationsMenuComponent  implements OnInit {
   currentConversation: Signal<Conversation> = this.conversationService.getCurrentConversation();
   conversationRename: Signal<{loading: boolean, name: string, conversationId: string }> = this.conversationRenameService.getConversationRename();
   folders: Signal<Folder[]> = this.foldersService.getFolders();
+  folderConversations: Signal<{folders: Folder[], conversations: Record<string, Conversation[]>}> = this.conversationService.getFolderConversations();
 
   constructor(
     private conversationService: ConversationService,
     private conversationRenameService: ConversationRenameService,
-    private foldersService: FoldersService) {
+    private foldersService: FoldersService,
+    private remoteConversationsService: RemoteConversationService
+  ) {
       addIcons({add,folder,trash,chatboxOutline,chevronForwardOutline,chatbubbleOutline});
       effect(() => {
         this.openAccordion(this.currentConversation().folderId || '')
       });
-  }
-
-  ngOnInit() {
-    this.foldersService.initFolders();
+    }
+  async ngOnInit() {
+    // this.foldersService.initFolders();
+    //const url = await this.remoteConversationsService.getRemoteConversations();
     this.conversationService.initConversations();
+
   }
 
   createNewConversation() {

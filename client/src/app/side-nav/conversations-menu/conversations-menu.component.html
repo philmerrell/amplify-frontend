@@ -11,18 +11,32 @@
   <ion-item-divider color="medium" sticky>
     Conversations
   </ion-item-divider>
-  <ion-accordion-group #accordionGroup [multiple]="true">
+  <ion-list>
+    @for(folder of folderConversations().folders; track folder.id) {
+      <ion-item-group class="ion-padding-bottom">
+        <ion-item-divider color="light">
+          <ion-icon name="folder" class="ion-padding-end"></ion-icon>
+          {{ folder.name }}
+        </ion-item-divider>
+        @for(conversation of folderConversations().conversations[folder.id]; track conversation.id) {
+          <ion-item (click)="setCurrentConversation(conversation)" routerLink="/" routerDirection="back">
+            <ion-icon slot="start" name="chatbox-outline"></ion-icon>
+            <ion-label>
+              <h2>{{ conversation.name }}</h2>
+            </ion-label>
+          </ion-item>
+        }
+      </ion-item-group>
+    }
+  </ion-list>
+  <!-- <ion-accordion-group #accordionGroup [multiple]="true">
     @for (folder of folders(); track folder.id) {
       <ion-accordion [value]="folder.id">
         <ion-item slot="header" color="light">
           <ion-label>{{ folder.name }}</ion-label>
-          <!-- <ion-button size="small" fill="clear">
-            <ion-icon slot="icon-only" name="trash"></ion-icon>
-          </ion-button> -->
         </ion-item>
         <div slot="content">
           @for(conversation of conversations | filter:folder.id; track conversation.id) {
-            <!-- <ion-menu-toggle> -->
               <ion-item (click)="setCurrentConversation(conversation)" routerLink="/" routerDirection="back">
                 <ion-icon name="chatbox-outline" color="secondary" slot="start"></ion-icon>
                 @if (conversationRename().conversationId === conversation.id && conversationRename().loading) {
@@ -35,7 +49,6 @@
                   </ion-label>
                 }
               </ion-item>
-            <!-- </ion-menu-toggle> -->
           } @empty {
             <ion-item>
               There are no conversations yet.
@@ -44,8 +57,8 @@
         </div>
       </ion-accordion>
     }
-  </ion-accordion-group>
-  @if(!folders().length) {
+  </ion-accordion-group> -->
+  <!-- @if(!folders().length) {
     <ion-card>
       <ion-item lines="none">
         <ion-icon slot="start" name="chatbox-outline"></ion-icon>
@@ -63,4 +76,5 @@
       </div>
     </ion-card>
   }
+     -->
 </ion-list>
