@@ -4,7 +4,7 @@
 @if(conversation()?.messages!.length > 0) {
   <div class="ion-padding">
     <ion-grid>
-      @for(message of conversation()?.messages; track message.id; let count = $count;) {
+      @for(message of conversation()?.messages; track message.id; let i = $index;) {
         @if(message.role === 'user') {
           <ion-row [id]="message.id" [@slide]>
             <ion-col size="3"></ion-col>
@@ -15,16 +15,19 @@
 
           <ion-row class="metadata-row">
             <ion-col>
-              @for(metadata of responseMetadata(); let i = $index; track i;) {
-                @if(metadata?.sticky && metadata.sticky !== undefined) {
-                  <ion-chip [@fadeInOut]>
-                    <ion-avatar>
+                <!-- Only display loading indicator if it's the last or second to last message -->
+                @if(i === conversation()?.messages!.length || i === conversation()?.messages!.length - 1) {
+                  @for(metadata of responseMetadata(); let i = $index; track i;) {
+                    @if(metadata?.sticky && metadata.sticky !== undefined) {
+                    <ion-chip [@fadeInOut]>
+                      <ion-avatar>
                       <div class="pulsating-circle"></div>
-                    </ion-avatar>
-                    <ion-label>{{ metadata.message }}</ion-label>
-                  </ion-chip>
+                      </ion-avatar>
+                      <ion-label>{{ metadata.message }}</ion-label>
+                    </ion-chip>
+                    }
+                  }
                 }
-              }
             </ion-col>
           </ion-row>
 
