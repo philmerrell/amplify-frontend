@@ -3,7 +3,7 @@
     <div [@expandCollapse]="expanded ? 'expanded' : 'collapsed'">
 
       @if(!expanded) {
-        <div class="truncated-message">{{ (message.content | truncateUserInput).text }}</div>
+        <div #truncatedMessage class="truncated-message">{{ (message.content | truncateUserInput).text }}</div>
         <ion-button (click)="expanded = !expanded" shape="round">
           <ion-icon slot="icon-only" name="chevron-down-outline"></ion-icon>
         </ion-button>
