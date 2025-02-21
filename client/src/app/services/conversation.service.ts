@@ -1,4 +1,4 @@
-import { Injectable, Signal, signal, WritableSignal } from '@angular/core';
+import { Injectable, resource, Signal, signal, WritableSignal } from '@angular/core';
 import { Conversation } from '../models/conversation.model';
 import { v4 as uuidv4 } from 'uuid';
 import { ModelService } from './model.service';
@@ -20,8 +20,16 @@ export class ConversationService {
   private selectedPrompt: Signal<string> = this.promptService.getSelectedPrompt();
   private currentConversation: WritableSignal<Conversation> = signal(this.createConversation());
   private conversations: WritableSignal<Conversation[]> = signal([]);
+  
+  private _conversationsResource = resource({
+    loader: () => {
+      return this.getAllConversations();
+    }
+  })
 
-  // private folderResource = resource({})
+  get conversationsResource() {
+    return this._conversationsResource.asReadonly()
+  }
 
   private folderConversations: WritableSignal<{
     folders: Folder[];
@@ -41,14 +49,12 @@ export class ConversationService {
     this.s3Client = new HttpClient(handler);
   }
 
-
   getCurrentConversation(): WritableSignal<Conversation> {
     return this.currentConversation;
   }
 
   async setCurrentConversation(conversation: Conversation) {
-    const conversationToSet = await this.getConversationById(conversation.id)
-    this.currentConversation.set(conversationToSet);
+    this.currentConversation.set(conversation);
   }
 
   getConversationName() {}
@@ -61,39 +67,62 @@ export class ConversationService {
     return this.folderConversations;
   }
 
-  async initConversations() {
-    const folderConversations = await this.getAllConversations();
-    this.folderConversations.set(folderConversations);
-    console.log('message:', folderConversations);
+  addFolderToConversations(folder: Folder) {
+    this._conversationsResource.update((current) => {
+      const foldersCopy = current?.folders ? [...current.folders] : [];
+      foldersCopy.unshift(folder); // add to the front so it shows up at the top
+
+      return { folders: foldersCopy, conversations: current?.conversations ?? {} };
+    })
+  }
+
+  addConversationToFolder(conversation: Conversation, folderId: string) {
+    this._conversationsResource.update((current) => {
+      const conversationsCopy = current?.conversations ? { ...current.conversations } : {};
+      if (!conversationsCopy[folderId]) {
+        conversationsCopy[folderId] = [];
+      }
+      conversationsCopy[folderId].unshift(conversation);
+
+      return { folders: current?.folders ?? [], conversations: conversationsCopy };
+    })
   }
 
   getAllConversations(): Promise<{ folders: Folder[]; conversations: Record<string, Conversation[]> }> {
     const url = this.developerSettings.getDeveloperApiBaseUrl();
     const apiBase = `${url()}/state/conversation/get_all`;
-
     return firstValueFrom(this.httpClient.get<{ statusCode: number; body: string }>(apiBase).pipe(
       switchMap(response => {
         if (response.statusCode !== 200) {
           throw new Error('Failed to fetch S3 URL');
         }
         const parsed = JSON.parse(response.body);
+
+        if(parsed.conversationsData?.length === 0) {
+          return of([{ folder: {} as Folder, conversation: {} as Conversation }]);
+        }
+
         if(parsed.presignedUrl === undefined) {
           throw new Error('S3 Presigned URL is undefined');
         }
+
         return this.s3Client.get<ConversationResponse[]>(parsed.presignedUrl);
       }),
       map(data => {
-        const conversations: Conversation[] = data.map(entry => entry.conversation);
-        
         // Use folder service to extract and group conversations
-        const folders = this.folderService.extractFolders(conversations);
+        const folders = this.folderService.extractFolders(data);
+        if(folders.length === 0) {
+          return { folders: [this.folderService.createNewFolder()], conversations: {} };
+        }
+        this.folderService.setActiveFolder(folders[0].id);
+        const conversations = data.map(({ conversation }) => conversation);
         const groupedConversations = this.folderService.groupConversationsByFolder(conversations);
-
+        // Return the record type
         return { folders, conversations: groupedConversations };
       }),
       catchError(error => {
         console.error('Error fetching conversations:', error);
-        return of({ folders: [], conversations: {} });
+        throw new Error('Failed to fetch conversations');
       })
     ));
   }
@@ -101,18 +130,27 @@ export class ConversationService {
   getConversationById(conversationId: string): Promise<Conversation> {
     const url = this.developerSettings.getDeveloperApiBaseUrl();
     const apiBase = `${url()}/state/conversation/get?conversationId=${conversationId}`;
-
     return firstValueFrom(this.httpClient.get<{statusCode: number; body:string}>(apiBase).pipe(
       map(response => {
         if (response.statusCode !== 200) {
           throw new Error('Failed to fetch conversation');
         }
-
         const body: {success: boolean; conversation: number[]} = JSON.parse(response.body);
-        
         const conversationString = lzwUncompress(body.conversation);
         const conversation: Conversation = JSON.parse(conversationString);
-
+        conversation.isLocal = true;
+        this._conversationsResource.update((current) => {
+          if (current?.conversations) {
+            Object.values(current.conversations).forEach((conversations) => {
+              const convoToUpdate = conversations.find((convo) => convo.id === conversationId);
+              if(convoToUpdate) {
+                convoToUpdate.messages = conversation.messages;
+                convoToUpdate.isLocal = true;
+              }
+            });
+          }
+          return current;
+        })
         return conversation;
       }),
       catchError(error => {
@@ -141,7 +179,7 @@ export class ConversationService {
   //   return conversations;
   // }
 
-  createConversation(): Conversation {
+  createConversation(folderId: string = ''): Conversation {
     const newConversation = {
       id: uuidv4(),
       name: 'New Conversation',
@@ -149,7 +187,8 @@ export class ConversationService {
       model: this.selectedModel(),
       prompt: this.selectedPrompt(),
       temperature: this.selectedTemperature(),
-      folderId: ''
+      folderId: folderId,
+      isLocal: true
     };
     return newConversation;
   }
@@ -233,5 +272,11 @@ export class ConversationService {
 
 interface ConversationResponse {
   conversation: Conversation;
+  folder: Folder;
+}
+
+interface ConversationTransferObject {
+  conversation: number[];
+  conversationId: string;
   folder: Folder;
 }

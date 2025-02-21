@@ -33,9 +33,6 @@
       </ion-toolbar>
     </ion-header>
     
-    @if(currentConversation().messages.length === 0) {
-      <!-- <app-model-settings></app-model-settings> -->
-    }
     <app-conversation-text [conversation]="currentConversation()" [loading]="chatLoading()" [scroller]="scroller"></app-conversation-text>
     
   </div>

@@ -3,78 +3,73 @@
     <ion-icon slot="start" name="add"></ion-icon>
     New Conversation
   </ion-button>
-  <ion-button size="large" aria-label="new folder">
+  <ion-button (click)="createFolder()" size="large" aria-label="new folder">
     <ion-icon slot="icon-only" name="folder"></ion-icon>
   </ion-button>
 </div>
 <ion-list>
-  <ion-item-divider color="medium" sticky>
-    Conversations
+  <ion-item-divider color="background" sticky class="ion-margin">
+    My Conversations
   </ion-item-divider>
   <ion-list>
-    @for(folder of folderConversations().folders; track folder.id) {
-      <ion-item-group class="ion-padding-bottom">
-        <ion-item-divider color="light">
+    @if(folderConversations.status() === status.Loading) {
+      <ion-item lines="none">
+        <ion-label>Loading Conversations</ion-label>
+        <ion-spinner></ion-spinner>
+      </ion-item>
+    }
+    @for(folder of folderConversations.value()?.folders; track folder.id;) {
+      <ion-item-group>
+        <ion-item button detail="false" (click)="setActiveFolder(folder.id)" lines="full" [color]="folder.id === activeFolder() ? 'medium' : 'background'">
           <ion-icon name="folder" class="ion-padding-end"></ion-icon>
-          {{ folder.name }}
-        </ion-item-divider>
-        @for(conversation of folderConversations().conversations[folder.id]; track conversation.id) {
-          <ion-item (click)="setCurrentConversation(conversation)" routerLink="/" routerDirection="back">
-            <ion-icon slot="start" name="chatbox-outline"></ion-icon>
+          <ion-input #folderNameInput autofocus="true" id="{{folder.id}}" class="folder" type="text" [value]="folder.name" [readonly]="editingFolder() !== folder.id" (ionBlur)="saveFolderName(folder, $event)"></ion-input>
+          <ion-button id="edit-folder-menu-{{ folder.id }}" slot="end" fill="clear" color="tertiary">
+            <ion-icon slot="icon-only" name="ellipsis-horizontal"></ion-icon>
+          </ion-button>
+          <ion-popover trigger="edit-folder-menu-{{ folder.id }}" triggerAction="click" #popover>
+            <ng-template>
+              <ion-list>
+                <ion-item button (click)="renameFolder(folder, $index); popover.dismiss()">
+                  <ion-icon slot="start" name="pencil-outline"></ion-icon>
+                  <ion-label>Rename</ion-label>
+                </ion-item>
+                <ion-item button (click)="deleteFolder(folder)">
+                  <ion-icon slot="start" name="trash-outline"></ion-icon>
+                  <ion-label>Delete</ion-label>
+                </ion-item>
+              </ion-list>
+            </ng-template>
+          </ion-popover>
+        </ion-item>
+        @for(conversation of folderConversations.value()?.conversations?.[folder.id] ?? []; track conversation.id) {
+          <ion-item lines="inset" (click)="setCurrentConversation(conversation); setActiveFolder(folder.id)" routerLink="/" routerDirection="back">
+            <ion-icon class="ion-padding-start" slot="start" name="chatbox-outline"></ion-icon>
             <ion-label>
               <h2>{{ conversation.name }}</h2>
             </ion-label>
           </ion-item>
         }
       </ion-item-group>
+    } @empty {
+      @if(folderConversations.status() === status.Resolved) {
+        <ion-item lines="none">
+          <ion-icon slot="start" name="chatbox-outline" color="secondary"></ion-icon>
+          <ion-label>
+            <h1>Theres nothing here...</h1>
+            <p><ion-text color="medium">Lets get started by creating a new conversation.</ion-text>.</p>
+          </ion-label>
+        </ion-item>
+      }
+    }
+    @if(folderConversations.error()) {
+      <ion-item>
+        <ion-label>
+          <h1>Whoops!</h1>
+          <p><ion-text color="medium">{{ folderConversations.error() }}</ion-text></p>
+        </ion-label>
+      </ion-item>
     }
   </ion-list>
-  <!-- <ion-accordion-group #accordionGroup [multiple]="true">
-    @for (folder of folders(); track folder.id) {
-      <ion-accordion [value]="folder.id">
-        <ion-item slot="header" color="light">
-          <ion-label>{{ folder.name }}</ion-label>
-        </ion-item>
-        <div slot="content">
-          @for(conversation of conversations | filter:folder.id; track conversation.id) {
-              <ion-item (click)="setCurrentConversation(conversation)" routerLink="/" routerDirection="back">
-                <ion-icon name="chatbox-outline" color="secondary" slot="start"></ion-icon>
-                @if (conversationRename().conversationId === conversation.id && conversationRename().loading) {
-                  <ion-label>
-                    <ion-skeleton-text [animated]="true"></ion-skeleton-text>
-                  </ion-label>
-                } @else {
-                  <ion-label>
-                    {{ conversation.name }}
-                  </ion-label>
-                }
-              </ion-item>
-          } @empty {
-            <ion-item>
-              There are no conversations yet.
-            </ion-item>
-          }
-        </div>
-      </ion-accordion>
-    }
-  </ion-accordion-group> -->
-  <!-- @if(!folders().length) {
-    <ion-card>
-      <ion-item lines="none">
-        <ion-icon slot="start" name="chatbox-outline"></ion-icon>
-        <ion-label>
-          <h1>You don't have any conversations yet.</h1>
-          <p><ion-text color="medium">Start a new chat or import existing chat history.</ion-text></p>
-        </ion-label>
-        
-      </ion-item>
-      <div class="ion-padding">
-        <ion-button routerLink="/settings/import-conversations" expand="block">
-          Import Settings
-          <ion-icon slot="end" name="chevron-forward-outline"></ion-icon>
-        </ion-button>
-      </div>
-    </ion-card>
-  }
-     -->
+
+  <pre>{{folderConversations.value() | json}}</pre>
 </ion-list>

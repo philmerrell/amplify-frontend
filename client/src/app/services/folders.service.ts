@@ -1,4 +1,4 @@
-import { Injectable, Signal, signal, WritableSignal } from '@angular/core';
+import { Injectable, Signal, signal, WritableSignal, ɵunwrapWritableSignal } from '@angular/core';
 import { v4 as uuidv4 } from 'uuid';
 import { Conversation } from '../models/conversation.model';
 
@@ -14,7 +14,7 @@ export interface Folder {
 })
 export class FoldersService {
 
-  private activeFolder = signal<string | null>(null); // Signal for active folder
+  private activeFolder: WritableSignal<string | null> = signal<string | null>(null); // Signal for active folder
 
   /**
    * Sets the active folder ID.
@@ -26,8 +26,8 @@ export class FoldersService {
   /**
    * Gets the currently active folder ID.
   */
-  getActiveFolder(): string | null {
-    return this.activeFolder();
+  getActiveFolder(): Signal<string | null> {
+    return this.activeFolder.asReadonly();
   }
 
   /**
@@ -68,7 +68,7 @@ export class FoldersService {
     /**
      * Groups conversations by folder.
     */
-    groupConversationsByFolder(conversations: Conversation[]): Record<string, Conversation[]> {
+    groupConversationsByFolder(conversations: any[]): Record<string, Conversation[]> {
       return conversations.reduce((acc, convo) => {
         const folderId = convo.folderId || 'unsorted';
         if (!acc[folderId]) {
@@ -82,20 +82,13 @@ export class FoldersService {
     /**
      * Extracts unique folders from a list of conversations.
     */
-    extractFolders(conversations: Conversation[]): Folder[] {
+    extractFolders(data: any[]): Folder[] {
       const folderMap = new Map<string, Folder>();
-
-      conversations.forEach(convo => {
-        if (convo.folderId && !folderMap.has(convo.folderId)) {
-          folderMap.set(convo.folderId, {
-            id: convo.folderId,
-            name: convo.name || `Folder ${folderMap.size + 1}`,
-            date: new Date().toISOString().slice(0, 10),
-            type: 'chat' // Default to 'chat' unless specified elsewhere
-          });
+      data.forEach(dataObject => {
+        if (dataObject.folder.id && !folderMap.has(dataObject.folder.id)) {
+          folderMap.set(dataObject.folder.id, dataObject.folder);
         }
       });
-
       return Array.from(folderMap.values());
     }
 

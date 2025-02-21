@@ -74,7 +74,7 @@ export class ImportConversationsPage implements OnInit {
     if (data) {
       if(data.history) {
         localStorage.setItem('conversationHistory', JSON.stringify(data.history));
-        this.conversationService.initConversations();
+        // this.conversationService.initConversations();
       }
       if(data.folders) {
         localStorage.setItem('folders', JSON.stringify(data.folders));
