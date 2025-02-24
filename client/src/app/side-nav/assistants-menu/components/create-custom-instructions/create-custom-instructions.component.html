@@ -8,32 +8,36 @@
 </ion-header>
 <ion-content>
   <div class="ion-padding">
-    <form [formGroup]="form" (ngSubmit)="handleSubmit()">
+    <form [formGroup]="form">
         <ion-input
           label="Name"
           labelPlacement="floating"
           placeholder="Enter a name"
           formControlName="name"
+          helperText="A short descriptive name is helpful"
           errorText="Name is required"
           ></ion-input>
         <ion-textarea
           label="Description"
-          placeholder="Describe your prompt"
+          placeholder="Describe your prompt. This is particularily helpful if you share them with others."
           labelPlacement="floating"
+          helperText="What do these custom instructions do?"
           formControlName="description"
           ></ion-textarea>
         <ion-textarea
           label="Prompt"
           rows="5"
           labelPlacement="floating"
-          [placeholder]="'Prompt content. Use {{ }} to denote a variable. Ex: {{name}} is a {{adjective}} {{noun}}'"
+          placeholder="Prompt instructions are the rules and patterns you want the LLM to follow when you interact with it."
           formControlName="prompt"
+          helperText="Your custom instructions go here"
           errorText="A prompt is required"
           ></ion-textarea>
         <ion-input
           label="Tags"
           labelPlacement="floating"
           placeholder="Separate tags with commas"
+          helperText="Tags are optional"
           formControlName="tags"
           ></ion-input>
         </form>
@@ -41,6 +45,6 @@
 </ion-content>
 <ion-footer>
   <ion-toolbar color="light">
-    <ion-button expand="block">Save</ion-button>
+    <ion-button (click)="createInstructions()"expand="block">Save</ion-button>
   </ion-toolbar>
 </ion-footer>

@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { IonToolbar, IonHeader, IonTitle, IonContent, IonButtons, IonButton, ModalController, IonItem, IonInput, IonTextarea, IonFooter } from "@ionic/angular/standalone";
+import { validateAllFormFields } from 'src/app/shared/form-utils';
 
 @Component({
   selector: 'app-create-custom-instructions',
@@ -25,7 +26,12 @@ export class CreateCustomInstructionsComponent  implements OnInit {
     this.modalController.dismiss();
   }
 
-  handleSubmit() {
+  createInstructions() {
+    if (this.form.valid) {
+      // create custom instructions
+    } else {
+      validateAllFormFields(this.form);
+    }
   }
 
 }
