@@ -3,7 +3,7 @@
     <ion-menu #mainMenu contentId="main-content" type="overlay" [swipeGesture]="false" menuId="main">
       <ion-header style="background: var(--ion-color-light)">
         <a routerLink="/" *ngIf="logo$ | async as logo">
-          <img [src]="'/assets/' + logo" alt="Home" />
+          <img [src]="'/assets/logo-' + logo + '.png'" alt="Home" />
         </a>
         <ion-toolbar>
           <ion-segment value="conversations">
