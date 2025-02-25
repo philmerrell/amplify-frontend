@@ -6,6 +6,7 @@ import { addOutline } from 'ionicons/icons';
 import { CustomInstructionsComponent } from './components/custom-instructions/custom-instructions.component';
 import { AssistantService } from 'src/app/services/assistant.service';
 import { CreateCustomInstructionsComponent } from './components/create-custom-instructions/create-custom-instructions.component';
+import { CreateAssistantModalComponent } from './components/create-assistant-modal/create-assistant-modal.component';
 
 @Component({
   selector: 'app-assistants-menu',
@@ -25,8 +26,12 @@ export class AssistantsMenuComponent  implements OnInit {
     this.getAssistants();
   }
 
-  createNewAssistant() {
-    
+  async presentCreateNewAssistantModal() {
+    const modal = await this.modalController.create({
+      component: CreateAssistantModalComponent
+    });
+
+    await modal.present();
   }
 
   async getAssistants() {
