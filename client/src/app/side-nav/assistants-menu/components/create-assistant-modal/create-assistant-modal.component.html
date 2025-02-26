@@ -1,4 +1,6 @@
-<ion-header>
+<ion-nav #nav></ion-nav>
+
+<!-- <ion-header>
   <ion-toolbar>
     <ion-title>Create Assistant</ion-title>
     <ion-buttons slot="end">
@@ -8,5 +10,90 @@
 </ion-header>
 
 <ion-content>
-  <!-- Your content goes here -->
-</ion-content>
+  <form [formGroup]="assistantForm">
+    
+        <ion-list>
+          <ion-item-divider [sticky]="true">
+            Assistant Details
+          </ion-item-divider>
+          <ion-item>
+            <ion-input label="Name" formControlName="name" placeholder="Enter assistant name"></ion-input>
+          </ion-item>
+  
+          <ion-item>
+            <ion-textarea label="Description" formControlName="description" placeholder="Enter description"></ion-textarea>
+          </ion-item>
+  
+          <ion-item>
+            <ion-textarea label="Instructions" formControlName="instructions" placeholder="Enter instructions"></ion-textarea>
+          </ion-item>
+  
+          <ion-item>
+            <ion-textarea label="Disclaimer" formControlName="disclaimer" placeholder="Enter disclaimer (optional)"></ion-textarea>
+          </ion-item>
+  
+          <ion-item>
+            <ion-input label="URI" type="url" formControlName="uri" placeholder="Enter URI"></ion-input>
+          </ion-item>
+
+          <ion-item-divider [sticky]="true">
+            Data Sources
+          </ion-item-divider>
+          <ion-chip *ngFor="let source of dataSources.controls; let i = index">
+            <ion-label>{{ source.value }}</ion-label>
+            <ion-icon name="close-circle" ></ion-icon>
+          </ion-chip>
+          <ion-item>
+            <ion-input label="New Data Source"></ion-input>
+            <ion-button fill="outline" (click)="addDataSource()">Add</ion-button>
+          </ion-item>
+            
+        </ion-list>
+
+      
+
+        <ion-item-divider [sticky]="true">
+          Tags
+        </ion-item-divider>
+        <ion-chip *ngFor="let tag of tags.controls; let i = index">
+          <ion-label>{{ tag.value }}</ion-label>
+          <ion-icon name="close-circle"></ion-icon>
+        </ion-chip>
+        <ion-item>
+          <ion-input label="New Tag"></ion-input>
+          <ion-button fill="outline" (click)="addTag()">Add</ion-button>
+        </ion-item>
+      
+    
+
+        <ion-item-divider [sticky]="true">
+          Advanced Settings
+        </ion-item-divider>
+          <ion-item>
+            <ion-checkbox label="Insert Attached Documents Metadata" formControlName="insertAttachedDocumentsMetadata"></ion-checkbox>
+          </ion-item>
+          <ion-item>
+            <ion-checkbox label="Insert Attached Documents" formControlName="insertAttachedDocuments"></ion-checkbox>
+          </ion-item>
+          <ion-item>
+            <ion-checkbox label="Insert Conversation Documents" formControlName="insertConversationDocuments"></ion-checkbox>
+          </ion-item>
+          <ion-item>
+            <ion-checkbox label="Disable Data Sources" formControlName="disableDataSources"></ion-checkbox>
+          </ion-item>
+          <ion-item>
+            <ion-checkbox label="Insert Conversation Documents Metadata" formControlName="insertConversationDocumentsMetadata"></ion-checkbox>
+          </ion-item>
+          <ion-item>
+            <ion-checkbox label="RAG Conversation Documents" formControlName="ragConversationDocuments"></ion-checkbox>
+          </ion-item>
+          <ion-item>
+            <ion-checkbox label="RAG Attached Documents" formControlName="ragAttachedDocuments"></ion-checkbox>
+          </ion-item>
+        
+
+    <ion-button expand="full" type="submit" [disabled]="assistantForm.invalid">
+      Submit
+    </ion-button>
+  </form>
+</ion-content> -->
