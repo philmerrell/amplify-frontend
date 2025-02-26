@@ -1,0 +1,62 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Create Assistant</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="dismiss()">Cancel</ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <form [formGroup]="form">
+    <ion-item-divider [sticky]="true">
+      Assistant Details
+    </ion-item-divider>
+    <div class="ion-padding">
+        <ion-input
+          label="Name"
+          labelPlacement="floating"
+          formControlName="name"
+          placeholder="Enter a name"
+          helperText="A short descriptive name is helpful"
+          errorText="Name is required"
+          ></ion-input>
+
+        <ion-textarea
+          label="Description"
+          labelPlacement="floating"
+          formControlName="description"
+          placeholder="Describe your prompt. This is particularily helpful if you share them with others."
+          helperText="What does this assistant do?"
+          errorText="A description is required">
+        </ion-textarea>
+
+        <ion-textarea
+          label="Instructions"
+          labelPlacement="floating"
+          formControlName="instructions"
+          rows="5"
+          placeholder="Instructions are the rules and patterns you want your assistant to follow."
+          helperText="Enter instructions for your assistant"
+          errorText="Instructions are required">
+        </ion-textarea>
+
+        <ion-textarea
+          label="Disclaimer"
+          labelPlacement="floating"
+          formControlName="disclaimer"
+          placeholder="Enter disclaimer (optional)"
+          helperText="This text is displayed at the end of the conversation">
+        </ion-textarea>
+
+    </div>
+  </form>
+</ion-content>
+<ion-footer>
+  <ion-toolbar>
+    <ion-button (click)="next()" expand="block">
+      Next
+      <ion-icon slot="end" name="chevron-forward-outline"></ion-icon>
+    </ion-button>
+  </ion-toolbar>
+</ion-footer>
