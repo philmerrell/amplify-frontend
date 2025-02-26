@@ -349,16 +349,15 @@ export class ChatRequestService {
         this.conversations.update(conversations => 
           conversations.map(c => c.id === conversation.id ? conversation : c)
         );
+        if(!isNewConversation) {
+          this.conversationService.saveConversation(conversation);
+        }
       }
     } catch(error) {
       // If an error occurs, reset the response content. 
       // The SSE might have malformed JSON or a server glitch.
       this.responseContent = '';
       // console.error(`Error in JSON.parse: ${error}`);
-    } finally {
-      if (!isNewConversation) {
-        this.conversationService.saveConversation(conversation);
-      }
     }
   }
 
