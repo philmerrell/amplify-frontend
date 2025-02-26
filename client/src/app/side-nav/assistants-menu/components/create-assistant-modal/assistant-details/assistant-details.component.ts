@@ -4,6 +4,7 @@ import { IonNav, IonHeader, IonTitle, IonToolbar, IonButtons, IonButton, IonCont
 import { addIcons } from 'ionicons';
 import { chevronForwardOutline } from 'ionicons/icons';
 import { validateAllFormFields } from 'src/app/shared/form-utils';
+import { DataSourcesComponent } from '../data-sources/data-sources.component';
 
 @Component({
   selector: 'app-assistant-details',
@@ -29,7 +30,7 @@ export class AssistantDetailsComponent  implements OnInit {
 
   next() {
     if(this.form.controls['name'].valid && this.form.controls['instructions'].valid) {
-      // this.nav.nativeElement.setRoot(GeneralInfoComponent, { nav: this.nav.nativeElement, form: this.form });
+      this.nav.nativeElement.push(DataSourcesComponent, { nav: this.nav.nativeElement, form: this.form });
     } else {
       validateAllFormFields(this.form);
     }

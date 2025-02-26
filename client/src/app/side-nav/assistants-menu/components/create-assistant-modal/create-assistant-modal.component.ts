@@ -37,7 +37,7 @@ export class CreateAssistantModalComponent implements OnInit {
 
 
   ngOnInit() {
-    this.nav.nativeElement.setRoot(AssistantDetailsComponent, { nav: this.nav.nativeElement, form: this.assistantForm });
+    this.nav.nativeElement.setRoot(AssistantDetailsComponent, { nav: this.nav, form: this.assistantForm });
   }
   
 

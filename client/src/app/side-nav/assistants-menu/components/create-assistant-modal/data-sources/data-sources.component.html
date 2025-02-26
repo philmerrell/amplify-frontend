@@ -1,0 +1,114 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+    <ion-title>Data Sources</ion-title>
+  </ion-toolbar>
+  <ion-toolbar>
+    <ion-segment>
+      <ion-segment-button value="selectedFiles" contentId="selectedFiles">
+        <ion-label>Selected Files</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="myFiles" contentId="myFiles">
+        <ion-label>My Files</ion-label>
+      </ion-segment-button>
+    </ion-segment>
+  </ion-toolbar>
+</ion-header>
+<ion-content>
+  
+  <ion-segment-view>
+    <ion-segment-content id="selectedFiles">
+      <ion-list>
+        <ion-item>
+          <ion-icon slot="start" name="cloud-upload-outline" color="secondary"></ion-icon>
+          <ion-label>
+            <h2>Upload a file</h2>
+            <p>Upload files from your computer to use with this assistant</p>
+          </ion-label>
+          <ion-button slot="end" fill="outline">Select Files</ion-button>
+        </ion-item>
+        <ion-item  lines="none">
+          <div appDropZone (fileDropped)="onFileDropped($event)" class="drop-zone">
+            Drop or select files to add to your assistant or browse "My Files" above to get started.
+          </div>
+        </ion-item>
+      </ion-list>    
+    </ion-segment-content>
+    <ion-segment-content id="myFiles">
+        <ion-list>
+          @for (file of files; track file.id) {
+            <ion-item (click)="handleFileSelect(file)" button>
+              @if (file.selected) {
+                <ion-icon color="success" name="checkmark-outline" slot="start"></ion-icon>
+              } @else {
+                <ion-icon [name]="file.type | fileTypeIcon" slot="start" color="secondary"></ion-icon>
+              }
+              <ion-label>
+                <h2><ion-text [color]="file.selected ? 'medium' : ''">{{ file.name }}</ion-text></h2>
+                <p>{{ file.createdAt | date }}</p>
+              </ion-label>
+              <ion-badge>{{ file.type | fileType }}</ion-badge>
+            </ion-item>
+          }
+          @if (!filesRequestComplete) {
+            <ion-item>
+              <ion-skeleton-text animated></ion-skeleton-text>
+            </ion-item>
+            <ion-item>
+              <ion-skeleton-text animated></ion-skeleton-text>
+            </ion-item>
+            <ion-item>
+              <ion-skeleton-text animated></ion-skeleton-text>
+            </ion-item>
+            <ion-item>
+              <ion-skeleton-text animated></ion-skeleton-text>
+            </ion-item>
+            <ion-item>
+              <ion-skeleton-text animated></ion-skeleton-text>
+            </ion-item>
+            <ion-item>
+              <ion-skeleton-text animated></ion-skeleton-text>
+            </ion-item>
+            <ion-item>
+              <ion-skeleton-text animated></ion-skeleton-text>
+            </ion-item>
+            <ion-item>
+              <ion-skeleton-text animated></ion-skeleton-text>
+            </ion-item>
+            <ion-item>
+              <ion-skeleton-text animated></ion-skeleton-text>
+            </ion-item>
+            <ion-item>
+              <ion-skeleton-text animated></ion-skeleton-text>
+            </ion-item>
+            <ion-item>
+              <ion-skeleton-text animated></ion-skeleton-text>
+            </ion-item>
+            <ion-item>
+              <ion-skeleton-text animated></ion-skeleton-text>
+            </ion-item>
+          }
+          @if (filesRequestComplete && !files.length) {
+            <ion-item>
+              <ion-icon slot="start" name="document-outline" color="secondary"></ion-icon>
+              <ion-label>
+                <h2>You have not uploaded any files yet</h2>
+                <p>But this is where they'd be if you did.</p>
+              </ion-label>
+            </ion-item>
+          }
+      </ion-list>
+    </ion-segment-content>
+  </ion-segment-view>
+
+</ion-content>
+<ion-footer>
+  <ion-toolbar>
+    <ion-button expand="block">
+      Next
+      <ion-icon slot="end" name="chevron-forward-outline"></ion-icon>
+    </ion-button>
+  </ion-toolbar>
+</ion-footer>
