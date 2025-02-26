@@ -1,7 +1,4 @@
-<!-- <pre>
-  {{ conversation() | json }}
-</pre> -->
-@if(conversation()?.messages!.length > 0) {
+@if(conversation()?.messages) {
   <div class="ion-padding">
     <ion-grid>
       @for(message of conversation()?.messages; track message.id; let i = $index;) {

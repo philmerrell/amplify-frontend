@@ -1,6 +1,6 @@
 import { Component, effect, ElementRef, input, OnInit, ResourceStatus, signal, Signal, ViewChild, WritableSignal, viewChildren, AfterViewInit, Input } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { IonAccordionGroup, IonAccordion, IonItemDivider, IonLabel, IonItem, IonIcon, IonList, IonCard, IonButton, IonRouterLink, IonSkeletonText, IonText, IonMenu, IonItemGroup, IonSpinner, IonPopover, IonContent, IonInput } from "@ionic/angular/standalone";
+import { IonAccordionGroup, IonAccordion, IonItemDivider, IonLabel, IonItem, IonIcon, IonList, IonCard, IonButton, IonRouterLink, IonSkeletonText, IonText, IonMenu, IonItemGroup, IonSpinner, IonPopover, IonContent, IonInput, IonItemOption, IonItemOptions, IonItemSliding } from "@ionic/angular/standalone";
 import { addIcons } from 'ionicons';
 import { chatbubbleOutline, chatboxOutline, add, folder, chevronForwardOutline, trash, pencilOutline, ellipsisHorizontalOutline, ellipsisHorizontal, trashOutline } from 'ionicons/icons';
 import { Conversation } from 'src/app/models/conversation.model';
@@ -14,13 +14,10 @@ import { JsonPipe } from '@angular/common';
   selector: 'app-conversations-menu',
   templateUrl: './conversations-menu.component.html',
   styleUrls: ['./conversations-menu.component.scss'],
-  imports: [IonText, IonButton, IonList, IonIcon, IonItem, IonLabel, IonItemDivider, RouterLink, IonRouterLink, IonItemGroup, JsonPipe, IonSpinner, IonPopover, IonContent, IonInput],
+  imports: [IonText, IonButton, IonList, IonIcon, IonItem, IonLabel, IonItemDivider, RouterLink, IonRouterLink, IonItemGroup, JsonPipe, IonSpinner, IonPopover, IonContent, IonInput, IonItemOption, IonItemOptions, IonItemSliding,],
   standalone: true,
 })
 export class ConversationsMenuComponent  implements OnInit {
-  deleteFolder(_t24: Folder) {
-  throw new Error('Method not implemented.');
-  }
 
   @ViewChild('accordionGroup', {static: true}) accordionGroup!: IonAccordionGroup;
   status = ResourceStatus;
@@ -53,6 +50,14 @@ export class ConversationsMenuComponent  implements OnInit {
     const newConversation = this.conversationService.createConversation(currentFolder);
     this.setCurrentConversation(newConversation);
     this.conversationService.addConversationToFolder(newConversation, currentFolder);
+  }
+
+  deleteFolder(folder: Folder) {
+
+  }
+
+  deleteConversation(conversation: Conversation) {
+    this.conversationService.deleteConversation(conversation);
   }
 
   renameFolder(folder: Folder, index: number) {

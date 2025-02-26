@@ -42,12 +42,27 @@
           </ion-popover>
         </ion-item>
         @for(conversation of folderConversations.value()?.conversations?.[folder.id] ?? []; track conversation.id) {
-          <ion-item lines="inset" (click)="setCurrentConversation(conversation); setActiveFolder(folder.id)" routerLink="/" routerDirection="back">
-            <ion-icon class="ion-padding-start" slot="start" name="chatbox-outline"></ion-icon>
-            <ion-label>
-              <h2>{{ conversation.name }}</h2>
-            </ion-label>
-          </ion-item>
+          <ion-item-sliding>
+            <ion-item lines="inset" (click)="setCurrentConversation(conversation); setActiveFolder(folder.id)" routerLink="/" routerDirection="back">
+              <ion-icon class="ion-padding-start" slot="start" name="chatbox-outline"></ion-icon>
+              <ion-label>
+                @if(conversationRename().conversationId === conversation.id) {
+                  @if(conversationRename().loading) {
+                    <ion-spinner name="dots"></ion-spinner>
+                  } @else {
+                    <h2>{{ conversationRename().name }}</h2>
+                  }
+                } @else {
+                  <h2>{{ conversation.name }}</h2>
+                }
+              </ion-label>
+            </ion-item>
+            <ion-item-options>
+              <ion-item-option color="danger" (click)="deleteConversation(conversation)">
+                <ion-icon slot="icon-only" name="trash"></ion-icon>
+              </ion-item-option>
+            </ion-item-options>
+          </ion-item-sliding>
         }
       </ion-item-group>
     } @empty {

@@ -1,4 +1,4 @@
-import { Injectable, signal, Signal, WritableSignal } from '@angular/core';
+import { effect, Injectable, signal, Signal, WritableSignal } from '@angular/core';
 import { SseClient } from 'ngx-sse-client';
 import { Conversation } from 'src/app/models/conversation.model';
 import { Model } from 'src/app/models/model.model';
@@ -23,7 +23,7 @@ export class ConversationRenameService {
     private conversationService: ConversationService,
     private developerSettingsService: DeveloperSettingsService,
     private modelService: ModelService
-  ) { }
+  ) {}
 
   getConversationRename(): Signal<{loading: boolean, name: string, conversationId: string}> {
     return this.conversationRename;
@@ -49,9 +49,6 @@ export class ConversationRenameService {
   }
 
   private parseRenameMessageEvent(messageEvent: MessageEvent) {
-    
-    // const conversation = this.currentConversation();
-    // console.log(messageEvent.data);
     try {
       const message = JSON.parse(messageEvent.data);
       // This case contains the response text we want to compile
@@ -69,6 +66,7 @@ export class ConversationRenameService {
           )
         })
         this.renamedConversationTitle = '';
+        this.conversationService.saveConversation(this.currentConversation());
       }
     } catch(error) {
       this.renamedConversationTitle = ''

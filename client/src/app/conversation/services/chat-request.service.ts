@@ -217,19 +217,18 @@ export class ChatRequestService {
     // Check if it's a new conversation (folderId is empty).
     if (this.currentConversation().folderId === '') {
 
-      // Create a new folderId for this conversation.
-      // const folderId = this.folderService.getFolderId();
-      const folderId = uuidv4();
+      const folderId = this.folderService.getActiveFolder();
       this.currentConversation.update((c: Conversation) => {
         return {
           ...c,
-          folderId: folderId,
+          folderId: folderId(),
           messages: [...c.messages, userMessage]
         }
       });
 
       // Add the new conversation to the list of all conversations.
       this.conversations.update((conversations) => [...conversations, this.currentConversation()]);
+      this.conversationService.addConversationToFolder(this.currentConversation(), folderId() ?? '')
 
     } else {
       // This is an existing conversation. Just append the user message.
@@ -311,10 +310,9 @@ export class ChatRequestService {
   private parseMessageEvent(messageEvent: MessageEvent) {
     const conversation = this.currentConversation();
     const userMessage = conversation.messages[0];
-
+    const isNewConversation = conversation.name === 'New Conversation';
     try {
       const message = JSON.parse(messageEvent.data);
-      console.log(message);
       if (message.s === 'meta') {
         // Metadata returned by the server. You can handle it here as needed.
 
@@ -338,7 +336,7 @@ export class ChatRequestService {
         this.chatLoading.set(false);
 
         // If the conversation name is still default, rename it based on first user message.
-        if (conversation.name === 'New Conversation') {
+        if (isNewConversation) {
           this.conversationRenameService.renameConversation(userMessage.content);
         }
 
@@ -357,6 +355,10 @@ export class ChatRequestService {
       // The SSE might have malformed JSON or a server glitch.
       this.responseContent = '';
       // console.error(`Error in JSON.parse: ${error}`);
+    } finally {
+      if (!isNewConversation) {
+        this.conversationService.saveConversation(conversation);
+      }
     }
   }
 
