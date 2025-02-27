@@ -8,7 +8,7 @@
   </ion-button>
 </div>
 <ion-list>
-  <ion-item-divider color="background" sticky class="ion-margin">
+  <ion-item-divider color="background" class="ion-margin">
     My Conversations
   </ion-item-divider>
   <ion-list>
@@ -20,7 +20,7 @@
     }
     @for(folder of folderConversations.value()?.folders; track folder.id;) {
       <ion-item-group>
-        <ion-item button detail="false" (click)="setActiveFolder(folder.id)" lines="full" [color]="folder.id === activeFolder() ? 'medium' : 'background'">
+        <ion-item button detail="false" (click)="setActiveFolder(folder.id)" lines="full" [color]="folder.id === activeFolder() ? 'medium' : 'background'" (dragleave)="onDragLeave($event)" (dragover)="onDragOver($event)" (drop)="onDrop($event, folder)">
           <ion-icon name="folder" class="ion-padding-end"></ion-icon>
           <ion-input #folderNameInput autofocus="true" id="{{folder.id}}" class="folder" type="text" [value]="folder.name" [readonly]="editingFolder() !== folder.id" (ionBlur)="saveFolderName(folder, $event)"></ion-input>
           <ion-button id="edit-folder-menu-{{ folder.id }}" slot="end" fill="clear" color="tertiary">
@@ -43,7 +43,7 @@
         </ion-item>
         @for(conversation of folderConversations.value()?.conversations?.[folder.id] ?? []; track conversation.id) {
           <ion-item-sliding>
-            <ion-item lines="inset" (click)="setCurrentConversation(conversation); setActiveFolder(folder.id)" routerLink="/" routerDirection="back">
+            <ion-item [lines]="$last ? 'none': 'inset'" (click)="setCurrentConversation(conversation); setActiveFolder(folder.id)" routerLink="/" routerDirection="back" draggable="true" (dragstart)="onDragStart($event, conversation)" (dragend)="onDragEnd($event)">
               <ion-icon class="ion-padding-start" slot="start" name="chatbox-outline"></ion-icon>
               <ion-label>
                 @if(conversationRename().conversationId === conversation.id) {
@@ -85,6 +85,4 @@
       </ion-item>
     }
   </ion-list>
-
-  <pre>{{folderConversations.value() | json}}</pre>
 </ion-list>

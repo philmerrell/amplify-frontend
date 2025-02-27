@@ -121,10 +121,33 @@ export class ConversationService {
       if (!conversationsCopy[folderId]) {
         conversationsCopy[folderId] = [];
       }
-      conversationsCopy[folderId].unshift(conversation);
+      
+      // Check if conversation already exists in folder
+      const exists = conversationsCopy[folderId].some(c => c.id === conversation.id);
+      if (!exists) {
+        conversationsCopy[folderId].unshift(conversation);
+      }
 
       return { folders: current?.folders ?? [], conversations: conversationsCopy };
     })
+  }
+
+  removeConversationFromFolder(conversation: Conversation, folderId: string) {
+    this._conversationsResource.update((current) => {
+      const conversationsCopy = current?.conversations ? { ...current.conversations } : {};
+      
+      if (conversationsCopy[folderId]) {
+        // Filter out the conversation from the specified folder
+        conversationsCopy[folderId] = conversationsCopy[folderId].filter(
+          c => c.id !== conversation.id
+        );
+      }
+
+      return { 
+        folders: current?.folders ?? [], 
+        conversations: conversationsCopy 
+      };
+    });
   }
 
   getAllConversations(): Promise<{ folders: Folder[]; conversations: Record<string, Conversation[]> }> {
@@ -199,17 +222,26 @@ export class ConversationService {
     ));
   }
 
-  saveConversation(conversation: Conversation): Promise<{ success: boolean; message: string }> {
+  saveConversation(conversation: Conversation, moveFolders: boolean = false): Promise<{ success: boolean; message: string }> {
     const url = this.developerSettings.getDeveloperApiBaseUrl();
     const apiBase = `${url()}/state/conversation/upload`;
-    const folderId = this.folderService.getActiveFolder();
-    const folder = this._conversationsResource.value()?.folders.find(f => f.id === folderId()) ?? {};
+    let folder: Folder;
+    // If we are moving the folder, we need to use the folderId from the conversation
+    if(moveFolders) {
+      folder = this._conversationsResource.value()?.folders.find(f => f.id === conversation.folderId) ?? {} as Folder;
+    } else {
+      // Otherwise, we need to use the active folder
+      const activeFolder = this.folderService.getActiveFolder();
+      folder = this._conversationsResource.value()?.folders.find(f => f.id === activeFolder()) ?? {} as Folder;
+    }
     conversation.isLocal = false;
+    console.log('saving conversation', conversation.folderId === folder.id);
     const data = {
       conversation: lzwCompress(JSON.stringify(conversation)),
       conversationId: conversation.id,
       folder: folder
     }
+
     return firstValueFrom(this.httpClient.put<{ statusCode: number; body: string }>(apiBase, {data: data}).pipe(
       map(response => {
         if (response.statusCode !== 200) {

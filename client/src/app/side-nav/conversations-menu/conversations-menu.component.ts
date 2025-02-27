@@ -1,4 +1,4 @@
-import { Component, effect, ElementRef, input, OnInit, ResourceStatus, signal, Signal, ViewChild, WritableSignal, viewChildren, AfterViewInit, Input } from '@angular/core';
+import { Component, effect, ElementRef, input, OnInit, ResourceStatus, signal, Signal, ViewChild, WritableSignal, viewChildren, AfterViewInit, Input, Renderer2 } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { IonAccordionGroup, IonAccordion, IonItemDivider, IonLabel, IonItem, IonIcon, IonList, IonCard, IonButton, IonRouterLink, IonSkeletonText, IonText, IonMenu, IonItemGroup, IonSpinner, IonPopover, IonContent, IonInput, IonItemOption, IonItemOptions, IonItemSliding } from "@ionic/angular/standalone";
 import { addIcons } from 'ionicons';
@@ -18,7 +18,6 @@ import { JsonPipe } from '@angular/common';
   standalone: true,
 })
 export class ConversationsMenuComponent  implements OnInit {
-
   @ViewChild('accordionGroup', {static: true}) accordionGroup!: IonAccordionGroup;
   status = ResourceStatus;
   readonly menu = input<IonMenu>();
@@ -29,6 +28,7 @@ export class ConversationsMenuComponent  implements OnInit {
   folderConversations = this.conversationService.conversationsResource;
   editingFolder = signal<string | null>(null); // Track folder being edited
   activeFolder = this.foldersService.getActiveFolder();
+  draggedConversation: Conversation | null = null;
 
   readonly folderNameInputs = viewChildren(IonInput, {read: ElementRef});
   
@@ -36,6 +36,7 @@ export class ConversationsMenuComponent  implements OnInit {
     private conversationService: ConversationService,
     private conversationRenameService: ConversationRenameService,
     private foldersService: FoldersService,
+    private renderer: Renderer2,
   ) {
       addIcons({add,folder,trash,chatboxOutline,chevronForwardOutline,chatbubbleOutline,pencilOutline, ellipsisHorizontal, trashOutline});
       effect(() => {
@@ -53,7 +54,83 @@ export class ConversationsMenuComponent  implements OnInit {
   }
 
   deleteFolder(folder: Folder) {
+    // TODO: just loop through all the convos in the folder and delete 1 by 1, that's how the api does it now
+  }
 
+  onDragStart($event: DragEvent, conversation: Conversation) {
+    $event.dataTransfer!.effectAllowed = "move";
+    this.draggedConversation = conversation;
+    const conversationEl = $event.target as HTMLElement;
+    if (conversationEl) {
+      conversationEl.classList.add("conversation-dragging");
+      // Create a div-based clone for the preview instead of cloning `ion-item`
+    const dragPreview = this.renderer.createElement("div");
+    this.renderer.setProperty(dragPreview, "innerHTML", conversationEl.innerHTML);
+
+    // Apply styles to make it visually identical but smaller
+    this.renderer.setStyle(dragPreview, "position", "absolute");
+    this.renderer.setStyle(dragPreview, "top", "0");
+    this.renderer.setStyle(dragPreview, "left", "0");
+    this.renderer.setStyle(dragPreview, "transform", "scale(0.7)"); // Shrink effect
+    this.renderer.setStyle(dragPreview, "opacity", "0.9");
+    this.renderer.setStyle(dragPreview, "pointerEvents", "none");
+    this.renderer.setStyle(dragPreview, "background", "white");
+    this.renderer.setStyle(dragPreview, "padding", "8px");
+    this.renderer.setStyle(dragPreview, "borderRadius", "8px");
+    this.renderer.setStyle(dragPreview, "boxShadow", "0 2px 8px rgba(0, 0, 0, 0.2)");
+
+    this.renderer.appendChild(document.body, dragPreview);
+
+    $event.dataTransfer!.setDragImage(dragPreview, 0, 0);
+
+      setTimeout(() => this.renderer.removeChild(document.body, dragPreview), 0);
+    }
+  }
+
+  onDragEnd($event: DragEvent) {
+    const conversationEl = $event.target as HTMLElement;
+    if (conversationEl) {
+      conversationEl.classList.remove("conversation-dragging");
+    }
+  }
+
+  onDragLeave($event: Event) {
+    const folderElement = $event.currentTarget as HTMLElement;
+    if(folderElement) {
+      folderElement.classList.remove("folder-drop-target-hover");
+    }
+  }
+
+  onDrop($event: DragEvent, targetFolder: Folder) {
+    $event.preventDefault();
+    const folderEl = $event.currentTarget as HTMLElement;
+
+    if (!this.draggedConversation) return;
+
+    if(this.draggedConversation.folderId) {
+      this.conversationService.removeConversationFromFolder(this.draggedConversation, this.draggedConversation.folderId);
+      this.conversationService.addConversationToFolder(this.draggedConversation, targetFolder.id)
+    }
+
+    if (folderEl) {
+      folderEl.classList.remove("folder-drop-target-hover");
+      folderEl.classList.add("folder-drop-success");
+
+      setTimeout(() => {
+        folderEl.classList.remove("folder-drop-success");
+      }, 200); // Remove bounce effect after animation
+    }
+
+    // Reset state
+    this.draggedConversation.folderId = targetFolder.id;
+    this.conversationService.saveConversation(this.draggedConversation, true);
+    this.draggedConversation = null;
+  }
+
+  onDragOver($event: DragEvent) {
+    $event.preventDefault();
+    const folderElement = $event.currentTarget as HTMLElement;
+    folderElement.classList.add("folder-drop-target-hover");
   }
 
   deleteConversation(conversation: Conversation) {

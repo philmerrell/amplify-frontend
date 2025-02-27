@@ -1,3 +1,44 @@
 .list-ios {
     background: none;
 }
+
+// Smooth, subtle highlight when dragging over a folder
+.folder-drop-target-hover {
+    border: 2px solid rgba(56, 128, 255, 0.3); // Subtle border
+    border-radius: 8px;
+    transition: all 0.15s ease-in-out;
+    scale: 1.08;
+    background-color:var(--ion-color-primary);
+}
+
+// Smooth fade & scale effect for dragged conversation items
+.conversation-dragging {
+    opacity: 0.7;
+    transform: scale(1.05);
+    transition: transform 0.15s ease-in-out, opacity 0.15s ease-in-out;
+}
+
+// Make folder icons look more interactive
+.folder-icon {
+    color: var(--ion-color-primary);
+    font-size: 1.5rem;
+}
+
+// Slight bounce effect when dropping into a folder
+@keyframes dropSuccess {
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.05);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+.folder-drop-success {
+    animation: dropSuccess 0.2s ease-in-out;
+}

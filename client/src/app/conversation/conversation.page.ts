@@ -14,6 +14,7 @@ import { Router } from '@angular/router';
 import { SettingsMenuComponent } from '../side-nav/settings-menu/settings-menu.component';
 import { SelectModelComponent } from './components/select-model/select-model.component';
 import { ModelSettingsComponent } from './components/model-settings/model-settings.component';
+import { JsonPipe } from '@angular/common';
 
 @Component({
   selector: 'app-conversation',
@@ -23,9 +24,8 @@ import { ModelSettingsComponent } from './components/model-settings/model-settin
   imports: [ IonIcon, IonPopover, IonButton, 
     ConversationTextComponent,
     SettingsMenuComponent,
-
     IonPopover,
-    IonContent, IonHeader, IonButtons, IonTitle, IonToolbar, IonFooter, ChatInputComponent, IonMenuButton ]
+    IonContent, IonHeader, IonButtons, IonTitle, IonToolbar, IonFooter, ChatInputComponent, IonMenuButton, JsonPipe ]
 })
 export class ConversationPage implements OnInit {
   currentConversation: Signal<Conversation> = this.conversationService.getCurrentConversation();

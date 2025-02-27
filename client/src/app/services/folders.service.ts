@@ -1,4 +1,4 @@
-import { Injectable, Signal, signal, WritableSignal, ɵunwrapWritableSignal } from '@angular/core';
+import { computed, Injectable, Signal, signal, WritableSignal, ɵunwrapWritableSignal } from '@angular/core';
 import { v4 as uuidv4 } from 'uuid';
 import { Conversation } from '../models/conversation.model';
 
@@ -15,7 +15,7 @@ export interface Folder {
 export class FoldersService {
 
   private activeFolder: WritableSignal<string | null> = signal<string | null>(null); // Signal for active folder
-
+  
   /**
    * Sets the active folder ID.
   */
@@ -29,7 +29,6 @@ export class FoldersService {
   getActiveFolder(): Signal<string | null> {
     return this.activeFolder.asReadonly();
   }
-
   /**
    * Creates a new folder with a unique ID and sets it as active.
   */
