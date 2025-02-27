@@ -2,6 +2,10 @@ ion-split-pane {
   --side-width: 320px;
 }
 
+.new-chat {
+  margin: 0 20px 20px 20px;
+}
+
 ion-menu ion-content {
   --background: var(--ion-item-background, var(--ion-background-color, #fff));
 }

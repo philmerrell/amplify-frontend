@@ -44,11 +44,11 @@
         </ion-button>
       </ion-textarea>
   
-      <ion-button (click)="presentSelectUploadedFileModal()" appTooltip="Select a file" shape="round" aria-label="Select a file">
-        <ion-icon slot="icon-only" name="copy-outline" aria-hidden="true"></ion-icon>
+      <ion-button (click)="fileInput.click()" appTooltip="Upload files" shape="round" aria-label="Select a file">
+        <ion-icon slot="icon-only" name="cloud-upload-outline" aria-hidden="true"></ion-icon>
       </ion-button>
-      <ion-button (click)="fileInput.click()" appTooltip="Upload files" shape="round" aria-label="Upload files">
-        <ion-icon slot="icon-only" name="add-outline" aria-hidden="true"></ion-icon>
+      <ion-button (click)="presentSelectUploadedFileModal()" appTooltip="My files" shape="round" aria-label="Upload files">
+        <ion-icon slot="icon-only" name="list-outline" aria-hidden="true"></ion-icon>
       </ion-button>
       <ion-button (click)="presentCustomInstructionsModal()" appTooltip="Custom instructions" color="secondary" shape="round" aria-label="Custom instructions">
         <ion-icon slot="icon-only" name="at-outline" aria-hidden="true"></ion-icon>

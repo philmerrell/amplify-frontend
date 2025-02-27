@@ -1,7 +1,7 @@
 import { Component, OnInit, Signal } from '@angular/core';
 import { IonButton, IonIcon, IonCard, IonCardContent, IonTextarea, IonChip, IonLabel, IonAvatar, IonBadge, ToastController, ModalController } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-import { arrowUpOutline, addOutline, copyOutline, atOutline, stop, pin, close, documentsOutline, documentOutline, checkmarkOutline, imageOutline, listOutline, readerOutline } from 'ionicons/icons';
+import { arrowUpOutline, addOutline, copyOutline, atOutline, stop, pin, close, documentsOutline, documentOutline, checkmarkOutline, imageOutline, listOutline, readerOutline, cloudUploadOutline } from 'ionicons/icons';
 import { ChatRequestService } from '../../services/chat-request.service';
 import { FormsModule } from '@angular/forms';
 import { FileDropZoneDirective } from './file-drop-zone.directive';
@@ -34,7 +34,7 @@ export class ChatInputComponent  implements OnInit {
     private fileUploadService: FileUploadService,
     private modalController: ModalController,
     private toastController: ToastController) {
-    addIcons({documentOutline,close,stop,arrowUpOutline,copyOutline,addOutline,atOutline,documentsOutline,pin,checkmarkOutline,readerOutline,imageOutline,listOutline});
+    addIcons({atOutline,close,stop,arrowUpOutline,cloudUploadOutline,listOutline,documentOutline,copyOutline,addOutline,documentsOutline,pin,checkmarkOutline,readerOutline,imageOutline});
   }
 
   ngOnInit() {}

@@ -1,6 +1,6 @@
 import { Component, input, OnInit } from '@angular/core';
 import { IonMenu } from '@ionic/angular';
-import { IonButton, IonIcon, ModalController, IonList, IonItem, IonLabel } from "@ionic/angular/standalone";
+import { IonIcon, ModalController, IonItem, IonLabel } from "@ionic/angular/standalone";
 import { addIcons } from 'ionicons';
 import { addOutline } from 'ionicons/icons';
 import { CustomInstructionsComponent } from './components/custom-instructions/custom-instructions.component';
@@ -13,7 +13,7 @@ import { CreateAssistantModalComponent } from './components/create-assistant-mod
   templateUrl: './assistants-menu.component.html',
   styleUrls: ['./assistants-menu.component.scss'],
   standalone: true,
-  imports: [IonLabel, IonItem, IonButton, IonIcon, CustomInstructionsComponent]
+  imports: [IonLabel, IonItem, IonIcon, CustomInstructionsComponent]
 })
 export class AssistantsMenuComponent  implements OnInit {
   readonly menu = input<IonMenu>();

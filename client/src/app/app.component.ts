@@ -1,10 +1,10 @@
 
 import { Component, OnInit } from '@angular/core';
 import { AsyncPipe, NgIf } from '@angular/common';
-import { IonHeader, IonToolbar, IonIcon, IonSegmentView, IonSegment, IonSegmentButton, IonSegmentContent, IonApp, IonSplitPane, IonMenu, IonContent, IonRouterOutlet, IonImg } from '@ionic/angular/standalone';
+import { IonHeader, IonToolbar, IonIcon, IonSegmentView, IonSegment, IonSegmentButton, IonSegmentContent, IonApp, IonSplitPane, IonMenu, IonContent, IonRouterOutlet, IonImg, IonButton } from '@ionic/angular/standalone';
 import { ConversationsMenuComponent } from './side-nav/conversations-menu/conversations-menu.component';
 import { addIcons } from 'ionicons';
-import { bodyOutline, briefcaseOutline, chatbox, settingsOutline, shareSocialOutline } from 'ionicons/icons';
+import { bodyOutline, briefcaseOutline, chatbox, createOutline, settingsOutline, shareSocialOutline } from 'ionicons/icons';
 import { ShareMenuComponent } from './side-nav/share-menu/share-menu.component';
 import { WorkspacesMenuComponent } from './side-nav/workspaces-menu/workspaces-menu.component';
 import { ThemeService } from './services/theme.service';
@@ -16,14 +16,14 @@ import { Observable } from 'rxjs';
   selector: 'app-root',
   templateUrl: 'app.component.html',
   styleUrls: ['app.component.scss'],
-  imports: [NgIf, AsyncPipe, IonHeader, IonToolbar, IonIcon, IonSegmentView, IonSegment, IonSegmentButton, IonSegmentContent, IonApp, IonSplitPane, IonMenu, IonContent, IonRouterOutlet, ConversationsMenuComponent, ShareMenuComponent, WorkspacesMenuComponent, TooltipDirective, AssistantsMenuComponent],
+  imports: [NgIf, AsyncPipe, IonButton, IonHeader, IonToolbar, IonIcon, IonSegmentView, IonSegment, IonSegmentButton, IonSegmentContent, IonApp, IonSplitPane, IonMenu, IonContent, IonRouterOutlet, ConversationsMenuComponent, ShareMenuComponent, WorkspacesMenuComponent, TooltipDirective, AssistantsMenuComponent],
 })
 export class AppComponent implements OnInit {
   logo$: Observable<string> = this.themeService.logo$;
   
   constructor(
     private themeService: ThemeService) {
-    addIcons({chatbox, shareSocialOutline, settingsOutline, briefcaseOutline, bodyOutline})
+    addIcons({chatbox, shareSocialOutline, settingsOutline, briefcaseOutline, bodyOutline, createOutline})
   }
 
   ngOnInit() {

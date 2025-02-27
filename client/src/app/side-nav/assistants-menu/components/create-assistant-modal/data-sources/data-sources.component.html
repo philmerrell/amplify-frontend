@@ -4,14 +4,18 @@
       <ion-back-button></ion-back-button>
     </ion-buttons>
     <ion-title>Data Sources</ion-title>
+    <ion-buttons slot="end">
+      <ion-button>Upload Files</ion-button>
+    </ion-buttons>
   </ion-toolbar>
   <ion-toolbar>
     <ion-segment>
       <ion-segment-button value="selectedFiles" contentId="selectedFiles">
-        <ion-label>Selected Files</ion-label>
+        <ion-label>Selected Files <ion-badge>{{dataSources.length}}</ion-badge></ion-label>
       </ion-segment-button>
-      <ion-segment-button value="myFiles" contentId="myFiles">
+      <ion-segment-button value="myFiles" contentId="myFiles" layout="icon-end">
         <ion-label>My Files</ion-label>
+        <ion-icon name="file-tray-outline" size="small"></ion-icon>
       </ion-segment-button>
     </ion-segment>
   </ion-toolbar>
@@ -21,19 +25,39 @@
   <ion-segment-view>
     <ion-segment-content id="selectedFiles">
       <ion-list>
-        <ion-item>
-          <ion-icon slot="start" name="cloud-upload-outline" color="secondary"></ion-icon>
-          <ion-label>
-            <h2>Upload a file</h2>
-            <p>Upload files from your computer to use with this assistant</p>
-          </ion-label>
-          <ion-button slot="end" fill="outline">Select Files</ion-button>
-        </ion-item>
-        <ion-item  lines="none">
-          <div appDropZone (fileDropped)="onFileDropped($event)" class="drop-zone">
-            Drop or select files to add to your assistant or browse "My Files" above to get started.
-          </div>
-        </ion-item>
+        @if(!dataSources.length) {
+          <!-- <ion-item>
+            <ion-icon slot="start" name="cloud-upload-outline" color="secondary"></ion-icon>
+            <ion-label>
+              <h2>Upload a file</h2>
+              <p>Upload files from your computer to use with this assistant</p>
+            </ion-label>
+          </ion-item> -->
+          <ion-item>
+            <ion-icon slot="start" name="document-outline" color="secondary"></ion-icon>
+            <ion-label>
+              <h2>No files selected</h2>
+              <p>Upload or click "My Files" above to add files.</p>
+            </ion-label>
+          </ion-item>
+
+          <ion-item  lines="none">
+            <div appDropZone (fileDropped)="onFileDropped($event)" class="drop-zone">
+              Drop files here or browse "My Files" above to add files to your assistant .
+            </div>
+          </ion-item>
+        }
+        
+        @for(file of dataSources; track file.id) {
+          <ion-item>
+            <ion-icon slot="start" name="document-outline" color="secondary"></ion-icon>
+            <ion-label>
+              <h2>{{ file.name }}</h2>
+              <!-- <p>{{ file.createdAt | date }}</p> -->
+            </ion-label>
+            <!-- <ion-badge>{{ file.type | fileType }}</ion-badge> -->
+          </ion-item>
+        }
       </ion-list>    
     </ion-segment-content>
     <ion-segment-content id="myFiles">

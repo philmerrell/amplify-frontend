@@ -1,13 +1,14 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { IonHeader, IonToolbar, IonButtons, IonBackButton, IonTitle, IonContent, IonFooter, IonButton, IonIcon, IonList, IonItem, IonLabel, IonSkeletonText, IonText, IonBadge, IonSegment, IonSegmentButton, IonSegmentView, IonSegmentContent } from "@ionic/angular/standalone";
 import { addIcons } from 'ionicons';
-import { chevronForwardOutline, checkmarkOutline, documentOutline, cloudUploadOutline } from 'ionicons/icons';
+import { chevronForwardOutline, checkmarkOutline, documentOutline, cloudUploadOutline, fileTrayOutline } from 'ionicons/icons';
 import { SelectUploadedFileService, UploadedFile } from 'src/app/conversation/components/select-uploaded-file/select-uploaded-file.service';
-import { FileWrapper } from 'src/app/conversation/services/file-upload.service';
+import { FileUploadService, FileWrapper } from 'src/app/conversation/services/file-upload.service';
 import { FileTypeIconPipe } from "../../../../../conversation/components/select-uploaded-file/pipes/file-type-icon.pipe";
 import { DatePipe } from '@angular/common';
 import { FileTypePipe } from "../../../../../conversation/components/select-uploaded-file/pipes/file-type.pipe";
 import { FileDropZoneDirective } from 'src/app/conversation/components/chat-input/file-drop-zone.directive';
+import { DataSource } from 'src/app/models/chat-request.model';
 
 @Component({
   selector: 'app-data-sources',
@@ -19,10 +20,12 @@ import { FileDropZoneDirective } from 'src/app/conversation/components/chat-inpu
 export class DataSourcesComponent  implements OnInit {
   files: UploadedFile[] = [];
   filesRequestComplete: boolean = false;
+  dataSources: DataSource[] = [];
   private selectUploadedFileService: SelectUploadedFileService = inject(SelectUploadedFileService);
+  private fileUploadService: FileUploadService = inject(FileUploadService);
   
   constructor() {
-    addIcons({cloudUploadOutline,checkmarkOutline,documentOutline,chevronForwardOutline});
+    addIcons({cloudUploadOutline,checkmarkOutline,documentOutline,chevronForwardOutline, fileTrayOutline});
   }
 
   ngOnInit() {
@@ -31,9 +34,16 @@ export class DataSourcesComponent  implements OnInit {
 
   async onFileDropped(files: File[]) {
     console.log(files);
-    // this.prepareFilesList(files);
+    this.prepareFilesList(files);
     // await this.getPresignedUrlForUpload();
     // this.initiateFileUploads();
+  }
+
+  async prepareFilesList(files: Array<any>) {  
+    for (const file of files) {
+      const fw = this.fileUploadService.createFileWrapperObj(file);
+      this.dataSources.push(fw);
+    }
   }
 
   async getFiles() {
@@ -51,6 +61,7 @@ export class DataSourcesComponent  implements OnInit {
       this.removeFile(uploadedFile);
     } else {
       this.addFile(uploadedFile);
+      this.dataSources.push(this.selectUploadedFileService.createDataSourceFromUplodedFile(uploadedFile));
     }
     uploadedFile.selected = !uploadedFile.selected;
   }
@@ -66,6 +77,8 @@ export class DataSourcesComponent  implements OnInit {
     const fw = this.createFileWrapperFromUploadedFile(uploadedFile);
     // this.chatRequestService.addFile(fw);
     const dataSource = this.selectUploadedFileService.createDataSourceFromUplodedFile(uploadedFile);
+    this.dataSources.push(dataSource);
+
     // this.chatRequestService.addDataSource(dataSource);
     // this.presentToast('File Added', 'dark', 3000);
   }

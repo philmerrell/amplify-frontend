@@ -2,9 +2,14 @@
   <ion-split-pane contentId="main-content">
     <ion-menu #mainMenu contentId="main-content" type="overlay" [swipeGesture]="false" menuId="main">
       <ion-header style="background: var(--ion-color-light)">
-        <a routerLink="/" *ngIf="logo$ | async as logo">
+        <img src="/assets/logo-light.png" alt="Home" />
+        <!-- <a routerLink="/" *ngIf="logo$ | async as logo">
           <img [src]="'/assets/logo-' + logo + '.png'" alt="Home" />
-        </a>
+        </a> -->
+        <ion-button class="new-chat" color="secondary" expand="block">
+          <ion-icon slot="start" name="create-outline"></ion-icon>
+          New Chat
+        </ion-button>
         <ion-toolbar>
           <ion-segment value="conversations">
             <ion-segment-button appTooltip="Conversations" aria-label="conversations" value="conversations" content-id="conversations">
