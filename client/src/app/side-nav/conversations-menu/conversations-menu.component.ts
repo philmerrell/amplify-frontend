@@ -1,4 +1,4 @@
-import { Component, effect, ElementRef, input, OnInit, ResourceStatus, signal, Signal, ViewChild, WritableSignal, viewChildren, AfterViewInit, Input, Renderer2 } from '@angular/core';
+import { Component, effect, ElementRef, input, OnInit, ResourceStatus, signal, Signal, ViewChild, WritableSignal, viewChildren, AfterViewInit, Input, Renderer2, computed } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { IonAccordionGroup, IonAccordion, IonItemDivider, IonLabel, IonItem, IonIcon, IonList, IonCard, IonButton, IonRouterLink, IonSkeletonText, IonText, IonMenu, IonItemGroup, IonSpinner, IonPopover, IonContent, IonInput, IonItemOption, IonItemOptions, IonItemSliding } from "@ionic/angular/standalone";
 import { addIcons } from 'ionicons';
@@ -29,7 +29,8 @@ export class ConversationsMenuComponent  implements OnInit {
   editingFolder = signal<string | null>(null); // Track folder being edited
   activeFolder = this.foldersService.getActiveFolder();
   draggedConversation: Conversation | null = null;
-
+  deletingFolder = this.conversationService.getDeletingFolder();
+  
   readonly folderNameInputs = viewChildren(IonInput, {read: ElementRef});
   
   constructor(
@@ -54,7 +55,33 @@ export class ConversationsMenuComponent  implements OnInit {
   }
 
   deleteFolder(folder: Folder) {
-    // TODO: just loop through all the convos in the folder and delete 1 by 1, that's how the api does it now
+    this.conversationService.deleteFolder(folder);
+  }
+
+  onBlur(event: Event) {
+    // Get the input element that triggered the blur
+    const input = event.target as HTMLInputElement;
+    
+    // Find the folder associated with this input
+    const folderId = input.id;
+    if (folderId && this.editingFolder() === folderId) {
+      // Only save if we're actually editing this folder
+      const folder = this.folderConversations.value()?.folders.find(f => f.id === folderId);
+      if (folder) {
+        const newName = input.value.trim();
+        
+        // Only update if there's a valid name
+        if (newName && newName !== folder.name) {
+          folder.name = newName;
+          // TODO: Save the folder name to your backend
+        }
+        
+        // Add a small delay before clearing the editing state
+        setTimeout(() => {
+          this.editingFolder.set(null);
+        }, 100);
+      }
+    }
   }
 
   onDragStart($event: DragEvent, conversation: Conversation) {
@@ -142,16 +169,45 @@ export class ConversationsMenuComponent  implements OnInit {
       this.editingFolder.set(null); // Exit edit mode
     } else {
       this.editingFolder.set(folder.id); // Enter edit mode for this folder
-      const input = this.folderNameInputs().find((input, i) => i === index);
-      // TODO: figure out how to set the focus correctly on edit
+      
+      // Use a longer delay to ensure the DOM is fully updated
+      setTimeout(() => {
+        const input = this.folderNameInputs().find((input, i) => i === index);
+        if (input) {
+          // Get the native input element
+          const nativeInput = input.nativeElement.querySelector('input');
+          if (nativeInput) {
+            // Focus and select with a longer delay
+            setTimeout(() => {
+              try {
+                // Try to focus and select
+                nativeInput.focus();
+                nativeInput.select();
+                
+                // Alternative approach - click the input to focus it
+                nativeInput.click();
+              } catch (e) {
+                console.error('Error focusing input:', e);
+              }
+            }, 200);
+          }
+        }
+      }, 100);
     }
   }
 
-  saveFolderName(folder: any, event: Event) {
+  saveFolderName(folder: Folder, event: Event) {
     const input = event.target as HTMLInputElement;
-    folder.name = input.value;
-    this.editingFolder.set(null); // Exit edit mode after saving
-    // TODO: actually save the folder name
+    const newName = input.value.trim();
+    
+    // Only update if there's a valid name
+    if (newName && newName !== folder.name) {
+      folder.name = newName;
+      // TODO: Save the folder name to your backend
+    }
+    
+    this.editingFolder.set(null); // Exit edit mode immediately on Enter key
+    this.conversationService.saveFolder(folder);
   }
 
   setActiveFolder(folderId: string) {

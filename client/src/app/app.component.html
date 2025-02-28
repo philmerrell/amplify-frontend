@@ -6,7 +6,7 @@
         <!-- <a routerLink="/" *ngIf="logo$ | async as logo">
           <img [src]="'/assets/logo-' + logo + '.png'" alt="Home" />
         </a> -->
-        <ion-button class="new-chat" color="secondary" expand="block">
+        <ion-button class="new-chat" color="secondary" expand="block" (click)="createNewConversation()">
           <ion-icon slot="start" name="create-outline"></ion-icon>
           New Chat
         </ion-button>

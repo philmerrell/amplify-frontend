@@ -6,7 +6,6 @@ import { Model } from '../models/model.model';
 import { PromptService } from './prompt.service';
 import { lzwCompress, lzwUncompress } from './compression';
 import { HttpBackend, HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs/internal/Observable';
 import { switchMap, map, catchError, of, firstValueFrom } from 'rxjs';
 import { Folder, FoldersService } from './folders.service';
 import { DeveloperSettingsService } from '../settings/developer/developer-settings.service';
@@ -14,13 +13,13 @@ import { DeveloperSettingsService } from '../settings/developer/developer-settin
 @Injectable({
   providedIn: 'root'
 })
-export class ConversationService {
-  
+export class ConversationService {  
   private selectedModel: Signal<Model> = this.modelService.getSelectedModel();
   private selectedTemperature: Signal<number> = this.modelService.getSelectedTemperature();
   private selectedPrompt: Signal<string> = this.promptService.getSelectedPrompt();
   private currentConversation: WritableSignal<Conversation> = signal(this.createConversation());
   private conversations: WritableSignal<Conversation[]> = signal([]);
+  private deletingFolder: WritableSignal<string | null> = signal(null);
   
   private _conversationsResource = resource({
     loader: () => {
@@ -32,13 +31,8 @@ export class ConversationService {
     return this._conversationsResource.asReadonly()
   }
 
-  private folderConversations: WritableSignal<{
-    folders: Folder[];
-    conversations: Record<string, Conversation[]>;
-  }> = signal({folders: [], conversations: {}});
   private s3Client: HttpClient;
 
-  
   constructor(
     private modelService: ModelService,
     private promptService: PromptService,
@@ -52,6 +46,10 @@ export class ConversationService {
 
   getCurrentConversation(): WritableSignal<Conversation> {
     return this.currentConversation;
+  }
+
+  getDeletingFolder(): Signal<string | null> {
+    return this.deletingFolder.asReadonly();
   }
 
   async setCurrentConversation(conversation: Conversation) {
@@ -84,6 +82,56 @@ export class ConversationService {
     ));
   }
 
+  async deleteFolder(folder: Folder) {
+    this.deletingFolder.set(folder.id);
+    const conversationsInFolder = this._conversationsResource.value()?.conversations[folder.id] ?? [];
+    
+    try {
+      // Create an array of promises for all conversation deletions
+      const deletionPromises = conversationsInFolder.map(conversation => 
+        this.deleteConversation(conversation)
+      );
+      
+      // Wait for all conversations to be deleted
+      await Promise.all(deletionPromises);
+      
+      // After all conversations are deleted, remove the folder entry
+      this._conversationsResource.update((current) => {
+        if (current?.conversations) {
+          delete current.conversations[folder.id];
+        }
+        
+        const foldersCopy = current?.folders ? [...current.folders] : [];
+        const idx = foldersCopy.findIndex(f => f.id === folder.id);
+        if (idx !== -1) {
+          foldersCopy.splice(idx, 1);
+        }
+        
+        return { 
+          folders: foldersCopy, 
+          conversations: current?.conversations ?? {} 
+        };
+      });
+    } catch (error) {
+      console.error('Error deleting folder:', error);
+    } finally {
+      // Set deletingFolder back to null when done
+      this.deletingFolder.set(null);
+    }
+  }
+
+  saveFolder(folder: Folder) {
+    const currentConversation = this.currentConversation();
+    if(currentConversation.folderId !== folder.id) {
+      this.currentConversation().folderId = folder.id;
+      this.saveConversation(currentConversation);
+      this.conversations.update(conversations => 
+        conversations.map(c => c.id === currentConversation.id ? currentConversation : c)
+      );
+    }
+  }
+
+
   renameConversation(conversationId: string, newName: string) {
     console.log('Renaming conversation service triggered', conversationId, newName);
     const conversation = this.conversations().find(c => c.id === conversationId);
@@ -102,10 +150,6 @@ export class ConversationService {
     return this.conversations;
   }
 
-  getFolderConversations(): Signal<{ folders: Folder[]; conversations: Record<string, Conversation[]> }> {
-    return this.folderConversations;
-  }
-
   addFolderToConversations(folder: Folder) {
     this._conversationsResource.update((current) => {
       const foldersCopy = current?.folders ? [...current.folders] : [];
@@ -113,6 +157,7 @@ export class ConversationService {
 
       return { folders: foldersCopy, conversations: current?.conversations ?? {} };
     })
+    this.folderService.setActiveFolder(folder.id);
   }
 
   addConversationToFolder(conversation: Conversation, folderId: string) {
