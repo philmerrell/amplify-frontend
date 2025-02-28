@@ -33,7 +33,9 @@
       <ion-content color="light">
         <ion-segment-view>
           <ion-segment-content id="conversations">
-            <app-conversations-menu [menu]="mainMenu"></app-conversations-menu>
+            <div style="width: 90%; margin: 0 auto;">
+              <app-conversations-menu [menu]="mainMenu"></app-conversations-menu>
+            </div>
           </ion-segment-content>
           <ion-segment-content id="assistants">
             <app-assistants-menu></app-assistants-menu>
