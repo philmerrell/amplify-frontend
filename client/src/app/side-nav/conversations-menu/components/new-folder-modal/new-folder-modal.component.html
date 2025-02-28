@@ -1,0 +1,43 @@
+<ion-header>
+  <ion-toolbar color="light">
+    <ion-title>Create New Folder</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="cancel()">
+        Dismiss
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding" >
+  <ion-item>
+    <ion-icon name="folder-outline" slot="start"></ion-icon>
+    <ion-input 
+      #folderNameInput
+      label="Folder Name" 
+      labelPlacement="floating"
+      placeholder="Enter folder name" 
+      [(ngModel)]="folderName"
+      (keydown.enter)="confirm()">
+    </ion-input>
+  </ion-item>
+  
+  <div class="ion-padding-top">
+    <ion-label>Suggestions:</ion-label>
+    <div class="suggestions-container">
+      @for (suggestion of suggestedNames; track suggestion) {
+        <ion-chip (click)="selectSuggestion(suggestion)" [color]="folderName === suggestion ? 'primary' : 'medium'">
+          <ion-label>{{ suggestion }}</ion-label>
+        </ion-chip>
+      }
+    </div>
+  </div>
+</ion-content>
+
+<ion-footer>
+  <ion-toolbar>
+    <ion-button shape="round" color="primary" expand="block" (click)="confirm()" [disabled]="!folderName.trim()">Create</ion-button>
+  </ion-toolbar>
+</ion-footer>
+
+

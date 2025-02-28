@@ -1,20 +1,20 @@
-import { Component, effect, ElementRef, input, OnInit, ResourceStatus, signal, Signal, ViewChild, WritableSignal, viewChildren, AfterViewInit, Input, Renderer2, computed } from '@angular/core';
-import { RouterLink } from '@angular/router';
-import { IonAccordionGroup, IonAccordion, IonItemDivider, IonLabel, IonItem, IonIcon, IonList, IonCard, IonButton, IonRouterLink, IonSkeletonText, IonText, IonMenu, IonItemGroup, IonSpinner, IonPopover, IonContent, IonInput, IonItemOption, IonItemOptions, IonItemSliding } from "@ionic/angular/standalone";
-import { addIcons } from 'ionicons';
-import { chatbubbleOutline, chatboxOutline, add, folder, chevronForwardOutline, trash, pencilOutline, ellipsisHorizontalOutline, ellipsisHorizontal, trashOutline } from 'ionicons/icons';
+import { Component, effect, ElementRef, input, OnInit, ResourceStatus, signal, Signal, ViewChild, WritableSignal, viewChildren, Renderer2 } from '@angular/core';
+import { IonAccordionGroup, IonItemDivider, IonLabel, IonItem, IonIcon, IonList, IonButton, IonRouterLink, IonText, IonMenu, IonItemGroup, IonSpinner, IonPopover, IonContent, IonInput, IonItemOption, IonItemOptions, IonItemSliding, ModalController } from "@ionic/angular/standalone";
+import { chatbubbleOutline, chatboxOutline, add, folder, chevronForwardOutline, trash, pencilOutline, ellipsisHorizontal, trashOutline } from 'ionicons/icons';
 import { Conversation } from 'src/app/models/conversation.model';
 import { ConversationService } from 'src/app/services/conversation.service';
 import { Folder, FoldersService } from 'src/app/services/folders.service';
-import { ConversationFilterPipe } from './conversation-filter.pipe';
 import { ConversationRenameService } from 'src/app/conversation/services/conversation-rename.service';
+import { NewFolderModalComponent } from './components/new-folder-modal/new-folder-modal.component';
+import { addIcons } from 'ionicons';
 import { JsonPipe } from '@angular/common';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-conversations-menu',
   templateUrl: './conversations-menu.component.html',
   styleUrls: ['./conversations-menu.component.scss'],
-  imports: [IonText, IonButton, IonList, IonIcon, IonItem, IonLabel, IonItemDivider, RouterLink, IonRouterLink, IonItemGroup, JsonPipe, IonSpinner, IonPopover, IonContent, IonInput, IonItemOption, IonItemOptions, IonItemSliding,],
+  imports: [IonText, IonButton, IonList, IonIcon, IonItem, IonLabel, IonItemDivider, RouterLink, IonRouterLink, IonItemGroup, JsonPipe, IonSpinner, IonPopover, IonInput, IonItemOption, IonItemOptions, IonItemSliding],
   standalone: true,
 })
 export class ConversationsMenuComponent  implements OnInit {
@@ -38,6 +38,7 @@ export class ConversationsMenuComponent  implements OnInit {
     private conversationRenameService: ConversationRenameService,
     private foldersService: FoldersService,
     private renderer: Renderer2,
+    private modalController: ModalController
   ) {
       addIcons({add,folder,trash,chatboxOutline,chevronForwardOutline,chatbubbleOutline,pencilOutline, ellipsisHorizontal, trashOutline});
       effect(() => {
@@ -226,9 +227,21 @@ export class ConversationsMenuComponent  implements OnInit {
     this.menu()?.close();
   }
 
-  createFolder() {
-    const newFolder = this.foldersService.createNewFolder();
-    this.conversationService.addFolderToConversations(newFolder);
+  async createFolder() {
+    const modal = await this.modalController.create({
+      component: NewFolderModalComponent,
+      cssClass: 'folder-modal'
+    });
+    
+    await modal.present();
+    
+    const { data, role } = await modal.onWillDismiss();
+    
+    if (role === 'confirm' && data) {
+      const newFolder = this.foldersService.createNewFolder();
+      newFolder.name = data; // Set the folder name from the modal
+      this.conversationService.addFolderToConversations(newFolder);
+    }
   }
 
   private openAccordion(folderId: string) {
