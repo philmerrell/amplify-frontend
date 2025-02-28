@@ -61,7 +61,6 @@ export class DataSourcesComponent  implements OnInit {
       this.removeFile(uploadedFile);
     } else {
       this.addFile(uploadedFile);
-      this.dataSources.push(this.selectUploadedFileService.createDataSourceFromUplodedFile(uploadedFile));
     }
     uploadedFile.selected = !uploadedFile.selected;
   }
