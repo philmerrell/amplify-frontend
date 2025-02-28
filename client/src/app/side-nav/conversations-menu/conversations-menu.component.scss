@@ -42,3 +42,26 @@
 .folder-drop-success {
     animation: dropSuccess 0.2s ease-in-out;
 }
+
+// make this hidden by default and show on hover
+.conversation-menu-button {
+    opacity: 0;
+    transition: opacity 0.2s ease-in-out;
+}
+
+.conversation-item:hover .conversation-menu-button {
+    opacity: 1;
+}
+
+// give the active conversation a slight border
+.active-conversation {
+    border: 1px solid var(--ion-color-medium);
+    transition: border 0.2s ease-in-out;
+    border-radius: 8px;
+    .conversation-menu-button {
+        opacity: 1;
+        ion-icon {
+            color: var(--ion-color-primary-contrast);
+        }
+    }
+}

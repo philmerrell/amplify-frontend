@@ -1,20 +1,20 @@
 import { Component, effect, ElementRef, input, OnInit, ResourceStatus, signal, Signal, ViewChild, WritableSignal, viewChildren, Renderer2 } from '@angular/core';
 import { IonAccordionGroup, IonItemDivider, IonLabel, IonItem, IonIcon, IonList, IonButton, IonRouterLink, IonText, IonMenu, IonItemGroup, IonSpinner, IonPopover, IonContent, IonInput, IonItemOption, IonItemOptions, IonItemSliding, ModalController } from "@ionic/angular/standalone";
-import { chatbubbleOutline, chatboxOutline, add, folder, chevronForwardOutline, trash, pencilOutline, ellipsisHorizontal, trashOutline } from 'ionicons/icons';
+import { chatbubbleOutline, chatboxOutline, add, folder, chevronForwardOutline, trash, pencilOutline, ellipsisHorizontal, trashOutline, ellipsisVertical } from 'ionicons/icons';
 import { Conversation } from 'src/app/models/conversation.model';
 import { ConversationService } from 'src/app/services/conversation.service';
 import { Folder, FoldersService } from 'src/app/services/folders.service';
 import { ConversationRenameService } from 'src/app/conversation/services/conversation-rename.service';
 import { NewFolderModalComponent } from './components/new-folder-modal/new-folder-modal.component';
 import { addIcons } from 'ionicons';
-import { JsonPipe } from '@angular/common';
+import { CommonModule, JsonPipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-conversations-menu',
   templateUrl: './conversations-menu.component.html',
   styleUrls: ['./conversations-menu.component.scss'],
-  imports: [IonText, IonButton, IonList, IonIcon, IonItem, IonLabel, IonItemDivider, RouterLink, IonRouterLink, IonItemGroup, JsonPipe, IonSpinner, IonPopover, IonInput, IonItemOption, IonItemOptions, IonItemSliding],
+  imports: [IonText, IonButton, IonList, IonIcon, IonItem, IonLabel, IonItemDivider, RouterLink, IonRouterLink, IonItemGroup, JsonPipe, IonSpinner, IonPopover, IonInput, IonItemOption, IonItemOptions, IonItemSliding, CommonModule],
   standalone: true,
 })
 export class ConversationsMenuComponent  implements OnInit {
@@ -40,11 +40,16 @@ export class ConversationsMenuComponent  implements OnInit {
     private renderer: Renderer2,
     private modalController: ModalController
   ) {
-      addIcons({add,folder,trash,chatboxOutline,chevronForwardOutline,chatbubbleOutline,pencilOutline, ellipsisHorizontal, trashOutline});
-      effect(() => {
-        this.openAccordion(this.currentConversation().folderId || '')
-      });
-    }
+    addIcons({
+      add, folder, trash, chatboxOutline, chevronForwardOutline, 
+      chatbubbleOutline, pencilOutline, ellipsisHorizontal, 
+      trashOutline, ellipsisVertical
+    });
+    
+    effect(() => {
+      this.openAccordion(this.currentConversation().folderId || '')
+    });
+  }
   async ngOnInit() {
   }
 

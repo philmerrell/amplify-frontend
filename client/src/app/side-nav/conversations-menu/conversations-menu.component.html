@@ -1,99 +1,109 @@
 <ion-list>
   <ion-item-divider color="background" class="ion-margin">
     My Conversations
-    <ion-button slot="end" (click)="createFolder()" class="ion-padding-start ion-padding-end" size="medium" aria-label="new folder">
+    <ion-button slot="end" (click)="createFolder()" class="ion-padding-start ion-padding-end" size="medium"
+      aria-label="new folder">
       <ion-icon slot="icon-only" name="folder"></ion-icon>
     </ion-button>
   </ion-item-divider>
   <ion-list>
     @if(folderConversations.status() === status.Loading) {
-      <ion-item lines="none">
-        <ion-label>Loading Conversations</ion-label>
-        <ion-spinner></ion-spinner>
-      </ion-item>
+    <ion-item lines="none">
+      <ion-label>Loading Conversations</ion-label>
+      <ion-spinner></ion-spinner>
+    </ion-item>
     }
     @for(folder of folderConversations.value()?.folders; track folder.id;) {
-      @if(deletingFolder() === folder.id) {
-        <ion-item lines="none">
-          <ion-label>Deleting Folder</ion-label>
-          <ion-spinner></ion-spinner>
-        </ion-item>
-      } @else {
-        <ion-item-group>
-          <ion-item button detail="false" (click)="setActiveFolder(folder.id)" lines="full" [color]="folder.id === activeFolder() ? 'medium' : 'background'" (dragleave)="onDragLeave($event)" (dragover)="onDragOver($event)" (drop)="onDrop($event, folder)">
-            <ion-icon name="folder" class="ion-padding-end"></ion-icon>
-            <ion-input 
-              #folderNameInput 
-              [attr.data-folder-id]="folder.id"
-              id="{{folder.id}}" 
-              class="folder" 
-              type="text" 
-              [value]="folder.name" 
-              [readonly]="editingFolder() !== folder.id" 
-              (keydown.enter)="saveFolderName(folder, $event)"
-              (ionBlur)="onBlur($event)"
-              [attr.tabindex]="editingFolder() === folder.id ? 0 : -1">
-            </ion-input>
-            <ion-button id="edit-folder-menu-{{ folder.id }}" slot="end" fill="clear" color="tertiary">
-              <ion-icon slot="icon-only" name="ellipsis-horizontal"></ion-icon>
-            </ion-button>
-            <ion-popover trigger="edit-folder-menu-{{ folder.id }}" triggerAction="click" #popover>
-              <ng-template>
-                <ion-list>
-                  <ion-item button (click)="renameFolder(folder, $index); popover.dismiss()">
-                    <ion-icon slot="start" name="pencil-outline"></ion-icon>
-                    <ion-label>Rename</ion-label>
-                  </ion-item>
-                  <ion-item button (click)="deleteFolder(folder); popover.dismiss()">
-                    <ion-icon slot="start" name="trash-outline"></ion-icon>
-                    <ion-label>Delete</ion-label>
-                  </ion-item>
-                </ion-list>
-              </ng-template>
-            </ion-popover>
-          </ion-item>
-          @for(conversation of folderConversations.value()?.conversations?.[folder.id] ?? []; track conversation.id) {
-            <ion-item-sliding>
-              <ion-item [lines]="$last ? 'none': 'inset'" (click)="setCurrentConversation(conversation); setActiveFolder(folder.id)" routerLink="/" routerDirection="back" draggable="true" (dragstart)="onDragStart($event, conversation)" (dragend)="onDragEnd($event)">
-                <ion-icon class="ion-padding-start" slot="start" name="chatbox-outline"></ion-icon>
-                <ion-label>
-                  @if(conversationRename().conversationId === conversation.id) {
-                    @if(conversationRename().loading) {
-                      <ion-spinner name="dots"></ion-spinner>
-                    } @else {
-                      <h2>{{ conversationRename().name }}</h2>
-                    }
-                  } @else {
-                    <h2>{{ conversation.name }}</h2>
-                  }
-                </ion-label>
+    @if(deletingFolder() === folder.id) {
+    <ion-item lines="none">
+      <ion-label>Deleting Folder</ion-label>
+      <ion-spinner></ion-spinner>
+    </ion-item>
+    } @else {
+    <ion-item-group>
+      <ion-item button detail="false" (click)="setActiveFolder(folder.id)" lines="none"
+        (dragleave)="onDragLeave($event)" (dragover)="onDragOver($event)" (drop)="onDrop($event, folder)">
+        <ion-icon name="folder" class="ion-padding-end"></ion-icon>
+        <ion-input #folderNameInput [attr.data-folder-id]="folder.id" id="{{folder.id}}" class="folder" type="text"
+          [value]="folder.name" [readonly]="editingFolder() !== folder.id"
+          (keydown.enter)="saveFolderName(folder, $event)" (ionBlur)="onBlur($event)"
+          [attr.tabindex]="editingFolder() === folder.id ? 0 : -1">
+        </ion-input>
+        <ion-button id="edit-folder-menu-{{ folder.id }}" slot="end" fill="clear" color="tertiary">
+          <ion-icon slot="icon-only" name="ellipsis-horizontal"></ion-icon>
+        </ion-button>
+        <ion-popover trigger="edit-folder-menu-{{ folder.id }}" triggerAction="click" #popover>
+          <ng-template>
+            <ion-list>
+              <ion-item button (click)="renameFolder(folder, $index); popover.dismiss()">
+                <ion-icon slot="start" name="pencil-outline"></ion-icon>
+                <ion-label>Rename</ion-label>
               </ion-item>
-              <ion-item-options>
-                <ion-item-option color="danger" (click)="deleteConversation(conversation)">
-                  <ion-icon slot="icon-only" name="trash"></ion-icon>
-                </ion-item-option>
-              </ion-item-options>
-            </ion-item-sliding>
+              <ion-item button (click)="deleteFolder(folder); popover.dismiss()">
+                <ion-icon slot="start" name="trash-outline"></ion-icon>
+                <ion-label>Delete</ion-label>
+              </ion-item>
+            </ion-list>
+          </ng-template>
+        </ion-popover>
+      </ion-item>
+      @for(conversation of folderConversations.value()?.conversations?.[folder.id] ?? []; track conversation.id) {
+      <ion-item lines="none" [color]="currentConversation().id === conversation.id ? 'primary' : ''"
+        [class.active-conversation]="currentConversation().id === conversation.id"
+        (click)="setCurrentConversation(conversation); setActiveFolder(folder.id)" routerLink="/" routerDirection="back"
+        draggable="true" (dragstart)="onDragStart($event, conversation)" (dragend)="onDragEnd($event)" detail="false"
+        class="conversation-item">
+
+        <ion-icon class="ion-padding-start" slot="start" name="chatbox-outline"></ion-icon>
+        <ion-label>
+          @if(conversationRename().conversationId === conversation.id) {
+          @if(conversationRename().loading) {
+          <ion-spinner name="dots"></ion-spinner>
+          } @else {
+          <h2>{{ conversationRename().name }}</h2>
           }
-        </ion-item-group>
+          } @else {
+          <h2>{{ conversation.name }}</h2>
+          }
+        </ion-label>
+
+        <ion-button id="conversation-menu-{{ conversation.id }}" slot="end" fill="clear"
+          [color]="currentConversation().id === conversation.id ? 'primary-contrast' : 'tertiary'"
+          class="conversation-menu-button">
+          <ion-icon slot="icon-only" name="ellipsis-horizontal"></ion-icon>
+        </ion-button>
+        <ion-popover trigger="conversation-menu-{{ conversation.id }}" triggerAction="click" #conversationPopover
+          (didDismiss)="$event.stopPropagation()">
+          <ng-template>
+            <ion-list>
+              <ion-item button (click)="deleteConversation(conversation);">
+                <ion-icon slot="start" name="trash-outline"></ion-icon>
+                <ion-label>Delete</ion-label>
+              </ion-item>
+            </ion-list>
+          </ng-template>
+        </ion-popover>
+      </ion-item>
       }
+    </ion-item-group>
+    }
     } @empty {
-      @if(folderConversations.status() === status.Resolved) {
-        <ion-item lines="none">
-          <ion-icon slot="start" name="chatbox-outline" color="secondary"></ion-icon>
-          <ion-label>
-            <h1>Theres nothing here...</h1>
-            <p><ion-text color="medium">Lets get started by creating a new conversation.</ion-text>.</p>
-          </ion-label>
-        </ion-item>
-      }
+    @if(folderConversations.status() === status.Resolved) {
+    <ion-item lines="none">
+      <ion-icon slot="start" name="chatbox-outline" color="secondary"></ion-icon>
+      <ion-label>
+        <h1>Theres nothing here...</h1>
+        <p><ion-text color="medium">Lets get started by creating a new conversation.</ion-text>.</p>
+      </ion-label>
+    </ion-item>
+    }
     }
     @if(folderConversations.error()) {
-      <ion-item>
-        <ion-label>
-          <h1>Whoops Something went wrong!</h1>
-          <p><ion-text color="medium">{{ folderConversations.error() }}</ion-text></p>
-        </ion-label>
-      </ion-item>
+    <ion-item>
+      <ion-label>
+        <h1>Whoops Something went wrong!</h1>
+        <p><ion-text color="medium">{{ folderConversations.error() }}</ion-text></p>
+      </ion-label>
+    </ion-item>
     }
-</ion-list>
+  </ion-list>
