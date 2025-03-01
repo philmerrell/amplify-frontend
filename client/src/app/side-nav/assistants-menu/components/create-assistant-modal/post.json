@@ -1,0 +1,888 @@
+{
+    "op": "/create",
+    "data": {
+        "name": "HR Assistant",
+        "description": "The HR Policy Assistant has access to all policy documentation on the Boise State HR website. This can be a starting point for any questions around HR policy.",
+        "instructions": "You are a senior HR policy advisor at Boise State University with extensive knowledge of organizational policies and employee guidelines. When responding to inquiries:\n\n1. Always provide clear, authoritative guidance\n2. Cite specific policy references and document sections\n3. Explain policy implications objectively and use a direct quote from reference material\n4. Use professional, empathetic language\n5. Protect individual confidentiality\n\nResponse Framework:\n- Begin with relevant policy section\n- Quote exact policy language when possible\n- Provide context and practical interpretation\n- Note any potential exceptions or escalation paths\n- Recommend consulting HR or legal team for complex situations\n\nInteraction Principles:\n- Prioritize organizational compliance\n- Balance employee rights with organizational needs\n- Maintain neutrality and objectivity\n- Use precise, unambiguous language\n- Avoid speculative or personal interpretations\n\nExample Policy Reference Format:\nPolicy Name, Section X.Y, Page Z of Policy Document",
+        "tools": [],
+        "tags": [
+            ""
+        ],
+        "dataSources": [
+            {
+                "id": "cb4af391-69a8-438b-bf9a-9b16ec111384",
+                "name": "PolicyManual_Sec02_02270_2019-07_PDF.pdf",
+                "type": "application/pdf",
+                "raw": "",
+                "data": "",
+                "key": "dev-amplifygenai_philmerrell@boisestate.edu/2025-02-28/e4be57a9-5508-4a2e-a68d-915c74ad3089.json",
+                "metadata": {
+                    "name": "PolicyManual_Sec02_02270_2019-07_PDF.pdf",
+                    "totalItems": 3,
+                    "locationProperties": [
+                        "page_number"
+                    ],
+                    "contentKey": "dev-amplifygenai_philmerrell@boisestate.edu/2025-02-28/e4be57a9-5508-4a2e-a68d-915c74ad3089.json.content.json",
+                    "createdAt": "2025-02-28T22:27:20.876574",
+                    "totalTokens": 577,
+                    "tags": [],
+                    "props": {}
+                }
+            },
+            {
+                "id": "f2e3824e-d956-4642-9d9c-15c981bebb24",
+                "name": "PolicyManual_Sec07_07000_2025-01-08_PDF.pdf",
+                "type": "application/pdf",
+                "raw": "",
+                "data": "",
+                "key": "dev-amplifygenai_philmerrell@boisestate.edu/2025-02-28/4d1a3eda-9d8a-48ce-a12e-7105212d320f.json",
+                "metadata": {
+                    "name": "PolicyManual_Sec07_07000_2025-01-08_PDF.pdf",
+                    "totalItems": 11,
+                    "locationProperties": [
+                        "page_number"
+                    ],
+                    "contentKey": "dev-amplifygenai_philmerrell@boisestate.edu/2025-02-28/4d1a3eda-9d8a-48ce-a12e-7105212d320f.json.content.json",
+                    "createdAt": "2025-02-28T22:27:21.667905",
+                    "totalTokens": 4230,
+                    "tags": [],
+                    "props": {}
+                }
+            },
+            {
+                "id": "cd4d8611-e1bb-4d28-81b9-7adfb59e1198",
+                "name": "PolicyManual_Sec07_07005_2021-12-21_PDF.pdf",
+                "type": "application/pdf",
+                "raw": "",
+                "data": "",
+                "key": "dev-amplifygenai_philmerrell@boisestate.edu/2025-02-28/9968d179-a137-4726-8e6e-4b170ff62913.json",
+                "metadata": {
+                    "name": "PolicyManual_Sec07_07005_2021-12-21_PDF.pdf",
+                    "totalItems": 11,
+                    "locationProperties": [
+                        "page_number"
+                    ],
+                    "contentKey": "dev-amplifygenai_philmerrell@boisestate.edu/2025-02-28/9968d179-a137-4726-8e6e-4b170ff62913.json.content.json",
+                    "createdAt": "2025-02-28T22:27:22.334723",
+                    "totalTokens": 3985,
+                    "tags": [],
+                    "props": {}
+                }
+            },
+            {
+                "id": "41ec9129-5c78-4f78-9415-fc817cfb548c",
+                "name": "PolicyManual_Sec07_07010_2022-09-26_PDF.pdf",
+                "type": "application/pdf",
+                "raw": "",
+                "data": "",
+                "key": "dev-amplifygenai_philmerrell@boisestate.edu/2025-02-28/10a9ea78-6b27-4d3b-ab2b-3ee717565c54.json",
+                "metadata": {
+                    "name": "PolicyManual_Sec07_07010_2022-09-26_PDF.pdf",
+                    "totalItems": 4,
+                    "locationProperties": [
+                        "page_number"
+                    ],
+                    "contentKey": "dev-amplifygenai_philmerrell@boisestate.edu/2025-02-28/10a9ea78-6b27-4d3b-ab2b-3ee717565c54.json.content.json",
+                    "createdAt": "2025-02-28T22:27:21.606662",
+                    "totalTokens": 1386,
+                    "tags": [],
+                    "props": {}
+                }
+            },
+            {
+                "id": "ca3c9648-98cb-40d0-9f7a-a85002015ef8",
+                "name": "PolicyManual_Sec07_07015_2012-07_PDF.pdf",
+                "type": "application/pdf",
+                "raw": "",
+                "data": "",
+                "key": "dev-amplifygenai_philmerrell@boisestate.edu/2025-02-28/7630a1a9-bad8-444f-ab19-40476d820e0f.json",
+                "metadata": {
+                    "name": "PolicyManual_Sec07_07015_2012-07_PDF.pdf",
+                    "totalItems": 4,
+                    "locationProperties": [
+                        "page_number"
+                    ],
+                    "contentKey": "dev-amplifygenai_philmerrell@boisestate.edu/2025-02-28/7630a1a9-bad8-444f-ab19-40476d820e0f.json.content.json",
+                    "createdAt": "2025-02-28T22:27:20.717786",
+                    "totalTokens": 1170,
+                    "tags": [],
+                    "props": {}
+                }
+            },
+            {
+                "id": "84560769-e701-4998-8ec2-6ca13e99f582",
+                "name": "PolicyManual_Sec07_07020_2015-06_Word.pdf",
+                "type": "application/pdf",
+                "raw": "",
+                "data": "",
+                "key": "dev-amplifygenai_philmerrell@boisestate.edu/2025-02-28/0024df6b-277b-4474-b8d3-8fefa4c0c399.json",
+                "metadata": {
+                    "name": "PolicyManual_Sec07_07020_2015-06_Word.pdf",
+                    "totalItems": 8,
+                    "locationProperties": [
+                        "page_number"
+                    ],
+                    "contentKey": "dev-amplifygenai_philmerrell@boisestate.edu/2025-02-28/0024df6b-277b-4474-b8d3-8fefa4c0c399.json.content.json",
+                    "createdAt": "2025-02-28T22:27:20.055639",
+                    "totalTokens": 2991,
+                    "tags": [],
+                    "props": {}
+                }
+            },
+            {
+                "id": "11adb531-2147-4baf-bc18-4cb1cdb35fca",
+                "name": "PolicyManual_Sec07_07025_2012-09_PDF.pdf",
+                "type": "application/pdf",
+                "raw": "",
+                "data": "",
+                "key": "dev-amplifygenai_philmerrell@boisestate.edu/2025-02-28/69b84431-8979-4dd5-9fda-9876ac860c8f.json",
+                "metadata": {
+                    "name": "PolicyManual_Sec07_07025_2012-09_PDF.pdf",
+                    "totalItems": 4,
+                    "locationProperties": [
+                        "page_number"
+                    ],
+                    "contentKey": "dev-amplifygenai_philmerrell@boisestate.edu/2025-02-28/69b84431-8979-4dd5-9fda-9876ac860c8f.json.content.json",
+                    "createdAt": "2025-02-28T22:27:22.473400",
+                    "totalTokens": 1075,
+                    "tags": [],
+                    "props": {}
+                }
+            },
+            {
+                "id": "c9b8a402-6075-4257-b915-95266e784ddd",
+                "name": "PolicyManual_Sec07_07030_2013-04_PDF.pdf",
+                "type": "application/pdf",
+                "raw": "",
+                "data": "",
+                "key": "dev-amplifygenai_philmerrell@boisestate.edu/2025-02-28/119741a0-ac82-4468-8211-80797f0d084f.json",
+                "metadata": {
+                    "name": "PolicyManual_Sec07_07030_2013-04_PDF.pdf",
+                    "totalItems": 3,
+                    "locationProperties": [
+                        "page_number"
+                    ],
+                    "contentKey": "dev-amplifygenai_philmerrell@boisestate.edu/2025-02-28/119741a0-ac82-4468-8211-80797f0d084f.json.content.json",
+                    "createdAt": "2025-02-28T22:27:21.150783",
+                    "totalTokens": 752,
+                    "tags": [],
+                    "props": {}
+                }
+            },
+            {
+                "id": "32addac1-9fd0-4082-9c0a-9050672ab1b4",
+                "name": "PolicyManual_Sec07_07035_2021-03-26_PDF.pdf",
+                "type": "application/pdf",
+                "raw": "",
+                "data": "",
+                "key": "dev-amplifygenai_philmerrell@boisestate.edu/2025-02-28/cac43d00-f096-48d3-8ed4-683f8b3663d7.json",
+                "metadata": {
+                    "name": "PolicyManual_Sec07_07035_2021-03-26_PDF.pdf",
+                    "totalItems": 3,
+                    "locationProperties": [
+                        "page_number"
+                    ],
+                    "contentKey": "dev-amplifygenai_philmerrell@boisestate.edu/2025-02-28/cac43d00-f096-48d3-8ed4-683f8b3663d7.json.content.json",
+                    "createdAt": "2025-02-28T22:27:22.006051",
+                    "totalTokens": 912,
+                    "tags": [],
+                    "props": {}
+                }
+            },
+            {
+                "id": "1a496427-bb3a-4bbe-a872-8f3d0e63e4a1",
+                "name": "PolicyManual_Sec07_07045_2017-10_PDF.pdf",
+                "type": "application/pdf",
+                "raw": "",
+                "data": "",
+                "key": "dev-amplifygenai_philmerrell@boisestate.edu/2025-02-28/6f42d1c7-5b58-4854-83e4-ce94696614f8.json",
+                "metadata": {
+                    "name": "PolicyManual_Sec07_07045_2017-10_PDF.pdf",
+                    "totalItems": 6,
+                    "locationProperties": [
+                        "page_number"
+                    ],
+                    "contentKey": "dev-amplifygenai_philmerrell@boisestate.edu/2025-02-28/6f42d1c7-5b58-4854-83e4-ce94696614f8.json.content.json",
+                    "createdAt": "2025-02-28T22:27:19.362504",
+                    "totalTokens": 1882,
+                    "tags": [],
+                    "props": {}
+                }
+            },
+            {
+                "id": "1d633212-46cd-4bd8-9c24-2b3796a9efe9",
+                "name": "PolicyManual_Sec07_07070_2017-02_PDF.pdf",
+                "type": "application/pdf",
+                "raw": "",
+                "data": "",
+                "key": "dev-amplifygenai_philmerrell@boisestate.edu/2025-02-28/4756aa91-ace8-4089-b173-d36127888b5d.json",
+                "metadata": {
+                    "name": "PolicyManual_Sec07_07070_2017-02_PDF.pdf",
+                    "totalItems": 4,
+                    "locationProperties": [
+                        "page_number"
+                    ],
+                    "contentKey": "dev-amplifygenai_philmerrell@boisestate.edu/2025-02-28/4756aa91-ace8-4089-b173-d36127888b5d.json.content.json",
+                    "createdAt": "2025-02-28T22:27:21.327097",
+                    "totalTokens": 1244,
+                    "tags": [],
+                    "props": {}
+                }
+            },
+            {
+                "id": "95a3c44e-6447-48f5-ad45-743e4e4e819e",
+                "name": "PolicyManual_Sec07_07140_2018-03_PDF.pdf",
+                "type": "application/pdf",
+                "raw": "",
+                "data": "",
+                "key": "dev-amplifygenai_philmerrell@boisestate.edu/2025-02-28/4f607553-7056-4e3e-9fd0-14a1e3b854ee.json",
+                "metadata": {
+                    "name": "PolicyManual_Sec07_07140_2018-03_PDF.pdf",
+                    "totalItems": 4,
+                    "locationProperties": [
+                        "page_number"
+                    ],
+                    "contentKey": "dev-amplifygenai_philmerrell@boisestate.edu/2025-02-28/4f607553-7056-4e3e-9fd0-14a1e3b854ee.json.content.json",
+                    "createdAt": "2025-02-28T22:27:21.559366",
+                    "totalTokens": 1046,
+                    "tags": [],
+                    "props": {}
+                }
+            },
+            {
+                "id": "bbe2915c-496d-4a87-b301-c4d695c2e7cc",
+                "name": "PolicyManual_Sec07_07170_2024-08-02_PDF.pdf",
+                "type": "application/pdf",
+                "raw": "",
+                "data": "",
+                "key": "dev-amplifygenai_philmerrell@boisestate.edu/2025-02-28/241d42eb-9b79-4819-a041-3dd606bdeb68.json",
+                "metadata": {
+                    "name": "PolicyManual_Sec07_07170_2024-08-02_PDF.pdf",
+                    "totalItems": 12,
+                    "locationProperties": [
+                        "page_number"
+                    ],
+                    "contentKey": "dev-amplifygenai_philmerrell@boisestate.edu/2025-02-28/241d42eb-9b79-4819-a041-3dd606bdeb68.json.content.json",
+                    "createdAt": "2025-02-28T22:27:19.417146",
+                    "totalTokens": 4326,
+                    "tags": [],
+                    "props": {}
+                }
+            },
+            {
+                "id": "9e0434ed-c638-4891-b796-a0664189350a",
+                "name": "PolicyManual_Sec07_07195_2016-01_PDF.pdf",
+                "type": "application/pdf",
+                "raw": "",
+                "data": "",
+                "key": "dev-amplifygenai_philmerrell@boisestate.edu/2025-02-28/805888af-51af-4320-ba93-485f6aafa774.json",
+                "metadata": {
+                    "name": "PolicyManual_Sec07_07195_2016-01_PDF.pdf",
+                    "totalItems": 5,
+                    "locationProperties": [
+                        "page_number"
+                    ],
+                    "contentKey": "dev-amplifygenai_philmerrell@boisestate.edu/2025-02-28/805888af-51af-4320-ba93-485f6aafa774.json.content.json",
+                    "createdAt": "2025-02-28T22:27:22.703420",
+                    "totalTokens": 1648,
+                    "tags": [],
+                    "props": {}
+                }
+            },
+            {
+                "id": "c5bcd37a-8734-4748-b658-a05335a6fc42",
+                "name": "PolicyManual_Sec07_07220_2025-01-03_PDF.pdf",
+                "type": "application/pdf",
+                "raw": "",
+                "data": "",
+                "key": "dev-amplifygenai_philmerrell@boisestate.edu/2025-02-28/536e3c89-0e61-4d8e-8161-3a0f802b3eac.json",
+                "metadata": {
+                    "name": "PolicyManual_Sec07_07220_2025-01-03_PDF.pdf",
+                    "totalItems": 5,
+                    "locationProperties": [
+                        "page_number"
+                    ],
+                    "contentKey": "dev-amplifygenai_philmerrell@boisestate.edu/2025-02-28/536e3c89-0e61-4d8e-8161-3a0f802b3eac.json.content.json",
+                    "createdAt": "2025-02-28T22:27:22.753279",
+                    "totalTokens": 1739,
+                    "tags": [],
+                    "props": {}
+                }
+            },
+            {
+                "id": "4cdbc2ce-0a9a-45af-8e30-91aab89b11e7",
+                "name": "PolicyManual_Sec07_07230_2022-12-14_PDF.pdf",
+                "type": "application/pdf",
+                "raw": "",
+                "data": "",
+                "key": "dev-amplifygenai_philmerrell@boisestate.edu/2025-02-28/aeac083c-9df7-47d3-b522-dbe62b3c9f95.json",
+                "metadata": {
+                    "name": "PolicyManual_Sec07_07230_2022-12-14_PDF.pdf",
+                    "totalItems": 14,
+                    "locationProperties": [
+                        "page_number"
+                    ],
+                    "contentKey": "dev-amplifygenai_philmerrell@boisestate.edu/2025-02-28/aeac083c-9df7-47d3-b522-dbe62b3c9f95.json.content.json",
+                    "createdAt": "2025-02-28T22:27:20.907703",
+                    "totalTokens": 5635,
+                    "tags": [],
+                    "props": {}
+                }
+            },
+            {
+                "id": "6ab1047a-6913-4ce2-a34c-1e6d50cfa5ee",
+                "name": "PolicyManual_Sec07_07260_2016-04_PDF.pdf",
+                "type": "application/pdf",
+                "raw": "",
+                "data": "",
+                "key": "dev-amplifygenai_philmerrell@boisestate.edu/2025-02-28/16845033-bef1-4b8e-ba1e-d1d717bcb51f.json",
+                "metadata": {
+                    "name": "PolicyManual_Sec07_07260_2016-04_PDF.pdf",
+                    "totalItems": 3,
+                    "locationProperties": [
+                        "page_number"
+                    ],
+                    "contentKey": "dev-amplifygenai_philmerrell@boisestate.edu/2025-02-28/16845033-bef1-4b8e-ba1e-d1d717bcb51f.json.content.json",
+                    "createdAt": "2025-02-28T22:27:22.035340",
+                    "totalTokens": 778,
+                    "tags": [],
+                    "props": {}
+                }
+            },
+            {
+                "id": "69c42075-1f7e-485c-8caf-7248a54a8c2b",
+                "name": "PolicyManual_Sec07_07270_2011-08_Word.pdf",
+                "type": "application/pdf",
+                "raw": "",
+                "data": "",
+                "key": "dev-amplifygenai_philmerrell@boisestate.edu/2025-02-28/43e022f8-df85-4b12-808b-e5ffe48fad64.json",
+                "metadata": {
+                    "name": "PolicyManual_Sec07_07270_2011-08_Word.pdf",
+                    "totalItems": 2,
+                    "locationProperties": [
+                        "page_number"
+                    ],
+                    "contentKey": "dev-amplifygenai_philmerrell@boisestate.edu/2025-02-28/43e022f8-df85-4b12-808b-e5ffe48fad64.json.content.json",
+                    "createdAt": "2025-02-28T22:27:20.797631",
+                    "totalTokens": 453,
+                    "tags": [],
+                    "props": {}
+                }
+            },
+            {
+                "id": "3eb0d6d3-fb38-499a-b1b8-40d0a8d81673",
+                "name": "PolicyManual_Sec07_07300_2013-04_PDF.pdf",
+                "type": "application/pdf",
+                "raw": "",
+                "data": "",
+                "key": "dev-amplifygenai_philmerrell@boisestate.edu/2025-02-28/3660b8be-452f-4d7e-aa62-3143d26f736c.json",
+                "metadata": {
+                    "name": "PolicyManual_Sec07_07300_2013-04_PDF.pdf",
+                    "totalItems": 4,
+                    "locationProperties": [
+                        "page_number"
+                    ],
+                    "contentKey": "dev-amplifygenai_philmerrell@boisestate.edu/2025-02-28/3660b8be-452f-4d7e-aa62-3143d26f736c.json.content.json",
+                    "createdAt": "2025-02-28T22:27:20.994387",
+                    "totalTokens": 1005,
+                    "tags": [],
+                    "props": {}
+                }
+            },
+            {
+                "id": "f0177d45-f4e6-4289-b7d6-c485166ff248",
+                "name": "PolicyManual_Sec07_07400_2013-04_PDF.pdf",
+                "type": "application/pdf",
+                "raw": "",
+                "data": "",
+                "key": "dev-amplifygenai_philmerrell@boisestate.edu/2025-02-28/a65a3d9d-33f7-4c30-bd98-077b4c2205ca.json",
+                "metadata": {
+                    "name": "PolicyManual_Sec07_07400_2013-04_PDF.pdf",
+                    "totalItems": 4,
+                    "locationProperties": [
+                        "page_number"
+                    ],
+                    "contentKey": "dev-amplifygenai_philmerrell@boisestate.edu/2025-02-28/a65a3d9d-33f7-4c30-bd98-077b4c2205ca.json.content.json",
+                    "createdAt": "2025-02-28T22:27:21.098460",
+                    "totalTokens": 1178,
+                    "tags": [],
+                    "props": {}
+                }
+            },
+            {
+                "id": "23db719a-b36c-4bcd-b188-77e837f38bed",
+                "name": "PolicyManual_Sec07_07420_2024-01-09_PDF.pdf",
+                "type": "application/pdf",
+                "raw": "",
+                "data": "",
+                "key": "dev-amplifygenai_philmerrell@boisestate.edu/2025-02-28/7727a0a8-0293-47b1-8a71-41a93a2b6038.json",
+                "metadata": {
+                    "name": "PolicyManual_Sec07_07420_2024-01-09_PDF.pdf",
+                    "totalItems": 8,
+                    "locationProperties": [
+                        "page_number"
+                    ],
+                    "contentKey": "dev-amplifygenai_philmerrell@boisestate.edu/2025-02-28/7727a0a8-0293-47b1-8a71-41a93a2b6038.json.content.json",
+                    "createdAt": "2025-02-28T22:27:22.190033",
+                    "totalTokens": 2917,
+                    "tags": [],
+                    "props": {}
+                }
+            },
+            {
+                "id": "a3e6b0fc-1765-4cb3-8e52-2361898ce794",
+                "name": "PolicyManual_Sec07_07430_2022-08-04_PDF.pdf",
+                "type": "application/pdf",
+                "raw": "",
+                "data": "",
+                "key": "dev-amplifygenai_philmerrell@boisestate.edu/2025-02-28/89037d39-b82d-4916-a123-c76c10a207ae.json",
+                "metadata": {
+                    "name": "PolicyManual_Sec07_07430_2022-08-04_PDF.pdf",
+                    "totalItems": 5,
+                    "locationProperties": [
+                        "page_number"
+                    ],
+                    "contentKey": "dev-amplifygenai_philmerrell@boisestate.edu/2025-02-28/89037d39-b82d-4916-a123-c76c10a207ae.json.content.json",
+                    "createdAt": "2025-02-28T22:27:21.965794",
+                    "totalTokens": 1605,
+                    "tags": [],
+                    "props": {}
+                }
+            },
+            {
+                "id": "3aadfc59-2105-42a4-a47b-c93f912af585",
+                "name": "PolicyManual_Sec07_07450_2024-01-29_PDF.pdf",
+                "type": "application/pdf",
+                "raw": "",
+                "data": "",
+                "key": "dev-amplifygenai_philmerrell@boisestate.edu/2025-02-28/b8f430b0-8145-492a-9245-1b1bf713b79b.json",
+                "metadata": {
+                    "name": "PolicyManual_Sec07_07450_2024-01-29_PDF.pdf",
+                    "totalItems": 6,
+                    "locationProperties": [
+                        "page_number"
+                    ],
+                    "contentKey": "dev-amplifygenai_philmerrell@boisestate.edu/2025-02-28/b8f430b0-8145-492a-9245-1b1bf713b79b.json.content.json",
+                    "createdAt": "2025-02-28T22:27:21.808370",
+                    "totalTokens": 1818,
+                    "tags": [],
+                    "props": {}
+                }
+            },
+            {
+                "id": "c495ac93-8ec5-4ff0-baf9-8a7147c60f9d",
+                "name": "PolicyManual_Sec07_07470_2020-01_PDF.pdf",
+                "type": "application/pdf",
+                "raw": "",
+                "data": "",
+                "key": "dev-amplifygenai_philmerrell@boisestate.edu/2025-02-28/a1faa0cd-d802-4589-9f74-de4c6550f97e.json",
+                "metadata": {
+                    "name": "PolicyManual_Sec07_07470_2020-01_PDF.pdf",
+                    "totalItems": 4,
+                    "locationProperties": [
+                        "page_number"
+                    ],
+                    "contentKey": "dev-amplifygenai_philmerrell@boisestate.edu/2025-02-28/a1faa0cd-d802-4589-9f74-de4c6550f97e.json.content.json",
+                    "createdAt": "2025-02-28T22:27:20.991582",
+                    "totalTokens": 1296,
+                    "tags": [],
+                    "props": {}
+                }
+            },
+            {
+                "id": "4c3c5272-e7c7-433f-9033-2ff1e756f350",
+                "name": "PolicyManual_Sec07_07480_2021-06-25_PDF.pdf",
+                "type": "application/pdf",
+                "raw": "",
+                "data": "",
+                "key": "dev-amplifygenai_philmerrell@boisestate.edu/2025-02-28/811c6340-deaa-4228-adeb-acc53392e7a3.json",
+                "metadata": {
+                    "name": "PolicyManual_Sec07_07480_2021-06-25_PDF.pdf",
+                    "totalItems": 4,
+                    "locationProperties": [
+                        "page_number"
+                    ],
+                    "contentKey": "dev-amplifygenai_philmerrell@boisestate.edu/2025-02-28/811c6340-deaa-4228-adeb-acc53392e7a3.json.content.json",
+                    "createdAt": "2025-02-28T22:27:21.617264",
+                    "totalTokens": 1148,
+                    "tags": [],
+                    "props": {}
+                }
+            },
+            {
+                "id": "a3dddfb0-a8e2-4643-ad5f-71ad020f06af",
+                "name": "PolicyManual_Sec07_07500_2010-05_PDF.pdf",
+                "type": "application/pdf",
+                "raw": "",
+                "data": "",
+                "key": "dev-amplifygenai_philmerrell@boisestate.edu/2025-02-28/a0567efb-f0bc-4354-b37b-050d9a24352d.json",
+                "metadata": {
+                    "name": "PolicyManual_Sec07_07500_2010-05_PDF.pdf",
+                    "totalItems": 5,
+                    "locationProperties": [
+                        "page_number"
+                    ],
+                    "contentKey": "dev-amplifygenai_philmerrell@boisestate.edu/2025-02-28/a0567efb-f0bc-4354-b37b-050d9a24352d.json.content.json",
+                    "createdAt": "2025-02-28T22:27:21.302149",
+                    "totalTokens": 1763,
+                    "tags": [],
+                    "props": {}
+                }
+            },
+            {
+                "id": "c2eecdd0-c069-4732-871a-fc09dcf82aeb",
+                "name": "PolicyManual_Sec07_07510_2013-11_PDF.pdf",
+                "type": "application/pdf",
+                "raw": "",
+                "data": "",
+                "key": "dev-amplifygenai_philmerrell@boisestate.edu/2025-02-28/def4a685-11bd-49cd-a759-84e49c2f2cf3.json",
+                "metadata": {
+                    "name": "PolicyManual_Sec07_07510_2013-11_PDF.pdf",
+                    "totalItems": 6,
+                    "locationProperties": [
+                        "page_number"
+                    ],
+                    "contentKey": "dev-amplifygenai_philmerrell@boisestate.edu/2025-02-28/def4a685-11bd-49cd-a759-84e49c2f2cf3.json.content.json",
+                    "createdAt": "2025-02-28T22:27:21.325018",
+                    "totalTokens": 1828,
+                    "tags": [],
+                    "props": {}
+                }
+            },
+            {
+                "id": "4b49ebef-98a8-4c3e-97cd-b89cdb9e7550",
+                "name": "PolicyManual_Sec07_07520_2019-07_Word.pdf",
+                "type": "application/pdf",
+                "raw": "",
+                "data": "",
+                "key": "dev-amplifygenai_philmerrell@boisestate.edu/2025-02-28/2b3b17b0-795f-4c01-a68e-0311eac9473b.json",
+                "metadata": {
+                    "name": "PolicyManual_Sec07_07520_2019-07_Word.pdf",
+                    "totalItems": 5,
+                    "locationProperties": [
+                        "page_number"
+                    ],
+                    "contentKey": "dev-amplifygenai_philmerrell@boisestate.edu/2025-02-28/2b3b17b0-795f-4c01-a68e-0311eac9473b.json.content.json",
+                    "createdAt": "2025-02-28T22:27:21.177240",
+                    "totalTokens": 1469,
+                    "tags": [],
+                    "props": {}
+                }
+            },
+            {
+                "id": "5bb782bd-a11d-4119-ba3a-aa37f2e86a0a",
+                "name": "PolicyManual_Sec07_07530_2019-07_PDF.pdf",
+                "type": "application/pdf",
+                "raw": "",
+                "data": "",
+                "key": "dev-amplifygenai_philmerrell@boisestate.edu/2025-02-28/1d6b1570-2fd5-40a0-99e0-e502c97e4f10.json",
+                "metadata": {
+                    "name": "PolicyManual_Sec07_07530_2019-07_PDF.pdf",
+                    "totalItems": 8,
+                    "locationProperties": [
+                        "page_number"
+                    ],
+                    "contentKey": "dev-amplifygenai_philmerrell@boisestate.edu/2025-02-28/1d6b1570-2fd5-40a0-99e0-e502c97e4f10.json.content.json",
+                    "createdAt": "2025-02-28T22:27:21.215738",
+                    "totalTokens": 2369,
+                    "tags": [],
+                    "props": {}
+                }
+            },
+            {
+                "id": "a9fe476f-36ba-4c79-b94d-c1d3f75d29f9",
+                "name": "PolicyManual_Sec07_07540_2019-07_PDF-1.pdf",
+                "type": "application/pdf",
+                "raw": "",
+                "data": "",
+                "key": "dev-amplifygenai_philmerrell@boisestate.edu/2025-02-28/0ea914af-a7b4-4214-9140-081d72126492.json",
+                "metadata": {
+                    "name": "PolicyManual_Sec07_07540_2019-07_PDF-1.pdf",
+                    "totalItems": 3,
+                    "locationProperties": [
+                        "page_number"
+                    ],
+                    "contentKey": "dev-amplifygenai_philmerrell@boisestate.edu/2025-02-28/0ea914af-a7b4-4214-9140-081d72126492.json.content.json",
+                    "createdAt": "2025-02-28T22:27:21.434508",
+                    "totalTokens": 813,
+                    "tags": [],
+                    "props": {}
+                }
+            },
+            {
+                "id": "9a9f76ad-160c-4326-87d8-15f797fb13ef",
+                "name": "PolicyManual_Sec07_07560_2019-09_PDF.pdf",
+                "type": "application/pdf",
+                "raw": "",
+                "data": "",
+                "key": "dev-amplifygenai_philmerrell@boisestate.edu/2025-02-28/b49405f7-7262-4c0b-a5de-25221c85eb48.json",
+                "metadata": {
+                    "name": "PolicyManual_Sec07_07560_2019-09_PDF.pdf",
+                    "totalItems": 6,
+                    "locationProperties": [
+                        "page_number"
+                    ],
+                    "contentKey": "dev-amplifygenai_philmerrell@boisestate.edu/2025-02-28/b49405f7-7262-4c0b-a5de-25221c85eb48.json.content.json",
+                    "createdAt": "2025-02-28T22:27:20.551268",
+                    "totalTokens": 2217,
+                    "tags": [],
+                    "props": {}
+                }
+            },
+            {
+                "id": "557f9994-8deb-458d-a9b9-422c83b37e33",
+                "name": "PolicyManual_Sec07_07570_01-02-25_PDF.pdf",
+                "type": "application/pdf",
+                "raw": "",
+                "data": "",
+                "key": "dev-amplifygenai_philmerrell@boisestate.edu/2025-02-28/3599f0c0-4334-4a2d-b1d2-5a3376dcefbf.json",
+                "metadata": {
+                    "name": "PolicyManual_Sec07_07570_01-02-25_PDF.pdf",
+                    "totalItems": 12,
+                    "locationProperties": [
+                        "page_number"
+                    ],
+                    "contentKey": "dev-amplifygenai_philmerrell@boisestate.edu/2025-02-28/3599f0c0-4334-4a2d-b1d2-5a3376dcefbf.json.content.json",
+                    "createdAt": "2025-02-28T22:27:21.603355",
+                    "totalTokens": 4310,
+                    "tags": [],
+                    "props": {}
+                }
+            },
+            {
+                "id": "f0c41704-a4a5-4e9d-978a-b4360d5f9ba6",
+                "name": "PolicyManual_Sec07_07580_01-20_PDF.pdf",
+                "type": "application/pdf",
+                "raw": "",
+                "data": "",
+                "key": "dev-amplifygenai_philmerrell@boisestate.edu/2025-02-28/9569587c-8e1d-430c-bb26-9f2eb8b10d9e.json",
+                "metadata": {
+                    "name": "PolicyManual_Sec07_07580_01-20_PDF.pdf",
+                    "totalItems": 4,
+                    "locationProperties": [
+                        "page_number"
+                    ],
+                    "contentKey": "dev-amplifygenai_philmerrell@boisestate.edu/2025-02-28/9569587c-8e1d-430c-bb26-9f2eb8b10d9e.json.content.json",
+                    "createdAt": "2025-02-28T22:27:21.917635",
+                    "totalTokens": 1263,
+                    "tags": [],
+                    "props": {}
+                }
+            },
+            {
+                "id": "0d694a6c-0b3d-4160-9439-d0686ad02ff5",
+                "name": "PolicyManual_Sec07_07590_2021-10-22_PDF.pdf",
+                "type": "application/pdf",
+                "raw": "",
+                "data": "",
+                "key": "dev-amplifygenai_philmerrell@boisestate.edu/2025-02-28/abb68acf-cea2-4225-a3c0-572bd161702f.json",
+                "metadata": {
+                    "name": "PolicyManual_Sec07_07590_2021-10-22_PDF.pdf",
+                    "totalItems": 6,
+                    "locationProperties": [
+                        "page_number"
+                    ],
+                    "contentKey": "dev-amplifygenai_philmerrell@boisestate.edu/2025-02-28/abb68acf-cea2-4225-a3c0-572bd161702f.json.content.json",
+                    "createdAt": "2025-02-28T22:27:20.122345",
+                    "totalTokens": 1986,
+                    "tags": [],
+                    "props": {}
+                }
+            },
+            {
+                "id": "5895cc49-1e7a-41fa-8bb3-7a0ff086a71c",
+                "name": "PolicyManual_Sec07_07600_2023-03-23_PDF.pdf",
+                "type": "application/pdf",
+                "raw": "",
+                "data": "",
+                "key": "dev-amplifygenai_philmerrell@boisestate.edu/2025-02-28/6bd23429-8fd2-40de-ae14-7558aa814001.json",
+                "metadata": {
+                    "name": "PolicyManual_Sec07_07600_2023-03-23_PDF.pdf",
+                    "totalItems": 10,
+                    "locationProperties": [
+                        "page_number"
+                    ],
+                    "contentKey": "dev-amplifygenai_philmerrell@boisestate.edu/2025-02-28/6bd23429-8fd2-40de-ae14-7558aa814001.json.content.json",
+                    "createdAt": "2025-02-28T22:27:22.488212",
+                    "totalTokens": 3685,
+                    "tags": [],
+                    "props": {}
+                }
+            },
+            {
+                "id": "502d36a7-7bae-4ffb-aa6c-a23dd94623c3",
+                "name": "PolicyManual_Sec07_07610_2024-10-18_PDF.pdf",
+                "type": "application/pdf",
+                "raw": "",
+                "data": "",
+                "key": "dev-amplifygenai_philmerrell@boisestate.edu/2025-02-28/6b1631d5-69b3-4cf8-93b8-fbbec04e7889.json",
+                "metadata": {
+                    "name": "PolicyManual_Sec07_07610_2024-10-18_PDF.pdf",
+                    "totalItems": 8,
+                    "locationProperties": [
+                        "page_number"
+                    ],
+                    "contentKey": "dev-amplifygenai_philmerrell@boisestate.edu/2025-02-28/6b1631d5-69b3-4cf8-93b8-fbbec04e7889.json.content.json",
+                    "createdAt": "2025-02-28T22:27:21.361326",
+                    "totalTokens": 2870,
+                    "tags": [],
+                    "props": {}
+                }
+            },
+            {
+                "id": "b6ae73de-cd46-4fa4-8e8d-b3859043faef",
+                "name": "PolicyManual_Sec07_07620_2025-01-02_PDF.pdf",
+                "type": "application/pdf",
+                "raw": "",
+                "data": "",
+                "key": "dev-amplifygenai_philmerrell@boisestate.edu/2025-02-28/093e97e2-0f97-4ecb-b539-a80c78ac6b0a.json",
+                "metadata": {
+                    "name": "PolicyManual_Sec07_07620_2025-01-02_PDF.pdf",
+                    "totalItems": 26,
+                    "locationProperties": [
+                        "page_number"
+                    ],
+                    "contentKey": "dev-amplifygenai_philmerrell@boisestate.edu/2025-02-28/093e97e2-0f97-4ecb-b539-a80c78ac6b0a.json.content.json",
+                    "createdAt": "2025-02-28T22:27:21.215383",
+                    "totalTokens": 10658,
+                    "tags": [],
+                    "props": {}
+                }
+            },
+            {
+                "id": "78203451-24b9-415e-9c61-31320fcf9eca",
+                "name": "PolicyManual_Sec07_07630_2024-01-09_PDF.pdf",
+                "type": "application/pdf",
+                "raw": "",
+                "data": "",
+                "key": "dev-amplifygenai_philmerrell@boisestate.edu/2025-02-28/a6758567-6ea6-429e-95b5-5d6fcef75a74.json",
+                "metadata": {
+                    "name": "PolicyManual_Sec07_07630_2024-01-09_PDF.pdf",
+                    "totalItems": 10,
+                    "locationProperties": [
+                        "page_number"
+                    ],
+                    "contentKey": "dev-amplifygenai_philmerrell@boisestate.edu/2025-02-28/a6758567-6ea6-429e-95b5-5d6fcef75a74.json.content.json",
+                    "createdAt": "2025-02-28T22:27:20.937781",
+                    "totalTokens": 3717,
+                    "tags": [],
+                    "props": {}
+                }
+            },
+            {
+                "id": "491f8522-4b87-4189-8c32-98f9869df88a",
+                "name": "PolicyManual_Sec07_07640_2024-01-09_PDF.pdf",
+                "type": "application/pdf",
+                "raw": "",
+                "data": "",
+                "key": "dev-amplifygenai_philmerrell@boisestate.edu/2025-02-28/ddb2e5fe-2ace-471d-b784-295217da4d80.json",
+                "metadata": {
+                    "name": "PolicyManual_Sec07_07640_2024-01-09_PDF.pdf",
+                    "totalItems": 8,
+                    "locationProperties": [
+                        "page_number"
+                    ],
+                    "contentKey": "dev-amplifygenai_philmerrell@boisestate.edu/2025-02-28/ddb2e5fe-2ace-471d-b784-295217da4d80.json.content.json",
+                    "createdAt": "2025-02-28T22:27:22.500401",
+                    "totalTokens": 2756,
+                    "tags": [],
+                    "props": {}
+                }
+            },
+            {
+                "id": "fe629ee6-4b29-47f5-954f-f5a4473b78de",
+                "name": "PolicyManual_Sec07_07650_2023-09-21_PDF.pdf",
+                "type": "application/pdf",
+                "raw": "",
+                "data": "",
+                "key": "dev-amplifygenai_philmerrell@boisestate.edu/2025-02-28/2660f65d-6575-4cd9-9ddb-aea0a10db869.json",
+                "metadata": {
+                    "name": "PolicyManual_Sec07_07650_2023-09-21_PDF.pdf",
+                    "totalItems": 22,
+                    "locationProperties": [
+                        "page_number"
+                    ],
+                    "contentKey": "dev-amplifygenai_philmerrell@boisestate.edu/2025-02-28/2660f65d-6575-4cd9-9ddb-aea0a10db869.json.content.json",
+                    "createdAt": "2025-02-28T22:27:22.794687",
+                    "totalTokens": 8576,
+                    "tags": [],
+                    "props": {}
+                }
+            },
+            {
+                "id": "87fa2480-51f0-4490-8399-d41eabc5ebc3",
+                "name": "PolicyManual_Sec07_07660_2023-08-17_PDF.pdf",
+                "type": "application/pdf",
+                "raw": "",
+                "data": "",
+                "key": "dev-amplifygenai_philmerrell@boisestate.edu/2025-02-28/c1867112-e185-498d-8b85-a193b795e8ea.json",
+                "metadata": {
+                    "name": "PolicyManual_Sec07_07660_2023-08-17_PDF.pdf",
+                    "totalItems": 3,
+                    "locationProperties": [
+                        "page_number"
+                    ],
+                    "contentKey": "dev-amplifygenai_philmerrell@boisestate.edu/2025-02-28/c1867112-e185-498d-8b85-a193b795e8ea.json.content.json",
+                    "createdAt": "2025-02-28T22:27:22.092807",
+                    "totalTokens": 734,
+                    "tags": [],
+                    "props": {}
+                }
+            },
+            {
+                "id": "5f80520a-73bc-45ea-bcca-178028ccca76",
+                "name": "PolicyManual_Section07_07060_2013-08_PDF.pdf",
+                "type": "application/pdf",
+                "raw": "",
+                "data": "",
+                "key": "dev-amplifygenai_philmerrell@boisestate.edu/2025-02-28/2ab545bc-3056-4731-ad5b-7415575cd19a.json",
+                "metadata": {
+                    "name": "PolicyManual_Section07_07060_2013-08_PDF.pdf",
+                    "totalItems": 5,
+                    "locationProperties": [
+                        "page_number"
+                    ],
+                    "contentKey": "dev-amplifygenai_philmerrell@boisestate.edu/2025-02-28/2ab545bc-3056-4731-ad5b-7415575cd19a.json.content.json",
+                    "createdAt": "2025-02-28T22:27:21.515577",
+                    "totalTokens": 1389,
+                    "tags": [],
+                    "props": {}
+                }
+            }
+        ],
+        "version": 1,
+        "fileKeys": [],
+        "provider": "amplify",
+        "data": {
+            "provider": "amplify",
+            "tags": [
+                ""
+            ],
+            "conversationTags": [],
+            "access": {
+                "read": true,
+                "write": true
+            },
+            "dataSourceOptions": {
+                "includeDownloadLinks": false,
+                "ragAttachedDocuments": false,
+                "insertAttachedDocuments": true,
+                "ragConversationDocuments": true,
+                "insertConversationDocuments": false,
+                "insertAttachedDocumentsMetadata": false,
+                "insertConversationDocumentsMetadata": false,
+                "disableDataSources": false
+            },
+            "messageOptions": {
+                "includeMessageIds": false,
+                "includeUserLineNumbers": false,
+                "includeAssistantLineNumbers": false
+            },
+            "featureOptions": {
+                "IncludeArtifactsInstr": true
+            },
+            "apiCapabilities": []
+        },
+        "disclaimer": "The HR Policy Assistant is designed to help navigate Boise State Policy. All information you receive should be verified by Boise State HR."
+    }
+}
