@@ -16,3 +16,12 @@
     border: 2px solid var(--ion-color-secondary);
     background: var(--ion-color-light);
 }
+
+.file-count {
+    background: var(--ion-color-primary);
+    color: var(--ion-color-primary-contrast);
+    padding: 3px 7px;
+    border-radius: 100%;
+    margin-left: 5px;
+    
+}

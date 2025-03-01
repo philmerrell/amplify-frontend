@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Injectable, Resource, resource, ResourceRef } from '@angular/core';
 import { firstValueFrom, map } from 'rxjs';
 import { DataSource } from 'src/app/models/chat-request.model';
 import { environment } from 'src/environments/environment';
@@ -37,6 +37,15 @@ interface GetUploadedFilesResponse {
   providedIn: 'root'
 })
 export class SelectUploadedFileService {
+
+  private _myFilesResource = resource({
+    loader: () => this.getUploadedFilesList()
+  })
+
+  get myFilesResource() {
+    return this._myFilesResource.asReadonly()
+  }
+  
 
   constructor(private http: HttpClient) { }
 

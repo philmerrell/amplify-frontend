@@ -11,7 +11,7 @@
   <ion-toolbar>
     <ion-segment>
       <ion-segment-button value="selectedFiles" contentId="selectedFiles">
-        <ion-label>Selected Files <ion-badge>{{dataSources.length}}</ion-badge></ion-label>
+        <ion-label>Selected Files <span class="file-count">{{files().length}}</span></ion-label>
       </ion-segment-button>
       <ion-segment-button value="myFiles" contentId="myFiles" layout="icon-end">
         <ion-label>My Files</ion-label>
@@ -25,14 +25,24 @@
   <ion-segment-view>
     <ion-segment-content id="selectedFiles">
       <ion-list>
-        @if(!dataSources.length) {
-          <!-- <ion-item>
-            <ion-icon slot="start" name="cloud-upload-outline" color="secondary"></ion-icon>
+        
+        @for(file of files(); track file.id) {
+          <ion-item>
+            <ion-icon slot="start" name="document-outline" color="secondary"></ion-icon>
             <ion-label>
-              <h2>Upload a file</h2>
-              <p>Upload files from your computer to use with this assistant</p>
+              <h2>{{ file.name }}</h2>
+              <!-- <p>{{ file.createdAt | date }}</p> -->
             </ion-label>
-          </ion-item> -->
+            @if(file.uploaded) {
+              <ion-button (click)="removeFile(file)" slot="end" color="danger" shape="round">
+                <ion-icon slot="icon-only" name="close"></ion-icon>
+              </ion-button>
+            } @else {
+              <ion-badge>{{ file.progress }}%</ion-badge>
+            }
+            <!-- <ion-badge>{{ file.type | fileType }}</ion-badge> -->
+          </ion-item>
+        } @empty {
           <ion-item>
             <ion-icon slot="start" name="document-outline" color="secondary"></ion-icon>
             <ion-label>
@@ -47,23 +57,12 @@
             </div>
           </ion-item>
         }
-        
-        @for(file of dataSources; track file.id) {
-          <ion-item>
-            <ion-icon slot="start" name="document-outline" color="secondary"></ion-icon>
-            <ion-label>
-              <h2>{{ file.name }}</h2>
-              <!-- <p>{{ file.createdAt | date }}</p> -->
-            </ion-label>
-            <!-- <ion-badge>{{ file.type | fileType }}</ion-badge> -->
-          </ion-item>
-        }
       </ion-list>    
     </ion-segment-content>
     <ion-segment-content id="myFiles">
         <ion-list>
-          @for (file of files; track file.id) {
-            <ion-item (click)="handleFileSelect(file)" button>
+          @for (file of myFilesResource.value(); track file.id) {
+            <ion-item (click)="handleMyFileSelect(file)" button>
               @if (file.selected) {
                 <ion-icon color="success" name="checkmark-outline" slot="start"></ion-icon>
               } @else {
@@ -75,8 +74,18 @@
               </ion-label>
               <ion-badge>{{ file.type | fileType }}</ion-badge>
             </ion-item>
+          } @empty {
+            
+              <ion-item>
+                <ion-icon slot="start" name="document-outline" color="secondary"></ion-icon>
+                <ion-label>
+                  <h2>You have not uploaded any files yet</h2>
+                  <p>But this is where they'd be if you did.</p>
+                </ion-label>
+              </ion-item>
+            
           }
-          @if (!filesRequestComplete) {
+          @if (myFilesResource.isLoading()) {
             <ion-item>
               <ion-skeleton-text animated></ion-skeleton-text>
             </ion-item>
@@ -114,15 +123,7 @@
               <ion-skeleton-text animated></ion-skeleton-text>
             </ion-item>
           }
-          @if (filesRequestComplete && !files.length) {
-            <ion-item>
-              <ion-icon slot="start" name="document-outline" color="secondary"></ion-icon>
-              <ion-label>
-                <h2>You have not uploaded any files yet</h2>
-                <p>But this is where they'd be if you did.</p>
-              </ion-label>
-            </ion-item>
-          }
+          
       </ion-list>
     </ion-segment-content>
   </ion-segment-view>

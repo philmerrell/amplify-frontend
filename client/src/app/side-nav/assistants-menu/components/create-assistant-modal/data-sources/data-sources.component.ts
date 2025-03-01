@@ -1,7 +1,7 @@
-import { Component, inject, OnInit } from '@angular/core';
-import { IonHeader, IonToolbar, IonButtons, IonBackButton, IonTitle, IonContent, IonFooter, IonButton, IonIcon, IonList, IonItem, IonLabel, IonSkeletonText, IonText, IonBadge, IonSegment, IonSegmentButton, IonSegmentView, IonSegmentContent } from "@ionic/angular/standalone";
+import { Component, ElementRef, inject, Input, OnInit, Resource, ResourceStatus, Signal } from '@angular/core';
+import { IonHeader, IonToolbar, IonButtons, IonBackButton, IonTitle, IonContent, IonFooter, IonButton, IonIcon, IonList, IonItem, IonLabel, IonSkeletonText, IonText, IonBadge, IonSegment, IonSegmentButton, IonSegmentView, IonSegmentContent, IonNav, ToastController } from "@ionic/angular/standalone";
 import { addIcons } from 'ionicons';
-import { chevronForwardOutline, checkmarkOutline, documentOutline, cloudUploadOutline, fileTrayOutline } from 'ionicons/icons';
+import { chevronForwardOutline, checkmarkOutline, documentOutline, cloudUploadOutline, fileTrayOutline, close, checkmarkCircle } from 'ionicons/icons';
 import { SelectUploadedFileService, UploadedFile } from 'src/app/conversation/components/select-uploaded-file/select-uploaded-file.service';
 import { FileUploadService, FileWrapper } from 'src/app/conversation/services/file-upload.service';
 import { FileTypeIconPipe } from "../../../../../conversation/components/select-uploaded-file/pipes/file-type-icon.pipe";
@@ -9,6 +9,8 @@ import { DatePipe } from '@angular/common';
 import { FileTypePipe } from "../../../../../conversation/components/select-uploaded-file/pipes/file-type.pipe";
 import { FileDropZoneDirective } from 'src/app/conversation/components/chat-input/file-drop-zone.directive';
 import { DataSource } from 'src/app/models/chat-request.model';
+import { CreateAssistantFileService } from '../create-assistant-file.service';
+import { FormGroup } from '@angular/forms';
 
 @Component({
   selector: 'app-data-sources',
@@ -18,81 +20,160 @@ import { DataSource } from 'src/app/models/chat-request.model';
   imports: [FileDropZoneDirective, IonSegmentButton, IonSegment, IonBadge, IonText, IonSkeletonText, IonLabel, IonItem, IonList, IonIcon, IonButton, IonFooter, IonContent, IonTitle, IonBackButton, IonButtons, IonToolbar, IonHeader, FileTypeIconPipe, DatePipe, FileTypePipe, IonSegmentView, IonSegmentContent]
 })
 export class DataSourcesComponent  implements OnInit {
-  files: UploadedFile[] = [];
-  filesRequestComplete: boolean = false;
-  dataSources: DataSource[] = [];
+  @Input() form!: FormGroup;
+  @Input() nav!: ElementRef<IonNav>;
   private selectUploadedFileService: SelectUploadedFileService = inject(SelectUploadedFileService);
   private fileUploadService: FileUploadService = inject(FileUploadService);
+  private createAssistantFileService: CreateAssistantFileService = inject(CreateAssistantFileService);
+  private toastController: ToastController = inject(ToastController);
+  
+  myFilesResource: Resource<UploadedFile[] | undefined> = this.selectUploadedFileService.myFilesResource;
+  status = ResourceStatus;
+  files: Signal<FileWrapper[]> = this.createAssistantFileService.getFiles();
   
   constructor() {
-    addIcons({cloudUploadOutline,checkmarkOutline,documentOutline,chevronForwardOutline, fileTrayOutline});
+    addIcons({fileTrayOutline,documentOutline,close,checkmarkCircle,checkmarkOutline,chevronForwardOutline,cloudUploadOutline});
   }
 
-  ngOnInit() {
-    this.getFiles();
-  }
+  ngOnInit() {}
 
   async onFileDropped(files: File[]) {
-    console.log(files);
-    this.prepareFilesList(files);
-    // await this.getPresignedUrlForUpload();
-    // this.initiateFileUploads();
+    this.addFilesToList(files);
+    await this.getPresignedUrlForUpload();
+    this.initiateFileUploads();
   }
 
-  async prepareFilesList(files: Array<any>) {  
+  async fileBrowseHandler(event: any) {
+    const files: File[] = event.files;
+    this.addFilesToList(files);
+    await this.getPresignedUrlForUpload();
+    this.initiateFileUploads();
+  }
+
+  async addFilesToList(files: Array<any>) {  
     for (const file of files) {
       const fw = this.fileUploadService.createFileWrapperObj(file);
-      this.dataSources.push(fw);
+      this.createAssistantFileService.addFile(fw);
     }
   }
 
-  async getFiles() {
-    try {
-      this.files = await this.selectUploadedFileService.getUploadedFilesList();
-    } catch (error) {
-      // this.presentToast('An error has occurred retrieving files list.', 'danger', 0);
-      console.log(error);
-    }
-    this.filesRequestComplete = true;
+  removeFile(file: FileWrapper) {
+    // const foundMyFile = this.myFiles()!.find(f => `s3://${f.id}` === file.id);
+    // if (foundMyFile) {        
+    //   foundMyFile.selected = false;
+    // }
+    // this.createAssistantFileService.removeFile(file);
   }
 
-  handleFileSelect(uploadedFile: UploadedFile) {
+  // async getMyFiles() {
+  //   try {
+  //     this.myFiles = await this.selectUploadedFileService.getUploadedFilesList();
+  //   } catch (error) {
+  //     this.presentErrorToast('An error has occurred retrieving the my files list.', 'danger');
+  //     console.log(error);
+  //   }
+  //   this.filesRequestComplete = true;
+  // }
+
+  handleMyFileSelect(uploadedFile: UploadedFile) {
     if (uploadedFile.selected) {
-      this.removeFile(uploadedFile);
+      this.unSelectMyFile(uploadedFile);
     } else {
-      this.addFile(uploadedFile);
+      this.selectMyFile(uploadedFile);
     }
     uploadedFile.selected = !uploadedFile.selected;
   }
 
-  removeFile(uploadedFile: UploadedFile) {
+  private unSelectMyFile(uploadedFile: UploadedFile) {
     const fw = this.createFileWrapperFromUploadedFile(uploadedFile);
+    this.createAssistantFileService.removeFile(fw);
     const dataSource = this.selectUploadedFileService.createDataSourceFromUplodedFile(uploadedFile);
-    // TODO: remove dataSource
-    // this.chatRequestService.removeFile(fw);
+    this.removeDataSource(dataSource);
   }
 
-  addFile(uploadedFile: UploadedFile) {
+  private selectMyFile(uploadedFile: UploadedFile) {
     const fw = this.createFileWrapperFromUploadedFile(uploadedFile);
-    // this.chatRequestService.addFile(fw);
+    this.createAssistantFileService.addFile(fw);
     const dataSource = this.selectUploadedFileService.createDataSourceFromUplodedFile(uploadedFile);
-    this.dataSources.push(dataSource);
-
-    // this.chatRequestService.addDataSource(dataSource);
-    // this.presentToast('File Added', 'dark', 3000);
+    this.addDataSource(dataSource);
   }
 
-  createFileWrapperFromUploadedFile(uploadedFile: UploadedFile): FileWrapper {
-      return {
-        name: uploadedFile.name,
-        id: `s3://${uploadedFile.id}`,
-        uploaded: true,
-        progress: 100,
-        file: {
-          type: uploadedFile.type
-        } as File
+  private async getPresignedUrlForUpload() {
+    for (const file of this.files()) {
+      if (!file.uploaded) {
+        try {
+          const response = await this.fileUploadService.getPresignedUrl(file);
+          file.presignedUrlResponse = response
+        } catch (error) {
+          this.presentErrorToast('An error occured getting a presigned URL.', 'danger');
+          this.createAssistantFileService.removeFile(file);
+        }
       }
     }
+  }
+
+  private addDataSource(dataSource: DataSource) {
+    this.createAssistantFileService.addDataSource(dataSource);
+  }
+
+  private removeDataSource(dataSource: DataSource) {
+    this.createAssistantFileService.removeDataSource(dataSource);
+  }
+
+  private initiateFileUploads() {
+    for (const file of this.files()) {
+      if (!file.uploaded) {
+        this.uploadFileToS3(file);
+      }
+    }
+  }
+
+  private uploadFileToS3(fw: FileWrapper) {
+    this.fileUploadService.uploadAndGetMetadata(fw).subscribe({
+      next: result => {
+        if (result.type === 'upload') {
+          fw.progress = result.data.progress;
+        } else if (result.type === 'metadata') {
+          const dataSource = this.createAssistantFileService.createDataSource(result.data, fw);
+          this.addDataSource(dataSource);
+        }
+      },
+      error: (error) => {
+        this.presentErrorToast('An error occured uploading to S3.', 'danger');
+        this.createAssistantFileService.removeFile(fw);
+      },
+      complete: () => {
+        fw.uploaded = true;
+      }
+    });
+  }
+
+  private createFileWrapperFromUploadedFile(uploadedFile: UploadedFile): FileWrapper {
+    return {
+      name: uploadedFile.name,
+      id: `s3://${uploadedFile.id}`,
+      uploaded: true,
+      progress: 100,
+      file: {
+        type: uploadedFile.type
+      } as File
+    }
+  }
+
+  private async presentErrorToast(message: string, color: string) {
+    const toast = await this.toastController.create({
+      message,
+      color,
+      duration: 0,
+      buttons: [
+        {
+          text: 'Close', 
+          role: 'cancel' 
+        }
+      ]
+    });
+    toast.present();
+  }
 
 
 }
