@@ -1,7 +1,8 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable, Resource, resource, ResourceRef } from '@angular/core';
+import { inject, Injectable, Resource, resource, ResourceRef } from '@angular/core';
 import { firstValueFrom, map } from 'rxjs';
 import { DataSource } from 'src/app/models/chat-request.model';
+import { DeveloperSettingsService } from 'src/app/settings/developer/developer-settings.service';
 import { environment } from 'src/environments/environment';
 
 export interface UploadedFile {
@@ -37,7 +38,7 @@ interface GetUploadedFilesResponse {
   providedIn: 'root'
 })
 export class SelectUploadedFileService {
-
+  private developerSettingsService: DeveloperSettingsService = inject(DeveloperSettingsService);
   private _myFilesResource = resource({
     loader: () => this.getUploadedFilesList()
   })
@@ -57,7 +58,9 @@ export class SelectUploadedFileService {
         sortIndex: "createdAt"
       }
     };
-    const request = this.http.post<GetUploadedFilesResponse>(`${environment.apiBaseUrl}/files/query`, requestObj)
+    const apiBaseUrl = this.developerSettingsService.getDeveloperApiBaseUrl();
+
+    const request = this.http.post<GetUploadedFilesResponse>(`${apiBaseUrl()}/files/query`, requestObj)
       .pipe(map(response => response.data.items));
     return firstValueFrom(request);
   }

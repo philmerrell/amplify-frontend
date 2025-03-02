@@ -20,7 +20,7 @@ export class CreateAssistantModalComponent implements OnInit {
     tags: this.fb.array([], Validators.required),
     instructions: ['', Validators.required],
     disclaimer: [''],
-    uri: [null],
+    uri: [''],
     dataSources: this.fb.array([], Validators.required),
     dataSourceOptions: this.fb.group({
       insertAttachedDocumentsMetadata: [false],

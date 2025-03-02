@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 
-import { AssistantService } from './assistant.service';
+import { AssistantService } from '../side-nav/assistants-menu/assistant.service';
 
 describe('AssistantService', () => {
   let service: AssistantService;

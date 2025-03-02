@@ -3,6 +3,7 @@ import { effect, inject, Injectable, Signal, signal, WritableSignal } from '@ang
 import { lastValueFrom } from 'rxjs';
 import { FileWrapper } from 'src/app/conversation/services/file-upload.service';
 import { DataSource } from 'src/app/models/chat-request.model';
+import { DeveloperSettingsService } from 'src/app/settings/developer/developer-settings.service';
 import { environment } from 'src/environments/environment';
 
 @Injectable({
@@ -12,6 +13,7 @@ export class CreateAssistantService {
     private files: WritableSignal<FileWrapper[]> = signal([]);
     private dataSources: WritableSignal<DataSource[]> = signal([]);
     private http: HttpClient = inject(HttpClient);
+    private developerSettingsService: DeveloperSettingsService = inject(DeveloperSettingsService);
   
   constructor() {}
 
@@ -73,8 +75,8 @@ export class CreateAssistantService {
         ...assistantFormValue,
         dataSources: this.dataSources()
       }
-      console.log(assistant);
-      const request = this.http.post(`${environment.apiBaseUrl}/assistant/create`, assistant);
+      const apiBaseUrl = this.developerSettingsService.getDeveloperApiBaseUrl();
+      const request = this.http.post(`${apiBaseUrl()}/assistant/create`, { data: {...assistant}});
       lastValueFrom(request);
     }
 }
