@@ -30,7 +30,7 @@ export class AssistantDetailsComponent  implements OnInit {
 
   next() {
     if(this.form.controls['name'].valid && this.form.controls['instructions'].valid) {
-      this.nav.nativeElement.push(DataSourcesComponent, { nav: this.nav.nativeElement, form: this.form });
+      this.nav.nativeElement.push(DataSourcesComponent, { nav: this.nav, form: this.form });
     } else {
       validateAllFormFields(this.form);
     }
