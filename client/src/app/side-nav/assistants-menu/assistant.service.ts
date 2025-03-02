@@ -26,5 +26,24 @@ export class AssistantService {
     return lastValueFrom(request)
   }
 
+  async deleteAssistant(assistantId: string): Promise<{message: string, success: boolean}> {
+    const apiBaseUrl = this.developerSettingsService.getDeveloperApiBaseUrl();
+    const request = this.http.post<{message: string, success: boolean}>(`${apiBaseUrl()}/assistant/delete`, { data: {assistantId} });
+    const result = await lastValueFrom(request);
+    if(result.success) {
+      this.removeAssistantFromResource(assistantId);
+    }
+
+    return result;
+  }
+
+  private removeAssistantFromResource(assistantId: string) {
+    this._assistantResource.update(assistants => {
+      const assistantIndex = assistants.findIndex((assistant: any) => assistant.assistantId === assistantId);
+      assistants.splice(assistantIndex, 1);
+      return [...assistants];
+    });
+  }
+
 
 }

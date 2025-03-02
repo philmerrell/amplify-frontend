@@ -1,11 +1,15 @@
 @for(assistant of assistantResource.value(); track assistant.id) {
-  <ion-item color="light">
+  <ion-item color="light" button detail="false">
     <ion-label>
       <h2>{{ assistant.name }}</h2>
     </ion-label>
-    <ion-button color="tertiary" slot="end" fill="clear" id="assistant-menu-{{ assistant.id }}">
-      <ion-icon slot="icon-only" size="small" name="ellipsis-horizontal"></ion-icon>
-    </ion-button>
+    @if(assistant.assistantId === pendingAssistantDeleteId) {
+      <ion-spinner slot="end" name="dots" color="tertiary"></ion-spinner>
+    } @else {
+      <ion-button color="tertiary" slot="end" fill="clear" id="assistant-menu-{{ assistant.id }}">
+        <ion-icon slot="icon-only" size="small" name="ellipsis-horizontal"></ion-icon>
+      </ion-button>
+    }
   </ion-item>
   <ion-popover trigger="assistant-menu-{{ assistant.id }}" triggerAction="click" #assistantPopover
       (didDismiss)="$event.stopPropagation()">
@@ -15,7 +19,7 @@
             <ion-icon slot="start" name="create-outline" color="primary"></ion-icon>
             <ion-label>Edit</ion-label>
           </ion-item>
-          <ion-item lines="none" button>
+          <ion-item (click)="presentDeleteAlert(assistant.assistantId, assistantPopover)" lines="none" button>
             <ion-icon slot="start" name="trash-outline" color="danger"></ion-icon>
             <ion-label>Delete</ion-label>
           </ion-item>
