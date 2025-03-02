@@ -10,10 +10,37 @@
   </ion-toolbar>
 </ion-header>
 <ion-content>
-  <p>test</p>
+  <form [formGroup]="form">
+    <ion-item-divider [sticky]="true">
+      Advanced Settings
+    </ion-item-divider>
+      <div formGroupName="dataSourceOptions">
+        <ion-item>
+          <ion-checkbox formControlName="insertAttachedDocumentsMetadata" labelPlacement="start">Insert Attached Documents Metadata</ion-checkbox>
+        </ion-item>
+        <ion-item>
+          <ion-checkbox formControlName="insertAttachedDocuments" labelPlacement="start">Insert Attached Documents</ion-checkbox>
+        </ion-item>
+        <ion-item>
+          <ion-checkbox formControlName="insertConversationDocuments" labelPlacement="start">Insert Conversation Documents</ion-checkbox>
+        </ion-item>
+        <ion-item>
+          <ion-checkbox formControlName="disableDataSources" labelPlacement="start">Disable Data Sources</ion-checkbox>
+        </ion-item>
+        <ion-item>
+          <ion-checkbox formControlName="insertConversationDocumentsMetadata" labelPlacement="start">Insert Conversation Documents Metadata</ion-checkbox>
+        </ion-item>
+        <ion-item>
+          <ion-checkbox formControlName="ragConversationDocuments" labelPlacement="start">RAG Conversation Documents</ion-checkbox>
+        </ion-item>
+        <ion-item>
+          <ion-checkbox formControlName="ragAttachedDocuments" labelPlacement="start">RAG Attached Documents</ion-checkbox>
+        </ion-item>
+      </div>
+  </form>
 </ion-content>
 <ion-footer>
   <ion-toolbar>
-    <ion-button expand="block" color="primary">Create</ion-button>
+    <ion-button (click)="createAssistant()" expand="block" color="primary">Create</ion-button>
   </ion-toolbar>
 </ion-footer>

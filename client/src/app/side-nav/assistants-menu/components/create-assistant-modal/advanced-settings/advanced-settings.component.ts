@@ -1,21 +1,30 @@
-import { Component, inject, OnInit } from '@angular/core';
-import { IonHeader, IonToolbar, IonTitle, IonButtons, IonButton, IonContent, IonFooter, ModalController, IonBackButton } from "@ionic/angular/standalone";
+import { Component, ElementRef, inject, Input, OnInit } from '@angular/core';
+import { FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { IonHeader, IonToolbar, IonTitle, IonButtons, IonButton, IonContent, IonFooter, ModalController, IonBackButton, IonItemDivider, IonItem, IonCheckbox, IonNav } from "@ionic/angular/standalone";
 
 @Component({
   selector: 'app-advanced-settings',
   templateUrl: './advanced-settings.component.html',
   styleUrls: ['./advanced-settings.component.scss'],
   standalone: true,
-  imports: [IonBackButton, IonFooter, IonContent, IonButton, IonButtons, IonTitle, IonToolbar, IonHeader, ]
+  imports: [ReactiveFormsModule, IonCheckbox, IonItem, IonItemDivider, IonBackButton, IonFooter, IonContent, IonButton, IonButtons, IonTitle, IonToolbar, IonHeader]
 })
 export class AdvancedSettingsComponent  implements OnInit {
+  @Input() form!: FormGroup;
+  @Input() nav!: ElementRef<IonNav>;
+
   private modalController: ModalController = inject(ModalController);
+
   constructor() { }
 
   ngOnInit() {}
 
   dismiss() {
     this.modalController.dismiss();
+  }
+
+  createAssistant() {
+    console.log(this.form.value);
   }
 
 }
