@@ -12,6 +12,10 @@
     color: var(--ion-color-primary);
 }
 
+#fileDropRef {
+    display: none;
+}
+
 .fileover {
     border: 2px solid var(--ion-color-secondary);
     background: var(--ion-color-light);
@@ -23,5 +27,4 @@
     padding: 3px 7px;
     border-radius: 100%;
     margin-left: 5px;
-    
 }

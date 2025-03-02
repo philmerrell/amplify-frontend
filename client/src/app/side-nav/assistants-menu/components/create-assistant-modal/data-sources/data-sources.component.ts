@@ -1,5 +1,5 @@
 import { Component, ElementRef, inject, Input, OnInit, Resource, ResourceStatus, Signal } from '@angular/core';
-import { IonHeader, IonToolbar, IonButtons, IonBackButton, IonTitle, IonContent, IonFooter, IonButton, IonIcon, IonList, IonItem, IonLabel, IonSkeletonText, IonText, IonBadge, IonSegment, IonSegmentButton, IonSegmentView, IonSegmentContent, IonNav, ToastController } from "@ionic/angular/standalone";
+import { IonHeader, IonToolbar, IonButtons, IonBackButton, IonTitle, IonContent, IonFooter, IonButton, IonIcon, IonList, IonItem, IonLabel, IonSkeletonText, IonText, IonBadge, IonSegment, IonSegmentButton, IonSegmentView, IonSegmentContent, IonNav, ToastController, IonThumbnail, IonSpinner } from "@ionic/angular/standalone";
 import { addIcons } from 'ionicons';
 import { chevronForwardOutline, checkmarkOutline, documentOutline, cloudUploadOutline, fileTrayOutline, close, checkmarkCircle } from 'ionicons/icons';
 import { SelectUploadedFileService, UploadedFile } from 'src/app/conversation/components/select-uploaded-file/select-uploaded-file.service';
@@ -17,7 +17,7 @@ import { FormGroup } from '@angular/forms';
   templateUrl: './data-sources.component.html',
   styleUrls: ['./data-sources.component.scss'],
   standalone: true,
-  imports: [FileDropZoneDirective, IonSegmentButton, IonSegment, IonBadge, IonText, IonSkeletonText, IonLabel, IonItem, IonList, IonIcon, IonButton, IonFooter, IonContent, IonTitle, IonBackButton, IonButtons, IonToolbar, IonHeader, FileTypeIconPipe, DatePipe, FileTypePipe, IonSegmentView, IonSegmentContent]
+  imports: [IonSpinner, FileDropZoneDirective, IonSegmentButton, IonSegment, IonBadge, IonText, IonSkeletonText, IonLabel, IonItem, IonList, IonIcon, IonButton, IonFooter, IonContent, IonTitle, IonBackButton, IonButtons, IonToolbar, IonHeader, FileTypeIconPipe, DatePipe, FileTypePipe, IonSegmentView, IonSegmentContent, IonThumbnail]
 })
 export class DataSourcesComponent  implements OnInit {
   @Input() form!: FormGroup;
@@ -58,22 +58,12 @@ export class DataSourcesComponent  implements OnInit {
   }
 
   removeFile(file: FileWrapper) {
-    // const foundMyFile = this.myFiles()!.find(f => `s3://${f.id}` === file.id);
-    // if (foundMyFile) {        
-    //   foundMyFile.selected = false;
-    // }
-    // this.createAssistantFileService.removeFile(file);
+    const foundMyFile = this.myFilesResource.value()!.find(f => `s3://${f.id}` === file.id);
+    if (foundMyFile) {        
+      foundMyFile.selected = false;
+    }
+    this.createAssistantFileService.removeFile(file);
   }
-
-  // async getMyFiles() {
-  //   try {
-  //     this.myFiles = await this.selectUploadedFileService.getUploadedFilesList();
-  //   } catch (error) {
-  //     this.presentErrorToast('An error has occurred retrieving the my files list.', 'danger');
-  //     console.log(error);
-  //   }
-  //   this.filesRequestComplete = true;
-  // }
 
   handleMyFileSelect(uploadedFile: UploadedFile) {
     if (uploadedFile.selected) {
@@ -83,6 +73,23 @@ export class DataSourcesComponent  implements OnInit {
     }
     uploadedFile.selected = !uploadedFile.selected;
   }
+
+  async next() {
+    if (this.allFilesUploaded()) {
+      // this.nav.nativeElement.push('app-create-assistant-file');
+    } else {
+      const top = await this.toastController.getTop()
+      if (!top) {
+        this.presentErrorToast('Please wait for all files to upload.', 'dark', 3000);
+      }
+    }
+  }
+
+  allFilesUploaded(): boolean {
+    return this.files().every(file => file.uploaded);
+  }
+
+
 
   private unSelectMyFile(uploadedFile: UploadedFile) {
     const fw = this.createFileWrapperFromUploadedFile(uploadedFile);
@@ -160,11 +167,11 @@ export class DataSourcesComponent  implements OnInit {
     }
   }
 
-  private async presentErrorToast(message: string, color: string) {
+  private async presentErrorToast(message: string, color: string, duration: number = 0) {
     const toast = await this.toastController.create({
       message,
       color,
-      duration: 0,
+      duration,
       buttons: [
         {
           text: 'Close', 

@@ -5,7 +5,7 @@
     </ion-buttons>
     <ion-title>Data Sources</ion-title>
     <ion-buttons slot="end">
-      <ion-button>Upload Files</ion-button>
+      <ion-button (click)="fileInput.click()">Upload Files</ion-button>
     </ion-buttons>
   </ion-toolbar>
   <ion-toolbar>
@@ -21,7 +21,7 @@
   </ion-toolbar>
 </ion-header>
 <ion-content>
-  
+  <input type="file" #fileInput id="fileDropRef" multiple (change)="fileBrowseHandler($event.target)" />
   <ion-segment-view>
     <ion-segment-content id="selectedFiles">
       <ion-list>
@@ -32,13 +32,18 @@
             <ion-label>
               <h2>{{ file.name }}</h2>
               <!-- <p>{{ file.createdAt | date }}</p> -->
+               <p>{{ file.progress }}</p>
             </ion-label>
             @if(file.uploaded) {
               <ion-button (click)="removeFile(file)" slot="end" color="danger" shape="round">
                 <ion-icon slot="icon-only" name="close"></ion-icon>
               </ion-button>
             } @else {
-              <ion-badge>{{ file.progress }}%</ion-badge>
+              @if(file.progress === 100) {
+                <ion-spinner slot="end" name="circular"></ion-spinner>
+              } @else {
+                <ion-badge slot="end">{{ file.progress || 0 }}%</ion-badge>
+              }
             }
             <!-- <ion-badge>{{ file.type | fileType }}</ion-badge> -->
           </ion-item>
@@ -75,7 +80,7 @@
               <ion-badge>{{ file.type | fileType }}</ion-badge>
             </ion-item>
           } @empty {
-            
+            @if(myFilesResource.status() === status.Resolved) {
               <ion-item>
                 <ion-icon slot="start" name="document-outline" color="secondary"></ion-icon>
                 <ion-label>
@@ -83,47 +88,23 @@
                   <p>But this is where they'd be if you did.</p>
                 </ion-label>
               </ion-item>
+            }
             
           }
           @if (myFilesResource.isLoading()) {
-            <ion-item>
-              <ion-skeleton-text animated></ion-skeleton-text>
-            </ion-item>
-            <ion-item>
-              <ion-skeleton-text animated></ion-skeleton-text>
-            </ion-item>
-            <ion-item>
-              <ion-skeleton-text animated></ion-skeleton-text>
-            </ion-item>
-            <ion-item>
-              <ion-skeleton-text animated></ion-skeleton-text>
-            </ion-item>
-            <ion-item>
-              <ion-skeleton-text animated></ion-skeleton-text>
-            </ion-item>
-            <ion-item>
-              <ion-skeleton-text animated></ion-skeleton-text>
-            </ion-item>
-            <ion-item>
-              <ion-skeleton-text animated></ion-skeleton-text>
-            </ion-item>
-            <ion-item>
-              <ion-skeleton-text animated></ion-skeleton-text>
-            </ion-item>
-            <ion-item>
-              <ion-skeleton-text animated></ion-skeleton-text>
-            </ion-item>
-            <ion-item>
-              <ion-skeleton-text animated></ion-skeleton-text>
-            </ion-item>
-            <ion-item>
-              <ion-skeleton-text animated></ion-skeleton-text>
-            </ion-item>
-            <ion-item>
-              <ion-skeleton-text animated></ion-skeleton-text>
-            </ion-item>
+            @for(item of [1,2,3,4,5,6,7,8]; track item) {
+              <ion-item>
+                <ion-thumbnail slot="start">
+                  <ion-skeleton-text [animated]="true"></ion-skeleton-text>
+                </ion-thumbnail>
+                <ion-label>
+                  <ion-skeleton-text style="width: 60%" animated></ion-skeleton-text>
+                  <ion-skeleton-text style="width: 30%" animated></ion-skeleton-text>
+                </ion-label>
+              </ion-item>
+            }
           }
-          
+    
       </ion-list>
     </ion-segment-content>
   </ion-segment-view>
@@ -131,7 +112,7 @@
 </ion-content>
 <ion-footer>
   <ion-toolbar>
-    <ion-button expand="block">
+    <ion-button (click)="next()" expand="block">
       Next
       <ion-icon slot="end" name="chevron-forward-outline"></ion-icon>
     </ion-button>
