@@ -1,6 +1,7 @@
 import { Component, ElementRef, inject, Input, OnInit } from '@angular/core';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { IonHeader, IonToolbar, IonTitle, IonButtons, IonButton, IonContent, IonFooter, ModalController, IonBackButton, IonItemDivider, IonItem, IonCheckbox, IonNav } from "@ionic/angular/standalone";
+import { CreateAssistantService } from '../create-assistant.service';
 
 @Component({
   selector: 'app-advanced-settings',
@@ -14,6 +15,7 @@ export class AdvancedSettingsComponent  implements OnInit {
   @Input() nav!: ElementRef<IonNav>;
 
   private modalController: ModalController = inject(ModalController);
+  private createAssistantService: CreateAssistantService = inject(CreateAssistantService);
 
   constructor() { }
 
@@ -24,7 +26,8 @@ export class AdvancedSettingsComponent  implements OnInit {
   }
 
   createAssistant() {
-    console.log(this.form.value);
+    this.createAssistantService.createAssistant(this.form.value);
+    this.modalController.dismiss();
   }
 
 }

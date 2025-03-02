@@ -50,7 +50,7 @@ import { DatePipe } from '@angular/common';
 import { FileTypePipe } from "../../../../../conversation/components/select-uploaded-file/pipes/file-type.pipe";
 import { FileDropZoneDirective } from 'src/app/conversation/components/chat-input/file-drop-zone.directive';
 import { DataSource } from 'src/app/models/chat-request.model';
-import { CreateAssistantFileService } from '../create-assistant-file.service';
+import { CreateAssistantService } from '../create-assistant.service';
 import { FormGroup } from '@angular/forms';
 import { AdvancedSettingsComponent } from '../advanced-settings/advanced-settings.component';
 
@@ -122,7 +122,7 @@ export class DataSourcesComponent implements OnInit {
    * The CreateAssistantFileService is used to store and manage all file-related data 
    * during the assistant file creation flow, including the final list of data sources.
    */
-  private createAssistantFileService: CreateAssistantFileService = inject(CreateAssistantFileService);
+  private createAssistantFileService: CreateAssistantService = inject(CreateAssistantService);
 
   /**
    * The ToastController from Ionic is used to present non-blocking messages or errors to the user.

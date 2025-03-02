@@ -1,13 +1,17 @@
-import { effect, Injectable, Signal, signal, WritableSignal } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { effect, inject, Injectable, Signal, signal, WritableSignal } from '@angular/core';
+import { lastValueFrom } from 'rxjs';
 import { FileWrapper } from 'src/app/conversation/services/file-upload.service';
 import { DataSource } from 'src/app/models/chat-request.model';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
-export class CreateAssistantFileService {
+export class CreateAssistantService {
     private files: WritableSignal<FileWrapper[]> = signal([]);
     private dataSources: WritableSignal<DataSource[]> = signal([]);
+    private http: HttpClient = inject(HttpClient);
   
   constructor() {}
 
@@ -62,5 +66,15 @@ export class CreateAssistantFileService {
 
     removeDataSource(dataSource: DataSource) {
       this.dataSources.update(dataSources => dataSources.filter(ds => ds.id !== dataSource.id))
-    } 
+    }
+
+    createAssistant(assistantFormValue: any) {
+      const assistant = {
+        ...assistantFormValue,
+        dataSources: this.dataSources()
+      }
+      console.log(assistant);
+      const request = this.http.post(`${environment.apiBaseUrl}/assistant/create`, assistant);
+      lastValueFrom(request);
+    }
 }
