@@ -10,13 +10,14 @@ import { fadeInOut } from 'src/app/core/animations/fadeInOut';
 import { slide } from 'src/app/core/animations/slide';
 import { UserMessageComponent } from './user-message/user-message.component';
 import { JsonPipe } from '@angular/common';
+import { HelpCardComponent } from '../help-card/help-card.component';
 
 @Component({
   selector: 'app-conversation-text',
   templateUrl: './conversation-text.component.html',
   styleUrls: ['./conversation-text.component.scss'],
   animations: [fadeInOut, slide],
-  imports: [UserMessageComponent, IonAvatar, IonLabel, IonIcon, IonChip, IonGrid, IonRow, IonCol, MarkdownComponent, FileTypeIconPipe, JsonPipe],
+  imports: [HelpCardComponent, UserMessageComponent, IonAvatar, IonLabel, IonIcon, IonChip, IonGrid, IonRow, IonCol, MarkdownComponent, FileTypeIconPipe, JsonPipe],
   standalone: true,
 })
 export class ConversationTextComponent  implements OnInit {

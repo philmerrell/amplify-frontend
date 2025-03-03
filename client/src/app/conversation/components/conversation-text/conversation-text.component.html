@@ -1,3 +1,7 @@
+@if(!conversation()?.messages?.length) {
+  <app-help-card></app-help-card>
+}
+
 @if(conversation()?.messages) {
   <div class="ion-padding">
     <ion-grid>
