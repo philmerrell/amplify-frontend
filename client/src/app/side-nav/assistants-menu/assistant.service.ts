@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Injectable, resource } from '@angular/core';
 import { lastValueFrom, map } from 'rxjs';
 import { DeveloperSettingsService } from '../../settings/developer/developer-settings.service';
+import { AssistantResponseItem } from 'src/app/models/assistant.model';
 
 @Injectable({
   providedIn: 'root'
@@ -19,7 +20,7 @@ export class AssistantService {
 
   constructor() { }
 
-  getAssistants() {
+  getAssistants(): Promise<AssistantResponseItem[]> {
     const apiBaseUrl = this.developerSettingsService.getDeveloperApiBaseUrl();
     const request = this.http.get(`${apiBaseUrl()}/assistant/list`)
       .pipe(map((response: any) => response.data));
@@ -39,9 +40,9 @@ export class AssistantService {
 
   private removeAssistantFromResource(assistantId: string) {
     this._assistantResource.update(assistants => {
-      const assistantIndex = assistants.findIndex((assistant: any) => assistant.assistantId === assistantId);
-      assistants.splice(assistantIndex, 1);
-      return [...assistants];
+      const assistantIndex = assistants!.findIndex((assistant: any) => assistant.assistantId === assistantId);
+      assistants!.splice(assistantIndex, 1);
+      return [...assistants!];
     });
   }
 

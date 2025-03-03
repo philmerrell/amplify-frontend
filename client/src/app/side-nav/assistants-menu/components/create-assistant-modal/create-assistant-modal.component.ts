@@ -1,8 +1,9 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 import { ModalController, IonNav } from '@ionic/angular/standalone';
 import { FormBuilder, FormGroup, Validators, FormArray, ReactiveFormsModule } from '@angular/forms';
 import { validateAllFormFields } from 'src/app/shared/form-utils';
 import { AssistantDetailsComponent } from './assistant-details/assistant-details.component';
+import { AssistantResponseItem } from 'src/app/models/assistant.model';
 
 @Component({
   selector: 'app-create-assistant-modal',
@@ -12,6 +13,7 @@ import { AssistantDetailsComponent } from './assistant-details/assistant-details
   imports: [IonNav, ReactiveFormsModule]
 })
 export class CreateAssistantModalComponent implements OnInit {
+  @Input() assistant: AssistantResponseItem | undefined;
   @ViewChild('nav', {read: ElementRef, static: true}) nav!: ElementRef<IonNav>
   assistantForm: FormGroup = this.fb.group({
     name: ['', Validators.required],
@@ -37,9 +39,12 @@ export class CreateAssistantModalComponent implements OnInit {
 
 
   ngOnInit() {
+    if(this.assistant) {
+      this.assistantForm.patchValue(this.assistant);
+    }
     this.nav.nativeElement.setRoot(AssistantDetailsComponent, { nav: this.nav, form: this.assistantForm });
   }
-  
+
 
   get tags(): FormArray {
     return this.assistantForm.get('tags') as FormArray;

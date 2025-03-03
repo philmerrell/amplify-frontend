@@ -12,7 +12,8 @@ export class ModelService {
   constructor() { }
 
   getModels(): Model[] {
-    return Object.values(Models);
+    const models = Object.values(Models);
+    return models.filter(model => model.visible);
   }
 
   getSelectedModel(): Signal<Model> {

@@ -15,7 +15,7 @@
       (didDismiss)="$event.stopPropagation()">
       <ng-template>
         <ion-list>
-          <ion-item lines="none" button>
+          <ion-item (click)="presentEditAssistantModal(assistant, assistantPopover)" lines="none" button>
             <ion-icon slot="start" name="create-outline" color="primary"></ion-icon>
             <ion-label>Edit</ion-label>
           </ion-item>

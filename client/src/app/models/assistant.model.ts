@@ -1,5 +1,6 @@
 import { DEFAULT_SYSTEM_PROMPT } from "../services/prompts";
 import { AttachedDocument } from "./attached-document.model";
+import { DataSource } from "./chat-request.model";
 
 
 export enum AssistantProviderID {
@@ -10,6 +11,45 @@ export enum AssistantProviderID {
 export interface AssistantTool {
     [key:string]:string;
 }
+
+export interface AssistantResponseItem {
+    assistantId:string;
+    coreHash: string;
+    createdAt: string;
+    data: {
+        access: {},
+        apiCapabilities: [],
+        conversationTags: [],
+        dataSourceOptions: {
+            disableDataSources: boolean;
+            includeDownloadLinks: boolean;
+            insertAttachedDocuments: boolean;
+            insertAttachedDocumentsMetadata: boolean;
+            insertConversationDocuments: boolean;
+            insertConversationDocumentsMetadata: boolean;
+            ragAttachedDocuments: boolean;
+            ragConversationDocuments: boolean;
+        },
+        featureOptions: {
+            IncludeArtifactsInstr: boolean;
+        },
+        messageOptions: {
+            includeAssistantLineNumbers: boolean;
+            includeMessageIds: boolean;
+            includeUserLineNumbers: boolean;
+        }
+        provider: string;
+        tags: string[];
+    },
+    dataSources: DataSource[];
+    description:string;
+    disclaimer?:string;
+    id:string;
+    instructions:string;
+    name:string;
+    tags:string[];
+    uri?:string;
+};
 
 export interface Assistant {
     id:string,

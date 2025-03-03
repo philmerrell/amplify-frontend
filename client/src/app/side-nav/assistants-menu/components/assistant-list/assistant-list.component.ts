@@ -1,8 +1,9 @@
 import { Component, inject, OnInit, Resource, ResourceStatus } from '@angular/core';
 import { AssistantService } from '../../assistant.service';
-import { IonIcon, IonLabel, IonSkeletonText, IonItem, IonList, IonPopover, IonButton, IonSpinner } from "@ionic/angular/standalone";
+import { IonIcon, IonLabel, IonSkeletonText, IonItem, IonList, IonPopover, IonButton, IonSpinner, ModalController } from "@ionic/angular/standalone";
 import { AlertController, ToastController } from '@ionic/angular';
-import { Assistant } from 'src/app/models/assistant.model';
+import { Assistant, AssistantResponseItem } from 'src/app/models/assistant.model';
+import { CreateAssistantModalComponent } from '../create-assistant-modal/create-assistant-modal.component';
 
 @Component({
   selector: 'app-assistant-list',
@@ -15,8 +16,9 @@ export class AssistantListComponent  implements OnInit {
   private alertController: AlertController = inject(AlertController);
   private assistantService: AssistantService = inject(AssistantService);
   private toastController: ToastController = inject(ToastController);
+  private modalController: ModalController = inject(ModalController);
 
-  assistantResource: Resource<any[]> = this.assistantService.assistantResource;
+  assistantResource: Resource<AssistantResponseItem[] | undefined> = this.assistantService.assistantResource;
   status = ResourceStatus;
   pendingAssistantDeleteId: string = '';
     
@@ -50,6 +52,19 @@ export class AssistantListComponent  implements OnInit {
     await alert.present();
   }
 
+  async presentEditAssistantModal(assistant: any, popover: IonPopover) {
+    popover.dismiss();
+    console.log('Edit assistant', assistant);
+    const modal = await this.modalController.create({
+      component: CreateAssistantModalComponent,
+      componentProps: {
+        assistant
+      }
+    });
+    modal.present();
+    
+  }
+
   private async deleteAssistant(assistantId: string) {
     this.pendingAssistantDeleteId = assistantId;
     const response = await this.assistantService.deleteAssistant(assistantId);
@@ -57,7 +72,7 @@ export class AssistantListComponent  implements OnInit {
     this.presentToast(response.message, response.success ? 'dark' : 'danger');
   }
 
-  async presentToast(message: string, color: string = 'dark', duration: number = 3000) {
+  private async presentToast(message: string, color: string = 'dark', duration: number = 3000) {
     const toast = await this.toastController.create({
       message,
       color,
