@@ -1,4 +1,5 @@
-import { Injectable, Signal, signal, WritableSignal } from '@angular/core';
+import { inject, Injectable, Signal, signal, WritableSignal } from '@angular/core';
+import { AuthTokenService } from '../../auth/auth-token.service';
 
 @Injectable({
   providedIn: 'root'
@@ -9,8 +10,7 @@ export class DeveloperSettingsService {
   jwt: WritableSignal<string> = signal('');
   chatEndpoint: WritableSignal<string> = signal('');
   apiBaseUrl: WritableSignal<string> = signal('');
-
-  constructor() { }
+  private authTokenService = inject(AuthTokenService);
 
   setDeveloperChatEndpoint(url: string) {
     localStorage.setItem('developerChatEndpoint', url);
@@ -28,13 +28,13 @@ export class DeveloperSettingsService {
   }
 
   setDeveloperJwt(token: string) {
-    localStorage.setItem('developerToken', token);
+    this.authTokenService.setAccessToken(token);
     this.jwt.set(token);
   }
 
   getDeveloperJwt(): Signal<string> {
     if (this.jwt() === '') {
-      const result = localStorage.getItem('developerToken');
+      const result = this.authTokenService.getAccessToken();
       if (result) {
         this.jwt.set(result);
       }

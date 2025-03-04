@@ -1,11 +1,11 @@
-import { effect, Injectable, signal, Signal, WritableSignal } from '@angular/core';
+import { Injectable, signal, Signal, WritableSignal } from '@angular/core';
 import { SseClient } from 'ngx-sse-client';
 import { Conversation } from 'src/app/models/conversation.model';
 import { Model } from 'src/app/models/model.model';
 import { ConversationService } from 'src/app/services/conversation.service';
 import { ModelService } from 'src/app/services/model.service';
-import { DeveloperSettingsService } from 'src/app/settings/developer/developer-settings.service';
 import { v4 as uuidv4 } from 'uuid';
+import { environment } from '../../../environments/environment';
 
 
 @Injectable({
@@ -21,7 +21,6 @@ export class ConversationRenameService {
   constructor(
     private sseClient: SseClient,
     private conversationService: ConversationService,
-    private developerSettingsService: DeveloperSettingsService,
     private modelService: ModelService
   ) {}
 
@@ -31,11 +30,11 @@ export class ConversationRenameService {
 
   renameConversation(userInput: string) {
     const requestObject = this.createRenameRequestObject(userInput);
-    const chatEndpoint = this.developerSettingsService.getDeveloperChatEndpoint();
+    const chatEndpoint = environment.chatEndpoint;
     this.conversationRename.set({loading: true, name: '', conversationId: this.currentConversation().id  })
 
 
-    this.sseClient.stream(chatEndpoint(), { keepAlive: false, responseType: 'event' }, { body: requestObject }, 'POST' )
+    this.sseClient.stream(chatEndpoint, { keepAlive: false, responseType: 'event' }, { body: requestObject }, 'POST' )
       .subscribe((event) => {
         if (event.type === 'error') {
           const errorEvent = event as ErrorEvent;

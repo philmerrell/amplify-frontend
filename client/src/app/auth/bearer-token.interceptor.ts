@@ -1,9 +1,10 @@
 import { HttpErrorResponse, HttpEvent, HttpHandler, HttpHandlerFn, HttpRequest } from "@angular/common/http";
 import { inject } from "@angular/core";
 import { catchError, EMPTY, finalize, Observable, throwError } from "rxjs";
-import { DeveloperSettingsService } from "../settings/developer/developer-settings.service";
 import { Router } from "@angular/router";
 import { ToastController } from "@ionic/angular/standalone";
+import { AuthTokenService } from './auth-token.service';
+import { AuthService } from './auth.service';
 
 export function addBearerTokenInterceptor(req: HttpRequest<unknown>, next: HttpHandlerFn): Observable<HttpEvent<unknown>> {
   return next(addTokenToRequest(req)).pipe(
@@ -15,12 +16,12 @@ export function addBearerTokenInterceptor(req: HttpRequest<unknown>, next: HttpH
 }
 
 function addTokenToRequest(req: HttpRequest<any>): HttpRequest<any> {
-  const developerSettings = inject(DeveloperSettingsService); // Inject the service
-  const jwt = developerSettings.getDeveloperJwt();
+  const authTokenService = inject(AuthTokenService);
+  
   // const token = ``;
   const clonedRequest = req.clone({
     setHeaders: {
-        Authorization: `Bearer ${jwt()}`
+        Authorization: `Bearer ${authTokenService.getAccessToken()}`
     }
   });
   return clonedRequest;
@@ -61,18 +62,37 @@ function handleError(error: any, request?:HttpRequest<any>, next?: HttpHandlerFn
 
 function handleUnauthorized(request: HttpRequest<any>, next: HttpHandlerFn) {
   const router = inject(Router);
-  presentToast('401: Update your bearer token', 'danger')
-  router.navigateByUrl('/settings/developer');
-  return EMPTY;
 
-  // TODO: refresh token...
-  // return this.refreshToken().pipe(
-  //     switchMap(() => next.handle(this.addTokenToRequest(request))),
-  //     catchError(err => {
-  //         this.clearUserAndTokens();
-  //         return throwError(() => err);
-  //     })
-  // );
+  // before redirecting to login, check to see if we can refresh the token
+  const authTokenService = inject(AuthTokenService);
+  const canRefreshToken = authTokenService.canRefreshToken();
+  if (canRefreshToken) {
+    handleRefresh(request, next);
+    return EMPTY;
+  }
+
+  router.navigate(['/login']);
+  return EMPTY;
+}
+
+function handleRefresh(request: HttpRequest<any>, next: HttpHandlerFn) {
+  const router = inject(Router);
+
+  const authTokenService = inject(AuthTokenService);
+  const refreshToken = authTokenService.getRefreshToken();
+  if (!refreshToken) {
+    router.navigate(['/login']);
+    return EMPTY;
+  }
+  
+  const authService = inject(AuthService);
+  authService.refreshToken().then((token) => {
+    authTokenService.setAccessToken(token.access_token);
+    authTokenService.setRefreshToken(token.refresh_token);
+    authTokenService.setIdToken(token.id_token);
+    router.navigate(['/login']);
+  });
+  return EMPTY;
 }
 
 async function presentToast(message: string, color: string) {

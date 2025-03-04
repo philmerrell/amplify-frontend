@@ -1,16 +1,19 @@
 import { Routes } from '@angular/router';
-import { authGuard } from './auth/auth-route-guard';
+import { AuthGuard } from './auth/auth-route-guard';
 
 export const routes: Routes = [
   {
     path: '',
-    redirectTo: '',
-    pathMatch: 'full',
+    loadComponent: () => import('./conversation/conversation.page').then( m => m.ConversationPage),
+    canActivate: [AuthGuard]
   },
   {
-    path: '',
-    loadComponent: () => import('./conversation/conversation.page').then( m => m.ConversationPage),
-    canActivate: [authGuard]
+    path: 'login',
+    loadComponent: () => import('./login/login.page').then(m => m.LoginPage)
+  },
+  {
+    path: 'auth/callback/cognito',
+    loadComponent: () => import('./auth/callback/callback.page').then(m => m.CallbackPage)
   },
   {
     path: 'settings/import-conversations',

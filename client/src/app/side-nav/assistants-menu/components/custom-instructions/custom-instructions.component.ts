@@ -24,7 +24,6 @@ export class CustomInstructionsComponent  implements OnInit {
 
   ngOnInit() {
     this.folders = this.customInstructionService.getBasePromptFolders();
-    console.log(this.customInstructions());
   }
 
   selectPromptTemplate(template: Prompt) {

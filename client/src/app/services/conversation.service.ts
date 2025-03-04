@@ -1,4 +1,4 @@
-import { Injectable, resource, Signal, signal, WritableSignal } from '@angular/core';
+import { inject, Injectable, resource, Signal, signal, WritableSignal } from '@angular/core';
 import { Conversation } from '../models/conversation.model';
 import { v4 as uuidv4 } from 'uuid';
 import { ModelService } from './model.service';
@@ -9,6 +9,8 @@ import { HttpBackend, HttpClient } from '@angular/common/http';
 import { switchMap, map, catchError, of, firstValueFrom } from 'rxjs';
 import { Folder, FoldersService } from './folders.service';
 import { DeveloperSettingsService } from '../settings/developer/developer-settings.service';
+import { UserService } from './user.service';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -20,10 +22,20 @@ export class ConversationService {
   private currentConversation: WritableSignal<Conversation> = signal(this.createConversation());
   private conversations: WritableSignal<Conversation[]> = signal([]);
   private deletingFolder: WritableSignal<string | null> = signal(null);
-  
+  private deletingConversation: WritableSignal<Conversation | null> = signal(null);
+  private userService: UserService = inject(UserService);
+  private url = environment.apiBaseUrl;
+
+  // dont fetch conversations until the user has logged in
+  // re-run if the user object changes, ie if the user is still authenticated after refreshing the page
   private _conversationsResource = resource({
-    loader: () => {
-      return this.getAllConversations();
+    request: () => ({isAuthenticated: this.userService.isAuthenticated(), user: this.userService.currentUser()}), 
+    loader: ({request}) => {
+      if(request.isAuthenticated === false) {
+        return firstValueFrom(of({folders: [], conversations: {}}));
+      } else {
+        return this.getAllConversations();
+      }
     }
   })
 
@@ -52,13 +64,17 @@ export class ConversationService {
     return this.deletingFolder.asReadonly();
   }
 
+  getDeletingConversation(): Signal<Conversation | null> {
+    return this.deletingConversation.asReadonly();
+  }
+
   async setCurrentConversation(conversation: Conversation) {
     this.currentConversation.set(conversation);
   }
 
   deleteConversation(conversation: Conversation) {
-    const url = this.developerSettings.getDeveloperApiBaseUrl();
-    const apiBase = `${url()}/state/conversation/delete?conversationId=${conversation.id}`;
+    this.deletingConversation.set(conversation);
+    const apiBase = `${this.url}/state/conversation/delete?conversationId=${conversation.id}`;
     return firstValueFrom(this.httpClient.delete<{statusCode: number; body:string}>(apiBase).pipe(
       map(response => {
         if (response.statusCode !== 200) {
@@ -73,10 +89,12 @@ export class ConversationService {
           }
           return current;
         })
+        this.deletingConversation.set(null);
         return conversation;
       }),
       catchError(error => {
         console.error('Error fetching conversation:', error);
+        this.deletingConversation.set(null);
         return of({} as Conversation);
       })
     ));
@@ -196,8 +214,8 @@ export class ConversationService {
   }
 
   getAllConversations(): Promise<{ folders: Folder[]; conversations: Record<string, Conversation[]> }> {
-    const url = this.developerSettings.getDeveloperApiBaseUrl();
-    const apiBase = `${url()}/state/conversation/get_all`;
+    const apiBase = `${this.url}/state/conversation/get_all`;
+    console.log('getting all conversations', apiBase);
     return firstValueFrom(this.httpClient.get<{ statusCode: number; body: string }>(apiBase).pipe(
       switchMap(response => {
         if (response.statusCode !== 200) {
@@ -235,8 +253,7 @@ export class ConversationService {
   }
 
   getConversationById(conversationId: string): Promise<Conversation> {
-    const url = this.developerSettings.getDeveloperApiBaseUrl();
-    const apiBase = `${url()}/state/conversation/get?conversationId=${conversationId}`;
+    const apiBase = `${this.url}/state/conversation/get?conversationId=${conversationId}`;
     return firstValueFrom(this.httpClient.get<{statusCode: number; body:string}>(apiBase).pipe(
       map(response => {
         if (response.statusCode !== 200) {
@@ -268,8 +285,7 @@ export class ConversationService {
   }
 
   saveConversation(conversation: Conversation, moveFolders: boolean = false): Promise<{ success: boolean; message: string }> {
-    const url = this.developerSettings.getDeveloperApiBaseUrl();
-    const apiBase = `${url()}/state/conversation/upload`;
+    const apiBase = `${this.url}/state/conversation/upload`;
     let folder: Folder;
     // If we are moving the folder, we need to use the folderId from the conversation
     if(moveFolders) {

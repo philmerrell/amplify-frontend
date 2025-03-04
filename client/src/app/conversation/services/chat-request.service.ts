@@ -181,13 +181,13 @@ export class ChatRequestService {
     const requestObject = this.createRequestObject(userInput);
 
     // The actual endpoint for SSE streaming from developer settings.
-    const chatEndpoint = this.developerSettingsService.getDeveloperChatEndpoint();
+    const chatEndpoint = environment.chatEndpoint;
     
     this.chatLoading.set(true);
 
     // Start streaming the response from our environment's chat endpoint using SSE.
     this.responseSubscription = this.sseClient.stream(
-      chatEndpoint(), 
+      chatEndpoint, 
       { keepAlive: false, responseType: 'event' }, 
       { body: requestObject }, 
       'POST'

@@ -1,64 +1,59 @@
 <ion-app>
   <ion-split-pane contentId="main-content">
-    <ion-menu #mainMenu contentId="main-content" type="overlay" [swipeGesture]="false" menuId="main">
-      <ion-header style="background: var(--ion-color-light)">
-        <img src="/assets/logo-light.png" alt="Home" />
-        <!-- <a routerLink="/" *ngIf="logo$ | async as logo">
-          <img [src]="'/assets/logo-' + logo + '.png'" alt="Home" />
-        </a> -->
-        <ion-button class="new-chat" color="secondary" expand="block" (click)="createNewConversation()">
-          <ion-icon slot="start" name="create-outline"></ion-icon>
-          New Chat
-        </ion-button>
-        <ion-toolbar>
-          <ion-segment value="conversations">
-            <ion-segment-button appTooltip="Conversations" aria-label="conversations" value="conversations" content-id="conversations">
-              <ion-icon name="chatbox-outline"></ion-icon>
-            </ion-segment-button>
-            <ion-segment-button aria-label="Assistants" value="assistants" content-id="assistants">
-              <ion-icon name="body-outline"></ion-icon>
-            </ion-segment-button>
-            <ion-segment-button aria-label="shared" value="shared" content-id="shared">
-              <ion-icon name="share-social-outline"></ion-icon>
-            </ion-segment-button>
-            <ion-segment-button aria-label="workspaces" value="workspaces" content-id="workspaces">
-              <ion-icon name="briefcase-outline"></ion-icon>
-            </ion-segment-button>
-            <!-- <ion-segment-button aria-label="settings" value="settings" content-id="settings">
-              <ion-icon name="settings-outline"></ion-icon>
-            </ion-segment-button> -->
-          </ion-segment>
-        </ion-toolbar>
-      </ion-header>
-      <ion-content color="light">
-        <ion-segment-view>
-          <ion-segment-content id="conversations">
-            <div style="width: 90%; margin: 0 auto;">
-              <app-conversations-menu [menu]="mainMenu"></app-conversations-menu>
-            </div>
-          </ion-segment-content>
-          <ion-segment-content id="assistants">
-            <app-assistants-menu></app-assistants-menu>
-          </ion-segment-content>
-          <ion-segment-content id="shared">
-            <app-share-menu [menu]="mainMenu"></app-share-menu>
-          </ion-segment-content>
-          <ion-segment-content id="workspaces">
-            <app-workspaces-menu [menu]="mainMenu"></app-workspaces-menu>
-          </ion-segment-content>
-          <!-- <ion-segment-content id="settings">
-            <app-settings-menu [menu]="mainMenu"></app-settings-menu>
-          </ion-segment-content> -->
-        </ion-segment-view>
-      </ion-content>
-    </ion-menu>
-
-    <!-- <ion-menu side="end" contentId="main-content" menuId="end">
-      <ion-content>
-        <app-base-prompts></app-base-prompts>
-      </ion-content>
-    </ion-menu> -->
-
+    @if(isAuthenticated()) {      
+      <ion-menu #mainMenu contentId="main-content" type="overlay" [swipeGesture]="false" menuId="main">
+        <ion-header style="background: var(--ion-color-light)">
+          <img src="/assets/logo-light.png" alt="Home" />
+          <!-- <a routerLink="/" *ngIf="logo$ | async as logo">
+            <img [src]="'/assets/logo-' + logo + '.png'" alt="Home" />
+          </a> -->
+          <ion-button class="new-chat" color="secondary" expand="block" (click)="createNewConversation()">
+            <ion-icon slot="start" name="create-outline"></ion-icon>
+            New Chat
+          </ion-button>
+          <ion-toolbar>
+            <ion-segment value="conversations">
+              <ion-segment-button appTooltip="Conversations" aria-label="conversations" value="conversations" content-id="conversations">
+                <ion-icon name="chatbox-outline"></ion-icon>
+              </ion-segment-button>
+              <ion-segment-button aria-label="Assistants" value="assistants" content-id="assistants">
+                <ion-icon name="body-outline"></ion-icon>
+              </ion-segment-button>
+              <ion-segment-button aria-label="shared" value="shared" content-id="shared">
+                <ion-icon name="share-social-outline"></ion-icon>
+              </ion-segment-button>
+              <ion-segment-button aria-label="workspaces" value="workspaces" content-id="workspaces">
+                <ion-icon name="briefcase-outline"></ion-icon>
+              </ion-segment-button>
+              <!-- <ion-segment-button aria-label="settings" value="settings" content-id="settings">
+                <ion-icon name="settings-outline"></ion-icon>
+              </ion-segment-button> -->
+            </ion-segment>
+          </ion-toolbar>
+        </ion-header>
+        <ion-content color="light">
+          <ion-segment-view>
+            <ion-segment-content id="conversations">
+              <div style="width: 90%; margin: 0 auto;">
+                <app-conversations-menu [menu]="mainMenu"></app-conversations-menu>
+              </div>
+            </ion-segment-content>
+            <ion-segment-content id="assistants">
+              <app-assistants-menu></app-assistants-menu>
+            </ion-segment-content>
+            <ion-segment-content id="shared">
+              <app-share-menu [menu]="mainMenu"></app-share-menu>
+            </ion-segment-content>
+            <ion-segment-content id="workspaces">
+              <app-workspaces-menu [menu]="mainMenu"></app-workspaces-menu>
+            </ion-segment-content>
+            <!-- <ion-segment-content id="settings">
+              <app-settings-menu [menu]="mainMenu"></app-settings-menu>
+            </ion-segment-content> -->
+          </ion-segment-view>
+        </ion-content>
+      </ion-menu>
+    }
     <ion-router-outlet id="main-content"></ion-router-outlet>
   </ion-split-pane>
 </ion-app>

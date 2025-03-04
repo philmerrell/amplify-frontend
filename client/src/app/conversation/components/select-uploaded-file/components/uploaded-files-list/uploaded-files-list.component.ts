@@ -37,7 +37,7 @@ export class UploadedFilesListComponent  implements OnInit {
       this.files = await this.selectUploadedFileService.getUploadedFilesList();
     } catch (error) {
       this.presentToast('An error has occurred retrieving files list.', 'danger', 0);
-      console.log(error);
+      console.error(error);
     }
     this.filesRequestComplete = true;
   }

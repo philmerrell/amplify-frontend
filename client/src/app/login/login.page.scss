@@ -1,0 +1,27 @@
+.login-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  text-align: center;
+  
+  h1 {
+    margin-bottom: 16px;
+  }
+  
+  p {
+    margin-bottom: 32px;
+    color: var(--ion-color-medium);
+  }
+  
+  ion-button {
+    max-width: 300px;
+    width: 100%;
+  }
+
+  img {
+    max-width: 450px;
+    height: auto;
+  }
+} 

@@ -1,0 +1,23 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Authentication</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <div class="callback-container">
+    @if (loading) {
+      <ion-spinner name="circular"></ion-spinner>
+      <p>Authentication...</p>
+    } @else if (error) {
+      <ion-icon name="alert-circle-outline" color="danger" size="large"></ion-icon>
+      <h2>Authentication Error</h2>
+      <p>{{ error }}</p>
+      <ion-button routerLink="/login">Return to Login</ion-button>
+    } @else {
+      <ion-icon name="checkmark-circle-outline" color="success" size="large"></ion-icon>
+      <h2>Authentication Successful</h2>
+      <p>Redirecting to the application...</p>
+    }
+  </div>
+</ion-content> 

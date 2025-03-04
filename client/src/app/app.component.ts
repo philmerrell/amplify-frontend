@@ -13,6 +13,7 @@ import { AssistantsMenuComponent } from './side-nav/assistants-menu/assistants-m
 import { Observable } from 'rxjs';
 import { ConversationService } from './services/conversation.service';
 import { FoldersService } from './services/folders.service';
+import { UserService } from './services/user.service';
 
 @Component({
   selector: 'app-root',
@@ -21,19 +22,19 @@ import { FoldersService } from './services/folders.service';
   imports: [NgIf, AsyncPipe, IonButton, IonHeader, IonToolbar, IonIcon, IonSegmentView, IonSegment, IonSegmentButton, IonSegmentContent, IonApp, IonSplitPane, IonMenu, IonContent, IonRouterOutlet, ConversationsMenuComponent, ShareMenuComponent, WorkspacesMenuComponent, TooltipDirective, AssistantsMenuComponent],
 })
 export class AppComponent implements OnInit {
-
+  userService: UserService = inject(UserService);
   logo$: Observable<string> = this.themeService.logo$;
   conversationService: ConversationService = inject(ConversationService);
   foldersService: FoldersService = inject(FoldersService);
   activeFolder: Signal<string | null> = this.foldersService.getActiveFolder();
+  isAuthenticated: Signal<boolean> = this.userService.isAuthenticated;
   
   constructor(
     private themeService: ThemeService) {
     addIcons({chatbox, shareSocialOutline, settingsOutline, briefcaseOutline, bodyOutline, createOutline})
   }
 
-  ngOnInit() {
-  }
+  ngOnInit() {}
 
   createNewConversation() {
     const currentFolder = this.activeFolder() ?? '';

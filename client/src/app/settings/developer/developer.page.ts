@@ -80,7 +80,7 @@ export class DeveloperPage implements OnInit {
   }
 
   private async decodeToken(jwt: string) {
-    this.decodedJwt = await this.authTokenService.decodeAccessToken(jwt);
+    this.decodedJwt = await this.authTokenService.decodeIdToken(jwt);
   }
 
 }

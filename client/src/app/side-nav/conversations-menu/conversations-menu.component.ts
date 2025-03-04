@@ -30,6 +30,7 @@ export class ConversationsMenuComponent  implements OnInit {
   activeFolder = this.foldersService.getActiveFolder();
   draggedConversation: Conversation | null = null;
   deletingFolder = this.conversationService.getDeletingFolder();
+  deletingConversation = this.conversationService.getDeletingConversation();
   
   readonly folderNameInputs = viewChildren(IonInput, {read: ElementRef});
   
@@ -224,6 +225,7 @@ export class ConversationsMenuComponent  implements OnInit {
     if(conversation.id === this.currentConversation().id) {
       return;
     }
+
     let convoToSet = conversation;
     if(!conversation.isLocal) {
       convoToSet = await this.conversationService.getConversationById(conversation.id);
