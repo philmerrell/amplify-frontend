@@ -4,10 +4,10 @@
 import { secrets } from './secrets';
 
 export const environment = {
-  // apiBaseUrl: 'https://dev-chat-api.dev.boisestate.edu',
+  // chatEndpoint: 'http://localhost:8000',
   apiBaseUrl: 'http://localhost:3015/dev',
-  // chatEndpoint: 'https://7epygvkf664qhoem4vvmwxmnam0ghnxz.lambda-url.us-east-1.on.aws/',
-  chatEndpoint: 'http://localhost:8000',
+  // apiBaseUrl: 'https://dev-chat-api.dev.boisestate.edu',
+  chatEndpoint: 'https://si62aopn4bfch4cyohmfcvrz4y0gsiab.lambda-url.us-east-1.on.aws/',
   production: false,
   cognito: {
     clientId: 'q0m6trkhevtbfa3a1sn2rbu65',
