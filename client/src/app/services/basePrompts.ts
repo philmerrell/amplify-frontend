@@ -42,8 +42,8 @@ export const basePrompt = {
       },
       {
         "id": "2b59ab49-bafd-4493-a20c-065d943eaf12",
-        "name": "Cognitive Verifier Pattern",
-        "description": "Examples:\n* When you are asked a question, follow these rules. Generate a number of additional questions that would help you more accurately answer the question. Combine the answers to the individual questions to produce the final answer to the overall question.",
+        "name": "Cognitive Verifier",
+        "description": "The Cognitive Verifier Pattern improves reasoning accuracy by breaking complex questions into multiple sub-questions, answering each independently, and then synthesizing these answers into a comprehensive response.",
         "content": "When you are asked a question, follow these rules. Generate a number of additional questions (one at a time) that would help you more accurately answer the question. Combine the answers to the individual questions to produce the final answer to the overall question.",
         "folderId": null,
         "type": "root_prompt",
