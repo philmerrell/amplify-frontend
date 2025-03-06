@@ -1,0 +1,36 @@
+<ion-item lines="none" [color]="isActive ? 'primary' : 'light'"
+  [class.active-conversation]="isActive"
+  (click)="onConversationClick()" routerLink="/" routerDirection="back"
+  draggable="true" (dragstart)="onDragStart($event)" (dragend)="onDragEnd($event)" detail="false"
+  class="conversation-item">
+  <ion-icon class="ion-padding-start" slot="start" name="chatbox-outline"></ion-icon>
+  <ion-label>
+    @if (isRenaming) {
+      @if (renamingData.loading || isDeleting) {
+        <ion-spinner name="dots"></ion-spinner>
+      } @else {
+        <h2>{{ renamingData.name }}</h2>
+      }
+    }@else if (isDeleting) {
+        <ion-spinner name="dots"></ion-spinner>
+    }@else {
+      <h2>{{ conversation.name }}</h2>
+    }
+  </ion-label>
+  <ion-button id="conversation-menu-{{ conversation.id }}" slot="end" fill="clear"
+    [color]="isActive ? 'primary-contrast' : 'tertiary'"
+    class="conversation-menu-button">
+    <ion-icon slot="icon-only" name="ellipsis-horizontal"></ion-icon>
+  </ion-button>
+  <ion-popover trigger="conversation-menu-{{ conversation.id }}" triggerAction="click" #conversationPopover
+    (didDismiss)="$event.stopPropagation()">
+    <ng-template>
+      <ion-list>
+        <ion-item lines="none" button (click)="onDelete(); conversationPopover.dismiss()">
+          <ion-icon slot="start" name="trash-outline"></ion-icon>
+          <ion-label>Delete</ion-label>
+        </ion-item>
+      </ion-list>
+    </ng-template>
+  </ion-popover>
+</ion-item> 

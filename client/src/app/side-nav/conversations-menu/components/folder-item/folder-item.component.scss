@@ -1,0 +1,31 @@
+// Smooth, subtle highlight when dragging over a folder
+.folder-drop-target-hover {
+  transition: all 0.15s ease-in-out;
+  scale: 1.08;
+}
+
+
+// Make folder icons look more interactive
+.folder-icon {
+  color: var(--ion-color-primary);
+  font-size: 1.5rem;
+}
+
+// Slight bounce effect when dropping into a folder
+@keyframes dropSuccess {
+  0% {
+      transform: scale(1);
+  }
+
+  50% {
+      transform: scale(1.05);
+  }
+
+  100% {
+      transform: scale(1);
+  }
+}
+
+.folder-drop-success {
+  animation: dropSuccess 0.2s ease-in-out;
+}

@@ -1,5 +1,5 @@
-import { Component, effect, ElementRef, input, OnInit, ResourceStatus, signal, Signal, ViewChild, WritableSignal, viewChildren, Renderer2 } from '@angular/core';
-import { IonAccordionGroup, IonItemDivider, IonLabel, IonItem, IonIcon, IonList, IonButton, IonRouterLink, IonText, IonMenu, IonItemGroup, IonSpinner, IonPopover, IonContent, IonInput, IonItemOption, IonItemOptions, IonItemSliding, ModalController } from "@ionic/angular/standalone";
+import { Component, input, ResourceStatus, signal, Signal, WritableSignal } from '@angular/core';
+import { IonItemDivider, IonLabel, IonItem, IonIcon, IonList, IonButton, IonText, IonMenu, IonItemGroup, IonSpinner } from "@ionic/angular/standalone";
 import { chatbubbleOutline, chatboxOutline, add, folder, chevronForwardOutline, trash, pencilOutline, ellipsisHorizontal, trashOutline, ellipsisVertical } from 'ionicons/icons';
 import { Conversation } from 'src/app/models/conversation.model';
 import { ConversationService } from 'src/app/services/conversation.service';
@@ -7,38 +7,36 @@ import { Folder, FoldersService } from 'src/app/services/folders.service';
 import { ConversationRenameService } from 'src/app/conversation/services/conversation-rename.service';
 import { NewFolderModalComponent } from './components/new-folder-modal/new-folder-modal.component';
 import { addIcons } from 'ionicons';
-import { CommonModule, JsonPipe } from '@angular/common';
-import { RouterLink } from '@angular/router';
+import { CommonModule } from '@angular/common';
+import { FolderItemComponent } from './components/folder-item/folder-item.component';
+import { ConversationItemComponent } from './components/conversation-item/conversation-item.component';
+import { ModalController } from '@ionic/angular/standalone';
 
 @Component({
   selector: 'app-conversations-menu',
   templateUrl: './conversations-menu.component.html',
   styleUrls: ['./conversations-menu.component.scss'],
-  imports: [IonText, IonButton, IonList, IonIcon, IonItem, IonLabel, IonItemDivider, RouterLink, IonRouterLink, IonItemGroup, JsonPipe, IonSpinner, IonPopover, IonInput, IonItemOption, IonItemOptions, IonItemSliding, CommonModule],
-  standalone: true,
+  imports: [
+    IonText, IonButton, IonList, IonIcon, IonItem, IonLabel, IonItemDivider, IonItemGroup, IonSpinner, CommonModule,
+    FolderItemComponent,
+    ConversationItemComponent
+  ],
 })
-export class ConversationsMenuComponent  implements OnInit {
-  @ViewChild('accordionGroup', {static: true}) accordionGroup!: IonAccordionGroup;
+export class ConversationsMenuComponent {
   status = ResourceStatus;
   readonly menu = input<IonMenu>();
   conversations: WritableSignal<Conversation[]> = this.conversationService.getConversations();
   currentConversation: Signal<Conversation> = this.conversationService.getCurrentConversation();
   conversationRename: Signal<{loading: boolean, name: string, conversationId: string }> = this.conversationRenameService.getConversationRename();
-  folders: Signal<Folder[]> = this.foldersService.getFolders();
   folderConversations = this.conversationService.conversationsResource;
-  editingFolder = signal<string | null>(null); // Track folder being edited
-  activeFolder = this.foldersService.getActiveFolder();
-  draggedConversation: Conversation | null = null;
+  editingFolder = signal<string | null>(null);
   deletingFolder = this.conversationService.getDeletingFolder();
   deletingConversation = this.conversationService.getDeletingConversation();
-  
-  readonly folderNameInputs = viewChildren(IonInput, {read: ElementRef});
   
   constructor(
     private conversationService: ConversationService,
     private conversationRenameService: ConversationRenameService,
     private foldersService: FoldersService,
-    private renderer: Renderer2,
     private modalController: ModalController
   ) {
     addIcons({
@@ -46,192 +44,95 @@ export class ConversationsMenuComponent  implements OnInit {
       chatbubbleOutline, pencilOutline, ellipsisHorizontal, 
       trashOutline, ellipsisVertical
     });
+  }
+
+  // Folder operations
+  setActiveFolder(folderId: string) {
+    this.foldersService.setActiveFolder(folderId);
+  }
+  
+  updateFolderEditingState(data: {folderId: string, isEditing: boolean}) {
+    const currentEditingFolder = this.editingFolder();
     
-    effect(() => {
-      this.openAccordion(this.currentConversation().folderId || '')
-    });
+    // Case 1: Trying to set a folder to editing mode
+    if (data.isEditing) {
+      // If we're already editing this folder, do nothing
+      if (currentEditingFolder === data.folderId) {
+        console.log('Already editing this folder, ignoring duplicate event');
+        return;
+      }
+      
+      // If we're editing a different folder, switch to the new one
+      console.log('Switching editing to folder:', data.folderId);
+      this.editingFolder.set(data.folderId);
+      return;
+    }
+    
+    // Case 2: Trying to exit editing mode
+    if (!data.isEditing) {
+      // Only clear if we're exiting editing for the currently edited folder
+      if (currentEditingFolder === data.folderId) {
+        console.log('Exiting edit mode for folder:', data.folderId);
+        this.editingFolder.set(null);
+      } else {
+        console.log('Ignoring exit edit for non-active folder');
+      }
+    }
   }
-  async ngOnInit() {
+  
+  updateFolder(folder: Folder) {
+    this.conversationService.saveFolder(folder);
   }
-
-  createNewConversation() {
-    const currentFolder = this.activeFolder() ?? '';
-    const newConversation = this.conversationService.createConversation(currentFolder);
-    this.setCurrentConversation(newConversation);
-    this.conversationService.addConversationToFolder(newConversation, currentFolder);
-  }
-
+  
   deleteFolder(folder: Folder) {
     this.conversationService.deleteFolder(folder);
   }
 
-  onBlur(event: Event) {
-    // Get the input element that triggered the blur
-    const input = event.target as HTMLInputElement;
-    
-    // Find the folder associated with this input
-    const folderId = input.id;
-    if (folderId && this.editingFolder() === folderId) {
-      // Only save if we're actually editing this folder
-      const folder = this.folderConversations.value()?.folders.find(f => f.id === folderId);
-      if (folder) {
-        const newName = input.value.trim();
-        
-        // Only update if there's a valid name
-        if (newName && newName !== folder.name) {
-          folder.name = newName;
-          // TODO: Save the folder name to your backend
-        }
-        
-        // Add a small delay before clearing the editing state
-        setTimeout(() => {
-          this.editingFolder.set(null);
-        }, 100);
-      }
-    }
-  }
-
-  onDragStart($event: DragEvent, conversation: Conversation) {
-    $event.dataTransfer!.effectAllowed = "move";
-    this.draggedConversation = conversation;
-    const conversationEl = $event.target as HTMLElement;
-    if (conversationEl) {
-      conversationEl.classList.add("conversation-dragging");
-      // Create a div-based clone for the preview instead of cloning `ion-item`
-    const dragPreview = this.renderer.createElement("div");
-    this.renderer.setProperty(dragPreview, "innerHTML", conversationEl.innerHTML);
-
-    // Apply styles to make it visually identical but smaller
-    this.renderer.setStyle(dragPreview, "position", "absolute");
-    this.renderer.setStyle(dragPreview, "top", "0");
-    this.renderer.setStyle(dragPreview, "left", "0");
-    this.renderer.setStyle(dragPreview, "transform", "scale(0.7)"); // Shrink effect
-    this.renderer.setStyle(dragPreview, "opacity", "0.9");
-    this.renderer.setStyle(dragPreview, "pointerEvents", "none");
-    this.renderer.setStyle(dragPreview, "background", "white");
-    this.renderer.setStyle(dragPreview, "padding", "8px");
-    this.renderer.setStyle(dragPreview, "borderRadius", "8px");
-    this.renderer.setStyle(dragPreview, "boxShadow", "0 2px 8px rgba(0, 0, 0, 0.2)");
-
-    this.renderer.appendChild(document.body, dragPreview);
-
-    $event.dataTransfer!.setDragImage(dragPreview, 0, 0);
-
-      setTimeout(() => this.renderer.removeChild(document.body, dragPreview), 0);
-    }
-  }
-
-  onDragEnd($event: DragEvent) {
-    const conversationEl = $event.target as HTMLElement;
-    if (conversationEl) {
-      conversationEl.classList.remove("conversation-dragging");
-    }
-  }
-
-  onDragLeave($event: Event) {
-    const folderElement = $event.currentTarget as HTMLElement;
-    if(folderElement) {
-      folderElement.classList.remove("folder-drop-target-hover");
-    }
-  }
-
-  onDrop($event: DragEvent, targetFolder: Folder) {
-    $event.preventDefault();
-    const folderEl = $event.currentTarget as HTMLElement;
-
-    if (!this.draggedConversation) return;
-
-    if(this.draggedConversation.folderId) {
-      this.conversationService.removeConversationFromFolder(this.draggedConversation, this.draggedConversation.folderId);
-      this.conversationService.addConversationToFolder(this.draggedConversation, targetFolder.id)
-    }
-
-    if (folderEl) {
-      folderEl.classList.remove("folder-drop-target-hover");
-      folderEl.classList.add("folder-drop-success");
-
-      setTimeout(() => {
-        folderEl.classList.remove("folder-drop-success");
-      }, 200); // Remove bounce effect after animation
-    }
-
-    // Reset state
-    this.draggedConversation.folderId = targetFolder.id;
-    this.conversationService.saveConversation(this.draggedConversation, true);
-    this.draggedConversation = null;
-  }
-
-  onDragOver($event: DragEvent) {
-    $event.preventDefault();
-    const folderElement = $event.currentTarget as HTMLElement;
-    folderElement.classList.add("folder-drop-target-hover");
-  }
-
-  deleteConversation(conversation: Conversation) {
-    this.conversationService.deleteConversation(conversation);
-  }
-
-  renameFolder(folder: Folder, index: number) {
-    if (this.editingFolder() === folder.id) {
-      this.editingFolder.set(null); // Exit edit mode
-    } else {
-      this.editingFolder.set(folder.id); // Enter edit mode for this folder
-      
-      // Use a longer delay to ensure the DOM is fully updated
-      setTimeout(() => {
-        const input = this.folderNameInputs().find((input, i) => i === index);
-        if (input) {
-          // Get the native input element
-          const nativeInput = input.nativeElement.querySelector('input');
-          if (nativeInput) {
-            // Focus and select with a longer delay
-            setTimeout(() => {
-              try {
-                // Try to focus and select
-                nativeInput.focus();
-                nativeInput.select();
-                
-                // Alternative approach - click the input to focus it
-                nativeInput.click();
-              } catch (e) {
-                console.error('Error focusing input:', e);
-              }
-            }, 200);
-          }
-        }
-      }, 100);
-    }
-  }
-
-  saveFolderName(folder: Folder, event: Event) {
-    const input = event.target as HTMLInputElement;
-    const newName = input.value.trim();
-    
-    // Only update if there's a valid name
-    if (newName && newName !== folder.name) {
-      folder.name = newName;
-      // TODO: Save the folder name to your backend
-    }
-    
-    this.editingFolder.set(null); // Exit edit mode immediately on Enter key
-    this.conversationService.saveFolder(folder);
-  }
-
-  setActiveFolder(folderId: string) {
-    this.foldersService.setActiveFolder(folderId);
-  }
-
-  async setCurrentConversation(conversation: Conversation) {
+  // Conversation operations
+  setCurrentConversation(conversation: Conversation) {
     if(conversation.id === this.currentConversation().id) {
       return;
     }
 
-    let convoToSet = conversation;
-    if(!conversation.isLocal) {
-      convoToSet = await this.conversationService.getConversationById(conversation.id);
+    this.conversationService.getConversationById(conversation.id)
+      .then(convo => {
+        this.conversationService.setCurrentConversation(convo || conversation);
+        this.menu()?.close();
+      });
+  }
+  
+  deleteConversation(conversation: Conversation) {
+    this.conversationService.deleteConversation(conversation);
+  }
+  
+  handleDrop(data: {event: DragEvent, folder: Folder}) {
+    const dataTransfer = data.event.dataTransfer;
+    if (!dataTransfer) return;
+    
+    try {
+      const dragData = JSON.parse(dataTransfer.getData('text/plain'));
+      const conversationId = dragData.conversationId;
+      const sourceFolderId = dragData.sourceFolderId;
+      
+      if (conversationId && sourceFolderId) {
+        const conversation = this.folderConversations.value()?.conversations?.[sourceFolderId]
+          ?.find(c => c.id === conversationId);
+          
+        if (conversation) {
+          // Remove from source folder
+          this.conversationService.removeConversationFromFolder(conversation, sourceFolderId);
+          
+          // Add to target folder
+          this.conversationService.addConversationToFolder(conversation, data.folder.id);
+          
+          // Update conversation
+          conversation.folderId = data.folder.id;
+          this.conversationService.saveConversation(conversation, true);
+        }
+      }
+    } catch (e) {
+      console.error('Error processing drag data:', e);
     }
-    this.conversationService.setCurrentConversation(convoToSet);
-    this.menu()?.close();
   }
 
   async createFolder() {
@@ -246,17 +147,8 @@ export class ConversationsMenuComponent  implements OnInit {
     
     if (role === 'confirm' && data) {
       const newFolder = this.foldersService.createNewFolder();
-      newFolder.name = data; // Set the folder name from the modal
+      newFolder.name = data;
       this.conversationService.addFolderToConversations(newFolder);
     }
   }
-
-  private openAccordion(folderId: string) {
-    setTimeout(() => {
-      if (folderId !== '') {
-        // this.accordionGroup.value = folderId;
-      }
-    }, 500)
-  }
-
 }

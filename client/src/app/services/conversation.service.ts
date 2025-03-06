@@ -49,7 +49,6 @@ export class ConversationService {
     private modelService: ModelService,
     private promptService: PromptService,
     private httpClient: HttpClient,
-    private developerSettings: DeveloperSettingsService,
     private folderService: FoldersService,
     handler: HttpBackend,
   ) {
