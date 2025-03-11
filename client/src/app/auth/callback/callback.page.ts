@@ -33,7 +33,8 @@ export class CallbackPage implements OnInit {
       this.route.queryParams.subscribe(async params => {
         // Check if there's an error in the callback
         if (params['error']) {
-          this.error = `Authentication error: ${params['error_description'] || params['error']}`;
+          this.error = `Authentication error: ${JSON.parse(params['error_description']) || JSON.parse(params['error'])}`;
+          console.log(this.error);
           this.loading = false;
           return;
         }

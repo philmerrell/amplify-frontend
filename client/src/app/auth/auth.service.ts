@@ -113,7 +113,7 @@ export class AuthService {
   
 }
 
-  interface TokenResponse {
+interface TokenResponse {
   id_token: string;
   access_token: string;
   refresh_token: string;

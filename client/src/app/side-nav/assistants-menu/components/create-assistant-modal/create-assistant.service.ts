@@ -18,10 +18,13 @@ export class CreateAssistantService {
   constructor() {}
 
   /**
-     * Add a file to the internal file list. 
+     * Add a file to the internal file list (if it's not added already). 
      * This function updates the signal to include the new file.
      */
     addFile(fw: FileWrapper) {
+      if (this.files().some(file => file.id === fw.id)) {
+        return;
+      }
       this.files.update(files => {
         return [
           ...files,
@@ -46,6 +49,10 @@ export class CreateAssistantService {
       return this.files;
     }
 
+    getDataSources(): Signal<DataSource[]> {
+      return this.dataSources;
+    }
+
     createDataSource(s3MetadataResult: any, fw: FileWrapper): DataSource {
       return {
         id: `s3://${fw.presignedUrlResponse!.key}`,
@@ -58,6 +65,9 @@ export class CreateAssistantService {
     }
 
     addDataSource(dataSource: DataSource) {
+      if (this.dataSources().some(ds => ds.id === dataSource.id)) {
+        return;
+      }
       this.dataSources.update(dataSources => {
         return [
           ...dataSources,
@@ -78,5 +88,14 @@ export class CreateAssistantService {
       const apiBaseUrl = this.developerSettingsService.getDeveloperApiBaseUrl();
       const request = this.http.post(`${apiBaseUrl()}/assistant/create`, { data: {...assistant}});
       lastValueFrom(request);
+    }
+
+    createFileWrapperFromDataSource(dataSource: DataSource): FileWrapper {
+      return {
+        id: dataSource.id,
+        name: dataSource.name!,
+        uploaded: true,
+        progress: 100,
+      }
     }
 }

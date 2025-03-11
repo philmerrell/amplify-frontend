@@ -31,6 +31,7 @@ export interface ChatResponseFormat {
 export interface DataSource {
     id: string;
     metadata?: any;
+    key?: string;
     name?: string;
     type?: string;
 }

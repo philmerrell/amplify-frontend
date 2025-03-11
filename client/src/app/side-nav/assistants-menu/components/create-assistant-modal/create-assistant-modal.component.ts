@@ -41,6 +41,11 @@ export class CreateAssistantModalComponent implements OnInit {
   ngOnInit() {
     if(this.assistant) {
       this.assistantForm.patchValue(this.assistant);
+      if (this.assistant.dataSources) {
+        this.assistant.dataSources.forEach(dataSource => {
+          this.dataSources.push(this.fb.group(dataSource));
+        });
+      }
     }
     this.nav.nativeElement.setRoot(AssistantDetailsComponent, { nav: this.nav, form: this.assistantForm });
   }

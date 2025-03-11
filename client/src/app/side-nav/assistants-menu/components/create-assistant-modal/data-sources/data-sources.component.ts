@@ -1,5 +1,6 @@
 import { 
   Component, 
+  effect, 
   ElementRef, 
   inject, 
   Input, 
@@ -160,13 +161,31 @@ export class DataSourcesComponent implements OnInit {
       chevronForwardOutline,
       cloudUploadOutline
     });
+
+    effect(() => {
+      this.myFilesResource.value()?.forEach((uploadedFile: UploadedFile) => {
+        const dataSources = this.createAssistantFileService.getDataSources();
+        const foundMyFile = dataSources().find(ds => ds.key === uploadedFile.id);
+        if (foundMyFile) {
+          uploadedFile.selected = true;
+        }
+      });
+    });
   }
 
   /**
-   * Called once after the component is constructed; here it's left empty, 
-   * but can be used to initialize logic related to data sources.
+   * 
    */
-  ngOnInit() {}
+  ngOnInit() {
+    if (this.form.controls['dataSources'].value.length > 0) {
+      this.form.controls['dataSources'].value.forEach((dataSource: DataSource) => {
+        this.addDataSource(dataSource);
+        const fw = this.createAssistantFileService.createFileWrapperFromDataSource(dataSource);
+        this.createAssistantFileService.addFile(fw);
+      });
+      
+    }
+  }
 
   /**
    * Handles the file drop event, which is fired by the custom FileDropZoneDirective 
@@ -307,7 +326,7 @@ export class DataSourcesComponent implements OnInit {
    * Adds a data source reference to the CreateAssistantFileService. 
    * Used after a file is successfully uploaded or retrieved from existing user files.
    */
-  private addDataSource(dataSource: DataSource) {
+  private addDataSource(dataSource: DataSource) {    
     this.createAssistantFileService.addDataSource(dataSource);
   }
 
