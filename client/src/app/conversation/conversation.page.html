@@ -35,8 +35,10 @@
     <app-conversation-text [conversation]="currentConversation()" [loading]="chatLoading()" [scroller]="scroller"></app-conversation-text>    
   </div>
 </ion-content>
-<ion-footer [translucent]="true">
-  <div class="container">
-    <app-chat-input></app-chat-input>
-  </div>
+<ion-footer [translucent]="true" class="ion-no-border">
+  <ion-toolbar>
+    <div class="container">
+      <app-chat-input></app-chat-input>
+    </div>
+  </ion-toolbar>
 </ion-footer>
