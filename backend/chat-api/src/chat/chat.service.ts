@@ -8,19 +8,36 @@ export class ChatService {
 
     constructor(private configService: ConfigService) {}
 
-    async getChat() {
+    async streamChat() {
         const llm = new ChatBedrockConverse({
-            model: "anthropic.claude-3-5-sonnet-20240620-v1:0",
-            region: this.configService.get<string>("BEDROCK_AWS_REGION"),
+            model: 'anthropic.claude-3-5-sonnet-20240620-v1:0',
+            region: this.configService.get<string>('BEDROCK_AWS_REGION'),
           });
-          const aiMsg = await llm.invoke([
-            [
-              "system",
-              "You are a helpful assistant that translates English to French. Translate the user sentence.",
-            ],
-            ["human", "cat I farted."],
-          ]);
-          return aiMsg;
+
+        const message = await llm.invoke([
+            { role: 'system', content: 'You are a helpful assistant that understands both French and English. Please answer any questions to the best of your ability.' },
+            { role: 'user', content: 'Does saying, "ChatGPT" in French sound similar to "Cat I Farted" in French?' },
+        ])
+        return message;
+        
+    }
+
+    async handleChat(model: string) {
+        const llm = new ChatBedrockConverse({
+            model: model,
+            region: this.configService.get<string>('BEDROCK_AWS_REGION'),
+        });
+
+        const stream = llm.stream([
+            { role: 'system', content: 'You are a helpful assistant that understands both French and English. Please answer any questions to the best of your ability.' },
+            { role: 'user', content: 'Does saying, "ChatGPT" in French sound similar to "Cat I Farted" in French?' },
+        ]);
+
+        return stream;
+    }
+
+    async handleConversation(model: string, conversation: any) {
+
     }
 
     
